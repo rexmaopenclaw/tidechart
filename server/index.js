@@ -2,11 +2,11 @@ const express = require('express');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const Database = require('better-sqlite3');
+const { Pool } = require('pg');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-const JWT_SECRET = 'tide-app-secret-2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'tide-app-secret-2026';
 
 // ----- CORS (allow GitHub Pages) -----
 app.use(function(req, res, next) {
@@ -17,26 +17,41 @@ app.use(function(req, res, next) {
   next();
 });
 
-// ----- DB -----
-const db = new Database(path.join(__dirname, 'tideapp.db'));
-db.pragma('journal_mode = WAL');
+// ----- PostgreSQL -----
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')
+    ? { rejectUnauthorized: false }
+    : false
+});
 
-db.exec(`CREATE TABLE IF NOT EXISTS users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL,
-  created_at TEXT DEFAULT (datetime('now'))
-)`);
+// ----- DB Init -----
+async function initDB() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id SERIAL PRIMARY KEY,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS points (
+      id SERIAL PRIMARY KEY,
+      user_id INTEGER NOT NULL REFERENCES users(id),
+      name TEXT NOT NULL,
+      lat REAL NOT NULL,
+      lon REAL NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    )
+  `);
+  console.log('DB tables ready');
+}
 
-db.exec(`CREATE TABLE IF NOT EXISTS points (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  name TEXT NOT NULL,
-  lat REAL NOT NULL,
-  lon REAL NOT NULL,
-  created_at TEXT DEFAULT (datetime('now')),
-  FOREIGN KEY (user_id) REFERENCES users(id)
-)`);
+initDB().catch(err => {
+  console.error('DB init failed:', err.message);
+  process.exit(1);
+});
 
 // ----- Middleware -----
 app.use(express.static(path.join(__dirname, '..')));
@@ -63,13 +78,14 @@ app.post('/api/register', async function(req, res) {
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
     if (password.length < 4) return res.status(400).json({ error: 'Password too short' });
 
-    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
-    if (existing) return res.status(400).json({ error: 'Email already registered' });
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows.length > 0) return res.status(400).json({ error: 'Email already registered' });
 
     const hash = await bcrypt.hash(password, 10);
-    const result = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run(email, hash);
-    const token = jwt.sign({ id: result.lastInsertRowid, email }, JWT_SECRET, { expiresIn: '30d' });
-    res.json({ token, user: { id: result.lastInsertRowid, email } });
+    const result = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id', [email, hash]);
+    const userId = result.rows[0].id;
+    const token = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: '30d' });
+    res.json({ token, user: { id: userId, email } });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -80,7 +96,8 @@ app.post('/api/login', async function(req, res) {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const user = result.rows[0];
     if (!user) return res.status(400).json({ error: 'Invalid email or password' });
 
     const match = await bcrypt.compare(password, user.password);
@@ -94,48 +111,59 @@ app.post('/api/login', async function(req, res) {
 });
 
 // ----- Points API -----
-app.get('/api/points', authMiddleware, function(req, res) {
-  const points = db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY created_at').all(req.user.id);
-  res.json(points);
-});
-
-app.post('/api/points', authMiddleware, function(req, res) {
+app.get('/api/points', authMiddleware, async function(req, res) {
   try {
-    const { name, lat, lon } = req.body;
-    if (!name || lat == null || lon == null) return res.status(400).json({ error: 'name, lat, lon required' });
-
-    const result = db.prepare('INSERT INTO points (user_id, name, lat, lon) VALUES (?, ?, ?, ?)').run(req.user.id, name, lat, lon);
-    res.json({ id: result.lastInsertRowid, name, lat, lon });
+    const result = await pool.query('SELECT id, name, lat, lon FROM points WHERE user_id = $1 ORDER BY created_at', [req.user.id]);
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.delete('/api/points/:id', authMiddleware, function(req, res) {
-  const result = db.prepare('DELETE FROM points WHERE id = ? AND user_id = ?').run(req.params.id, req.user.id);
-  if (result.changes === 0) return res.status(404).json({ error: 'Point not found' });
-  res.json({ ok: true });
+app.post('/api/points', authMiddleware, async function(req, res) {
+  try {
+    const { name, lat, lon } = req.body;
+    if (!name || lat == null || lon == null) return res.status(400).json({ error: 'name, lat, lon required' });
+
+    const result = await pool.query('INSERT INTO points (user_id, name, lat, lon) VALUES ($1, $2, $3, $4) RETURNING id', [req.user.id, name, lat, lon]);
+    res.json({ id: result.rows[0].id, name, lat, lon });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/points/sync', authMiddleware, function(req, res) {
+app.delete('/api/points/:id', authMiddleware, async function(req, res) {
+  try {
+    const result = await pool.query('DELETE FROM points WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]);
+    if (result.rowCount === 0) return res.status(404).json({ error: 'Point not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/points/sync', authMiddleware, async function(req, res) {
   try {
     const { points: clientPoints } = req.body;
     if (!Array.isArray(clientPoints)) return res.status(400).json({ error: 'points array required' });
 
-    // Replace all user points with client state
-    const del = db.prepare('DELETE FROM points WHERE user_id = ?');
-    const ins = db.prepare('INSERT INTO points (user_id, name, lat, lon) VALUES (?, ?, ?, ?)');
-
-    const transaction = db.transaction(() => {
-      del.run(req.user.id);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      await client.query('DELETE FROM points WHERE user_id = $1', [req.user.id]);
       for (const p of clientPoints) {
-        ins.run(req.user.id, p.name, p.lat, p.lon);
+        await client.query('INSERT INTO points (user_id, name, lat, lon) VALUES ($1, $2, $3, $4)', [req.user.id, p.name, p.lat, p.lon]);
       }
-    });
-    transaction();
+      await client.query('COMMIT');
+    } catch (e) {
+      await client.query('ROLLBACK');
+      throw e;
+    } finally {
+      client.release();
+    }
 
-    const points = db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY id').all(req.user.id);
-    res.json(points);
+    const result = await pool.query('SELECT id, name, lat, lon FROM points WHERE user_id = $1 ORDER BY id', [req.user.id]);
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -267,6 +295,35 @@ function findNearestHKO(lat, lon) {
   return best;
 }
 
+async function findNearestValidHKO(lat, lon) {
+  const stations = [];
+  for (const [code, stn] of Object.entries(HKO_STATIONS)) {
+    const d = Math.sqrt((stn.lat - lat) ** 2 + (stn.lon - lon) ** 2);
+    stations.push({
+      code: code,
+      name: stn.name,
+      lat: stn.lat,
+      lon: stn.lon,
+      distance_km: Math.round(d * 111 * 100) / 100
+    });
+  }
+  stations.sort((a, b) => a.distance_km - b.distance_km);
+
+  let lastError = null;
+  for (const stn of stations) {
+    try {
+      console.log('Trying tide station ' + stn.code + ' (' + stn.name + '), ' + stn.distance_km + 'km away');
+      const data = await getTideData(stn.code);
+      return { station: stn, tideRaw: data };
+    } catch (err) {
+      lastError = err;
+      console.log('Station ' + stn.code + ' failed: ' + err.message + ', trying next...');
+    }
+  }
+
+  throw new Error(lastError || 'No valid HKO tide station found');
+}
+
 // HKO tide fetch with station code
 async function fetchTideDataStation(year, stationCode) {
   const url = 'https://www.hko.gov.hk/tide/' + stationCode + 'textPH' + year + '.htm';
@@ -354,14 +411,12 @@ app.get('/api/current', async function(req, res) {
 
     const hydroTime = reqDate.replace(/-/g, '') + reqTime;
 
-    // Find nearest HKO tide station
-    const nearestHKO = findNearestHKO(reqLat || 22.38, reqLon || 113.90);
-    const hkoStationCode = nearestHKO ? nearestHKO.code : 'TBT';
+    // Find nearest valid HKO tide station (skip stations that return 404)
+    const { station: nearestHKO, tideRaw } = await findNearestValidHKO(reqLat || 22.38, reqLon || 113.90);
 
-    const tideRaw = await getTideData(hkoStationCode);
     const targetDate = new Date(reqDate + 'T' + reqTime.substring(0, 2) + ':' + reqTime.substring(2, 4) + ':00');
     const tide = processTideData(tideRaw, targetDate);
-    tide.station = nearestHKO ? nearestHKO : { code: 'TBT', name: '尖鼻咀 (Tsim Bei Tsui)', lat: 22.483, lon: 114.000, distance_km: 0 };
+    tide.station = nearestHKO;
 
     const geojson = await fetchHydroCurrents(hydroTime, reqMode);
 
