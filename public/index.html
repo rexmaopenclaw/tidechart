@@ -16,6 +16,7 @@
         <p class="subtitle">Current Forecast</p>
         <button id="loginBtn" class="login-btn">登入</button>
         <button id="logoutBtn" class="login-btn hidden">登出</button>
+        <button id="settingsBtn" class="settings-btn">⚙️</button>
       </div>
     </header>
 
@@ -130,6 +131,20 @@
         <button class="cancel" id="loginCancel">取消</button>
         <button class="save" id="loginRegisterBtn">註冊</button>
         <button class="save" id="loginSubmitBtn">登入</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal">
+      <h3>⚙️ 設定</h3>
+      <label>API 伺服器網址</label>
+      <input type="url" id="apiUrlInput" placeholder="https://your-tunnel.trycloudflare.com">
+      <p class="hint">留空 = 使用當前網址（同源）</p>
+      <div class="modal-btns">
+        <button class="cancel" id="settingsCancel">取消</button>
+        <button class="save" id="settingsSaveBtn">儲存</button>
       </div>
     </div>
   </div>

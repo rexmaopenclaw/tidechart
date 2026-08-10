@@ -1,3 +1,21 @@
+// ----- Configurable API Base -----
+const API_KEY = 'tide_api_base';
+function getApiBase() {
+  try { return localStorage.getItem(API_KEY) || ''; } catch { return ''; }
+}
+function setApiBase(url) {
+  try {
+    if (url) localStorage.setItem(API_KEY, url.replace(/\/+$/, ''));
+    else localStorage.removeItem(API_KEY);
+  } catch {}
+}
+
+function apiUrl(path) {
+  const base = getApiBase();
+  if (base) return base + path;
+  return path;
+}
+
 // ----- State -----
 let state = {
   date: '',
@@ -44,7 +62,7 @@ let pointIdCounter = parseInt(localStorage.getItem('tidePointId') || '100');
 async function syncPointsToServer() {
   if (!state.token) return;
   try {
-    const resp = await fetch('/api/points/sync', {
+    const resp = await fetch(apiUrl('/api/points/sync'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
       body: JSON.stringify({ points: points })
@@ -64,7 +82,7 @@ async function syncPointsToServer() {
 async function loadServerPoints() {
   if (!state.token) return;
   try {
-    const resp = await fetch('/api/points', {
+    const resp = await fetch(apiUrl('/api/points'), {
       headers: { 'Authorization': 'Bearer ' + state.token }
     });
     if (resp.ok) {
@@ -117,6 +135,11 @@ const currentMin = document.getElementById('currentMin');
 const currentPointId = document.getElementById('currentPointId');
 const speedToggleBtn = document.getElementById('speedToggleBtn');
 const speedInfo = document.getElementById('speedInfo');
+const settingsBtn = document.getElementById('settingsBtn');
+const settingsModal = document.getElementById('settingsModal');
+const settingsCancel = document.getElementById('settingsCancel');
+const settingsSaveBtn = document.getElementById('settingsSaveBtn');
+const apiUrlInput = document.getElementById('apiUrlInput');
 
 // ----- Map -----
 let map, markerLayer;
@@ -204,7 +227,7 @@ function deletePoint(id) {
     renderMarkers();
   }
   if (state.token && typeof id === 'number') {
-    fetch('/api/points/' + id, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.token } }).catch(function(){});
+    fetch(apiUrl('/api/points/' + id), { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.token } }).catch(function(){});
   }
 }
 
@@ -275,7 +298,7 @@ function updateLoginUI() {
 async function doLogin(email, password) {
   loginError.classList.add('hidden');
   try {
-    const resp = await fetch('/api/login', {
+    const resp = await fetch(apiUrl('/api/login'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, password: password })
@@ -301,7 +324,7 @@ async function doLogin(email, password) {
 async function doRegister(email, password) {
   loginError.classList.add('hidden');
   try {
-    const resp = await fetch('/api/register', {
+    const resp = await fetch(apiUrl('/api/register'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: email, password: password })
@@ -349,13 +372,13 @@ async function loadData() {
     const p = state.activePoint;
 
     // Fetch current data
-    let url = '/api/current?date=' + date + '&time=' + time + '&mode=' + state.mode;
+    let url = apiUrl('/api/current?date=' + date + '&time=' + time + '&mode=' + state.mode);
     if (p.lat && p.lon) {
       url += '&lat=' + p.lat + '&lon=' + p.lon;
     }
     const [currentResp, seriesResp] = await Promise.all([
       fetch(url),
-      fetch('/api/current-series?date=' + date + '&mode=' + state.mode + '&lat=' + p.lat + '&lon=' + p.lon)
+      fetch(apiUrl('/api/current-series?date=' + date + '&mode=' + state.mode + '&lat=' + p.lat + '&lon=' + p.lon))
     ]);
 
     if (!currentResp.ok) throw new Error('HTTP ' + currentResp.status);
@@ -663,6 +686,20 @@ function init() {
   const tideInfo = document.getElementById('tideInfo');
   if (tideInfo) {
     tideInfo.classList.remove('hidden');
+  }
+
+  // Settings modal
+  if (settingsBtn && settingsModal) {
+    settingsBtn.addEventListener('click', function() {
+      apiUrlInput.value = getApiBase();
+      settingsModal.classList.remove('hidden');
+    });
+    settingsCancel.addEventListener('click', function() { settingsModal.classList.add('hidden'); });
+    settingsSaveBtn.addEventListener('click', function() {
+      setApiBase(apiUrlInput.value.trim());
+      settingsModal.classList.add('hidden');
+      if (state.activePoint) loadData();
+    });
   }
 
   // Speed toggle
