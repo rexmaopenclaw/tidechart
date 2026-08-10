@@ -425,8 +425,20 @@ async function fetchWeather(lat, lon, dateStr, timeStr) {
     fetch(base + '&models=gfs_seamless'),
     fetch(base + '&models=ecmwf_ifs')
   ]);
-  const gfs = await gfsResp.json();
-  const ecmwf = await ecmwfResp.json();
+
+  let gfs, ecmwf;
+  if (gfsResp.ok) {
+    gfs = await gfsResp.json();
+  } else {
+    console.log('GFS Open-Meteo error: ' + gfsResp.status + ' ' + (await gfsResp.text()).substring(0, 100));
+    gfs = {};
+  }
+  if (ecmwfResp.ok) {
+    ecmwf = await ecmwfResp.json();
+  } else {
+    console.log('ECMWF Open-Meteo error: ' + ecmwfResp.status + ' ' + (await ecmwfResp.text()).substring(0, 100));
+    ecmwf = {};
+  }
 
   const pick = (j) => {
     // Find the right hour index
