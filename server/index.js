@@ -678,7 +678,7 @@ app.get('/api/hko-wind', async function(req, res) {
             distance_km: stn.distance_km
           });
         }
-        if (nearest.length >= 3) break;
+        if (nearest.length >= 5) break;
       }
     }
 
