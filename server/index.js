@@ -706,8 +706,37 @@ app.get('/api/hko-wind', async function(req, res) {
   }
 });
 
+// ----- DEBUG: Test Open-Meteo directly -----
+app.get('/api/debug-openmeteo', async function(req, res) {
+  try {
+    const lat = parseFloat(req.query.lat) || 22.38;
+    const lon = parseFloat(req.query.lon) || 113.90;
+    const date = req.query.date || '2026-08-11';
+
+    const base = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+      '&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m' +
+      '&start_date=' + date + '&end_date=' + date +
+      '&timezone=Asia/Hong_Kong&wind_speed_unit=kn';
+
+    const [gfsResp, ecmwfResp] = await Promise.all([
+      fetch(base + '&models=gfs_seamless'),
+      fetch(base + '&models=ecmwf_ifs')
+    ]);
+
+    const result = {
+      gfs_status: gfsResp.status,
+      ecmwf_status: ecmwfResp.status,
+      gfs_text: await gfsResp.text(),
+      ecmwf_text: await ecmwfResp.text()
+    };
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message, stack: err.stack });
+  }
+});
+
 // ----- API: Weather (GFS + ECMWF wind) -----
-app.get('/api/weather', async function(req, res) {
+app.get('/api/weather', async function(req, res)
   try {
     const lat = parseFloat(req.query.lat) || 22.38;
     const lon = parseFloat(req.query.lon) || 113.90;
