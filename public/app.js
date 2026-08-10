@@ -539,13 +539,13 @@ function drawTideChart(tide) {
     ctx.fillText(String(i).padStart(2, '0') + ':00', x, h - 1);
   }
 
-  const now = new Date();
-  const currentHour = now.getHours() + now.getMinutes() / 60;
-  if (currentHour >= 0 && currentHour <= 23) {
-    const frac = currentHour / 23;
+  // Query time indicator (red dot)
+  const queryHour = parseInt(hourPicker.value) + parseInt(minPicker.value) / 60;
+  if (queryHour >= 0 && queryHour <= 23) {
+    const frac = queryHour / 23;
     const x = pad.left + frac * chartW;
-    const hIdx = Math.floor(currentHour);
-    const hFrac = currentHour - hIdx;
+    const hIdx = Math.floor(queryHour);
+    const hFrac = queryHour - hIdx;
     const nextIdx = hIdx < 23 ? hIdx + 1 : 23;
     const yVal = heights[hIdx] + (heights[nextIdx] - heights[hIdx]) * hFrac;
     const y = pad.top + chartH - ((yVal - minH) / range) * chartH;
@@ -558,6 +558,11 @@ function drawTideChart(tide) {
     ctx.strokeStyle = 'rgba(255,107,107,0.3)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
+    // Label
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = '7px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
 }
 
@@ -634,10 +639,9 @@ function drawSpeedChart(series) {
     ctx.fillText(timeStr, x, h - 1);
   }
 
-  // Now indicator
-  const now = new Date();
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
-  const frac = nowMinutes / (24 * 60);
+  // Query time indicator (red dot)
+  const queryMinutes = parseInt(hourPicker.value) * 60 + parseInt(minPicker.value);
+  const frac = queryMinutes / (24 * 60);
   if (frac >= 0 && frac <= 1) {
     const x = pad.left + frac * chartW;
     const idx = Math.floor(frac * (speeds.length - 1));
@@ -654,6 +658,11 @@ function drawSpeedChart(series) {
     ctx.strokeStyle = 'rgba(255,107,107,0.3)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
+    // Label
+    ctx.fillStyle = '#ff6b6b';
+    ctx.font = '7px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
 }
 
