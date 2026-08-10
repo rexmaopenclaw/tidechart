@@ -5,8 +5,17 @@ const bcrypt = require('bcryptjs');
 const Database = require('better-sqlite3');
 
 const app = express();
-const PORT = 3002;
+const PORT = process.env.PORT || 3002;
 const JWT_SECRET = 'tide-app-secret-2026';
+
+// ----- CORS (allow GitHub Pages) -----
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
 
 // ----- DB -----
 const db = new Database(path.join(__dirname, 'tideapp.db'));
@@ -30,7 +39,7 @@ db.exec(`CREATE TABLE IF NOT EXISTS points (
 )`);
 
 // ----- Middleware -----
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '..')));
 app.use(express.json());
 
 function authMiddleware(req, res, next) {

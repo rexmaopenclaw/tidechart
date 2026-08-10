@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: tide-app
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && node index.js
+    healthCheckPath: /api/current?date=2026-08-10&time=180000&mode=S&lat=22.38&lon=113.9003
+    envVars:
+      - key: NODE_VERSION
+        value: 22
