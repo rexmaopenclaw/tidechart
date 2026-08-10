@@ -697,6 +697,20 @@ function init() {
     tideInfo.classList.remove('hidden');
   }
 
+  // Now button — jump to real-time rounded to nearest 15min
+  const nowBtn = document.getElementById('nowBtn');
+  if (nowBtn) {
+    nowBtn.addEventListener('click', function() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const mins = Math.round(now.getMinutes() / 15) * 15;
+      const m = String(mins >= 60 ? 0 : mins).padStart(2, '0');
+      hourPicker.value = h;
+      minPicker.value = m;
+      loadData();
+    });
+  }
+
   // Settings modal
   if (settingsBtn && settingsModal) {
     settingsBtn.addEventListener('click', function() {
