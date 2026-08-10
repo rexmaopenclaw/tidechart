@@ -220,6 +220,7 @@ function renderPointsBar() {
 }
 
 function deletePoint(id) {
+  if (!confirm('確定刪除「' + (points.find(function(p) { return p.id === id; }) || {name: '?'}).name + '」？')) return;
   points = points.filter(function(p) { return p.id !== id; });
   saveLocalPoints(points);
   if (state.activePoint && state.activePoint.id === id) {
