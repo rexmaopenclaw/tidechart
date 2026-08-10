@@ -1,5 +1,5 @@
 // ----- Configurable API Base -----
-const API_KEY = 'tide_api_base';
+const API_KEY = '***';
 function getApiBase() {
   try { return localStorage.getItem(API_KEY) || ''; } catch { return ''; }
 }
@@ -16,6 +16,61 @@ function apiUrl(path) {
   return path;
 }
 
+// ----- Direction helpers -----
+const DIR_NAMES = {
+  'N': '北', 'NNE': '北北東', 'NE': '東北', 'ENE': '東北東',
+  'E': '東', 'ESE': '東南東', 'SE': '東南', 'SSE': '南南東',
+  'S': '南', 'SSW': '南南西', 'SW': '西南', 'WSW': '西南西',
+  'W': '西', 'WNW': '西北西', 'NW': '西北', 'NNW': '北北西'
+};
+
+function degToCompass(deg) {
+  const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
+// HKO CSV uses text directions — map to degrees
+function hkoWindDirToDeg(dirStr) {
+  if (!dirStr || dirStr === '--' || dirStr === 'N/A' || dirStr === 'Calm' || dirStr === 'Variable') return null;
+  const map = {
+    'North': 0, 'N': 0,
+    'North by east': 11.25,
+    'NNE': 22.5, 'North-northeast': 22.5, 'North northeast': 22.5,
+    'NE by N': 33.75,
+    'NE': 45, 'Northeast': 45, 'North-east': 45,
+    'NE by E': 56.25,
+    'ENE': 67.5, 'East-northeast': 67.5, 'East northeast': 67.5,
+    'East by N': 78.75,
+    'East': 90, 'E': 90,
+    'East by S': 101.25,
+    'ESE': 112.5, 'East-southeast': 112.5, 'East southeast': 112.5,
+    'SE by E': 123.75,
+    'SE': 135, 'Southeast': 135, 'South-east': 135,
+    'SE by S': 146.25,
+    'SSE': 157.5, 'South-southeast': 157.5, 'South southeast': 157.5,
+    'South by E': 168.75,
+    'South': 180, 'S': 180,
+    'South by W': 191.25,
+    'SSW': 202.5, 'South-southwest': 202.5, 'South southwest': 202.5,
+    'SW by S': 213.75,
+    'SW': 225, 'Southwest': 225, 'South-west': 225,
+    'SW by W': 236.25,
+    'WSW': 247.5, 'West-southwest': 247.5, 'West southwest': 247.5,
+    'West by S': 258.75,
+    'West': 270, 'W': 270,
+    'West by N': 281.25,
+    'WNW': 292.5, 'West-northwest': 292.5, 'West northwest': 292.5,
+    'NW by W': 303.75,
+    'NW': 315, 'Northwest': 315, 'North-west': 315,
+    'NW by N': 326.25,
+    'NNW': 337.5, 'North-northwest': 337.5, 'North northwest': 337.5,
+    'North by W': 348.75
+  };
+  // Normalize: lowercase, trim, title-case
+  const key = dirStr.trim().replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+  return map[key] != null ? map[key] : null;
+}
+
 // ----- State -----
 let state = {
   date: '',
@@ -23,12 +78,15 @@ let state = {
   mode: 'S',
   activePoint: null,
   data: null,
+  series: null,
+  weather: null,
+  hkoWind: null,
   user: null,
   token: null
 };
 
 // ----- Auth -----
-const AUTH_KEY = 'tide_auth';
+const AUTH_KEY = '***';
 function loadAuth() {
   try {
     const d = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
@@ -64,7 +122,7 @@ async function syncPointsToServer() {
   try {
     const resp = await fetch(apiUrl('/api/points/sync'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
+      headers: { 'Content-Type': 'application/json', 'Authorization': '***' + state.token },
       body: JSON.stringify({ points: points })
     });
     if (resp.ok) {
@@ -83,7 +141,7 @@ async function loadServerPoints() {
   if (!state.token) return;
   try {
     const resp = await fetch(apiUrl('/api/points'), {
-      headers: { 'Authorization': 'Bearer ' + state.token }
+      headers: { 'Authorization': '***' + state.token }
     });
     if (resp.ok) {
       const serverPoints = await resp.json();
@@ -140,6 +198,25 @@ const settingsModal = document.getElementById('settingsModal');
 const settingsCancel = document.getElementById('settingsCancel');
 const settingsSaveBtn = document.getElementById('settingsSaveBtn');
 const apiUrlInput = document.getElementById('apiUrlInput');
+
+// Wind DOM refs
+const windCard = document.getElementById('windCard');
+const windUnitToggle = document.getElementById('windUnitToggle');
+const windBody = document.getElementById('windBody');
+const windStationSelect = document.getElementById('windStationSelect');
+const windHkoStation = document.getElementById('windHkoStation');
+const windHkoSpeed = document.getElementById('windHkoSpeed');
+const windHkoGust = document.getElementById('windHkoGust');
+const windHkoDir = document.getElementById('windHkoDir');
+const windHkoDirArrow = document.getElementById('windHkoDirArrow');
+const windHkoDist = document.getElementById('windHkoDist');
+const windHkoTime = document.getElementById('windHkoTime');
+const windHkoUnit = document.getElementById('windHkoUnit');
+const forecastWindCard = document.getElementById('forecastWindCard');
+const forecastWindBody = document.getElementById('forecastWindBody');
+const windGfs = document.getElementById('windGfs');
+const windEcmwf = document.getElementById('windEcmwf');
+let windUnit = 'kn'; // default knot
 
 // ----- Map -----
 let map, markerLayer;
@@ -231,7 +308,7 @@ function deletePoint(id) {
     renderMarkers();
   }
   if (state.token && typeof id === 'number') {
-    fetch(apiUrl('/api/points/' + id), { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.token } }).catch(function(){});
+    fetch(apiUrl('/api/points/' + id), { method: 'DELETE', headers: { 'Authorization': '***' + state.token } }).catch(function(){});
   }
 }
 
@@ -380,18 +457,34 @@ async function loadData() {
     if (p.lat && p.lon) {
       url += '&lat=' + p.lat + '&lon=' + p.lon;
     }
-    const [currentResp, seriesResp] = await Promise.all([
+    const [currentResp, seriesResp, weatherResp, hkoWindResp] = await Promise.all([
       fetch(url),
-      fetch(apiUrl('/api/current-series?date=' + date + '&mode=' + state.mode + '&lat=' + p.lat + '&lon=' + p.lon))
+      fetch(apiUrl('/api/current-series?date=' + date + '&mode=' + state.mode + '&lat=' + p.lat + '&lon=' + p.lon)),
+      fetch(apiUrl('/api/weather?lat=' + p.lat + '&lon=' + p.lon + '&date=' + date + '&time=' + time)).catch(function(){ return null; }),
+      fetch(apiUrl('/api/hko-wind?lat=' + p.lat + '&lon=' + p.lon)).catch(function(){ return null; })
     ]);
 
     if (!currentResp.ok) throw new Error('HTTP ' + currentResp.status);
     state.data = await currentResp.json();
 
-    if (seriesResp.ok) {
+    if (seriesResp && seriesResp.ok) {
       state.series = await seriesResp.json();
     } else {
       state.series = null;
+    }
+
+    // Forecast wind (GFS + ECMWF) — optional
+    if (weatherResp && weatherResp.ok) {
+      state.weather = await weatherResp.json();
+    } else {
+      state.weather = null;
+    }
+
+    // HKO real-time wind
+    if (hkoWindResp && hkoWindResp.ok) {
+      state.hkoWind = await hkoWindResp.json();
+    } else {
+      state.hkoWind = null;
     }
 
     render();
@@ -460,15 +553,153 @@ function render() {
   tideRange.textContent = tide.minHeight + ' - ' + tide.maxHeight + 'm (範圍 ' + tide.range + 'm)';
 
   const events = [];
-  tide.highs.forEach(function(h) { events.push({ time: h.time, height: h.height, type: 'high' }); });
-  tide.lows.forEach(function(l) { events.push({ time: l.time, height: l.height, type: 'low' }); });
+  if (tide.highs) tide.highs.forEach(function(h) { events.push({ time: h.time, height: h.height, type: 'high' }); });
+  if (tide.lows) tide.lows.forEach(function(l) { events.push({ time: l.time, height: l.height, type: 'low' }); });
   events.sort(function(a, b) { return a.time.localeCompare(b.time); });
-  tideEvents.textContent = events.slice(0, 4).map(function(e) {
-    return (e.type === 'high' ? '⬆' : '⬇') + ' ' + e.time + ' ' + e.height.toFixed(2) + 'm';
+  tideEvents.innerHTML = events.slice(0, 4).map(function(e) {
+    const cls = e.type === 'high' ? 'tide-high' : 'tide-low';
+    const arrow = e.type === 'high' ? '⬆' : '⬇';
+    return '<span class="' + cls + '">' + arrow + ' ' + e.time + ' ' + e.height.toFixed(2) + 'm</span>';
   }).join(' · ');
+
+  renderHkoWind();
+  renderForecastWind();
 
   drawTideChart(tide);
   drawSpeedChart(state.series);
+}
+
+// ----- HKO Real-time Wind -----
+function renderHkoWind() {
+  if (!windBody || !windHkoSpeed) return;
+
+  // HKO wind CSV is real-time only — only show when selected time is approximately "now"
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+  const selectedDate = datePicker.value;
+  const selectedMinutes = parseInt(hourPicker.value) * 60 + parseInt(minPicker.value, 10);
+  const currentMinutes = now.getHours() * 60 + Math.round(now.getMinutes() / 15) * 15;
+  const isCurrentTime = selectedDate === todayStr && Math.abs(selectedMinutes - currentMinutes) <= 15;
+
+  if (!isCurrentTime) {
+    windBody.classList.add('hidden');
+    windCard.classList.add('hidden');
+    return;
+  }
+
+  const h = state.hkoWind;
+  const nearest = h && h.nearest;
+
+  // If no data or no nearest records, hide
+  if (!nearest || !Array.isArray(nearest) || nearest.length === 0) {
+    windBody.classList.add('hidden');
+    windCard.classList.add('hidden');
+    return;
+  }
+
+  windBody.classList.remove('hidden');
+  windCard.classList.remove('hidden');
+
+  // Populate dropdown
+  const currentVal = windStationSelect.value;
+  windStationSelect.innerHTML = '';
+  nearest.forEach(function(stn, i) {
+    const opt = document.createElement('option');
+    opt.value = String(i);
+    opt.textContent = (i + 1) + '. ' + stn.station + ' (' + stn.distance_km.toFixed(1) + 'km)';
+    windStationSelect.appendChild(opt);
+  });
+  // Restore selection if still valid, otherwise pick first
+  const idx = nearest.some(function(s, i) { return String(i) === currentVal; }) ? parseInt(currentVal) : 0;
+  windStationSelect.value = String(idx);
+
+  // Show selected station
+  showHkoWindStation(idx);
+}
+
+function showHkoWindStation(idx) {
+  const h = state.hkoWind;
+  if (!h || !h.nearest || !h.nearest[idx]) return;
+  const stn = h.nearest[idx];
+
+  const rawSpeed = parseFloat(stn.wind_speed);
+  const rawGust = parseFloat(stn.wind_gust);
+  const dirStr = stn.wind_dir || '';
+
+  // HKO CSV data is in km/h — convert if showing knots
+  const speedKn = isNaN(rawSpeed) ? null : rawSpeed / 1.852;
+  const gustKn = isNaN(rawGust) ? null : rawGust / 1.852;
+  const speedKmh = isNaN(rawSpeed) ? null : rawSpeed;
+  const gustKmh = isNaN(rawGust) ? null : rawGust;
+
+  // Speed
+  if (windUnit === 'kn') {
+    windHkoSpeed.textContent = speedKn != null ? speedKn.toFixed(1) : '--';
+    windHkoUnit.textContent = 'kn';
+  } else {
+    windHkoSpeed.textContent = speedKmh != null ? Math.round(speedKmh * 10) / 10 + '' : '--';
+    windHkoUnit.textContent = 'km/h';
+  }
+
+  // Gust
+  if (windUnit === 'kn') {
+    windHkoGust.textContent = gustKn != null ? gustKn.toFixed(1) + ' kn' : '--';
+  } else {
+    windHkoGust.textContent = gustKmh != null ? Math.round(gustKmh * 10) / 10 + ' km/h' : '--';
+  }
+
+  // Direction — arrow + angle
+  const dirDeg = hkoWindDirToDeg(dirStr);
+  if (dirDeg != null) {
+    const compass = degToCompass(dirDeg);
+    // Arrow points direction wind is GOING TO (meteorological FROM + 180°)
+    const arrowDeg = (dirDeg + 180) % 360;
+    windHkoDir.textContent = DIR_NAMES[compass] + ' (' + dirDeg + '°)';
+    if (windHkoDirArrow) {
+      windHkoDirArrow.style.transform = 'rotate(' + arrowDeg + 'deg)';
+    }
+  } else {
+    windHkoDir.textContent = dirStr || '--';
+  }
+
+  // Station
+  windHkoStation.textContent = stn.station || '--';
+  windHkoDist.textContent = stn.distance_km ? stn.distance_km.toFixed(1) + ' km' : '--';
+  windHkoTime.textContent = h.timestamp ? h.timestamp.substring(11, 16) + ' (' + h.timestamp.substring(0, 10) + ')' : '--';
+}
+
+// ----- Forecast Wind (GFS + ECMWF) — reference card -----
+function renderForecastWind() {
+  if (!forecastWindBody || !windGfs || !windEcmwf) return;
+  const w = state.weather;
+  if (!w) {
+    forecastWindBody.classList.add('hidden');
+    forecastWindCard.classList.add('hidden');
+    return;
+  }
+
+  const fmt = function(m) {
+    if (!m || m.speed_kn == null) return '--';
+    if (windUnit === 'kn') {
+      return m.speed_kn.toFixed(1) + ' kn (陣風 ' + m.gust_kn.toFixed(1) + ' kn) ' + (m.compass_cn || m.compass || '');
+    } else {
+      const kmh = Math.round(m.speed_kn * 1.852 * 10) / 10;
+      const gustKmh = m.gust_kn != null ? Math.round(m.gust_kn * 1.852 * 10) / 10 : null;
+      return kmh.toFixed(1) + ' km/h' + (gustKmh != null ? ' (陣風 ' + gustKmh.toFixed(1) + ' km/h)' : '') + ' ' + (m.compass_cn || m.compass || '');
+    }
+  };
+
+  forecastWindBody.classList.remove('hidden');
+  forecastWindCard.classList.remove('hidden');
+  windGfs.textContent = fmt(w.gfs);
+  windEcmwf.textContent = fmt(w.ecmwf);
+}
+
+function toggleWindUnit() {
+  windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
+  if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  renderHkoWind();
+  renderForecastWind();
 }
 
 // ----- Canvas Helpers -----
@@ -712,6 +943,18 @@ function init() {
       setApiBase(apiUrlInput.value.trim());
       settingsModal.classList.add('hidden');
       if (state.activePoint) loadData();
+    });
+  }
+
+  // Wind unit toggle
+  if (windUnitToggle) {
+    windUnitToggle.addEventListener('click', toggleWindUnit);
+  }
+
+  // Wind station dropdown change
+  if (windStationSelect) {
+    windStationSelect.addEventListener('change', function() {
+      showHkoWindStation(parseInt(windStationSelect.value));
     });
   }
 

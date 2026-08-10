@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { Pool } = require('pg');
+const Database = require('better-sqlite3');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -17,41 +17,28 @@ app.use(function(req, res, next) {
   next();
 });
 
-// ----- PostgreSQL -----
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_URL && !process.env.DATABASE_URL.includes('localhost')
-    ? { rejectUnauthorized: false }
-    : false
-});
+// ----- SQLite (local) -----
+const db = new Database(path.join(__dirname, 'tideapp.db'));
+db.pragma('journal_mode = WAL');
 
-// ----- DB Init -----
-async function initDB() {
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS users (
-      id SERIAL PRIMARY KEY,
-      email TEXT UNIQUE NOT NULL,
-      password TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `);
-  await pool.query(`
-    CREATE TABLE IF NOT EXISTS points (
-      id SERIAL PRIMARY KEY,
-      user_id INTEGER NOT NULL REFERENCES users(id),
-      name TEXT NOT NULL,
-      lat REAL NOT NULL,
-      lon REAL NOT NULL,
-      created_at TIMESTAMP DEFAULT NOW()
-    )
-  `);
-  console.log('DB tables ready');
-}
+db.exec(`CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  created_at TEXT DEFAULT (datetime('now'))
+)`);
 
-initDB().catch(err => {
-  console.error('DB init failed:', err.message);
-  process.exit(1);
-});
+db.exec(`CREATE TABLE IF NOT EXISTS points (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  lat REAL NOT NULL,
+  lon REAL NOT NULL,
+  created_at TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+)`);
+
+console.log('DB tables ready (SQLite)');
 
 // ----- Middleware -----
 app.use(express.static(path.join(__dirname, '..')));
@@ -78,12 +65,12 @@ app.post('/api/register', async function(req, res) {
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
     if (password.length < 4) return res.status(400).json({ error: 'Password too short' });
 
-    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
-    if (existing.rows.length > 0) return res.status(400).json({ error: 'Email already registered' });
+    const existing = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    if (existing) return res.status(400).json({ error: 'Email already registered' });
 
     const hash = await bcrypt.hash(password, 10);
-    const result = await pool.query('INSERT INTO users (email, password) VALUES ($1, $2) RETURNING id', [email, hash]);
-    const userId = result.rows[0].id;
+    const result = db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').run(email, hash);
+    const userId = result.lastInsertRowid;
     const token = jwt.sign({ id: userId, email }, JWT_SECRET, { expiresIn: '30d' });
     res.json({ token, user: { id: userId, email } });
   } catch (err) {
@@ -96,8 +83,7 @@ app.post('/api/login', async function(req, res) {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    const user = result.rows[0];
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
     if (!user) return res.status(400).json({ error: 'Invalid email or password' });
 
     const match = await bcrypt.compare(password, user.password);
@@ -111,59 +97,55 @@ app.post('/api/login', async function(req, res) {
 });
 
 // ----- Points API -----
-app.get('/api/points', authMiddleware, async function(req, res) {
+app.get('/api/points', authMiddleware, function(req, res) {
   try {
-    const result = await pool.query('SELECT id, name, lat, lon FROM points WHERE user_id = $1 ORDER BY created_at', [req.user.id]);
-    res.json(result.rows);
+    const points = db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY created_at').all(req.user.id);
+    res.json(points);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/points', authMiddleware, async function(req, res) {
+app.post('/api/points', authMiddleware, function(req, res) {
   try {
     const { name, lat, lon } = req.body;
     if (!name || lat == null || lon == null) return res.status(400).json({ error: 'name, lat, lon required' });
 
-    const result = await pool.query('INSERT INTO points (user_id, name, lat, lon) VALUES ($1, $2, $3, $4) RETURNING id', [req.user.id, name, lat, lon]);
-    res.json({ id: result.rows[0].id, name, lat, lon });
+    const result = db.prepare('INSERT INTO points (user_id, name, lat, lon) VALUES (?, ?, ?, ?)').run(req.user.id, name, lat, lon);
+    res.json({ id: result.lastInsertRowid, name, lat, lon });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.delete('/api/points/:id', authMiddleware, async function(req, res) {
+app.delete('/api/points/:id', authMiddleware, function(req, res) {
   try {
-    const result = await pool.query('DELETE FROM points WHERE id = $1 AND user_id = $2', [req.params.id, req.user.id]);
-    if (result.rowCount === 0) return res.status(404).json({ error: 'Point not found' });
+    const result = db.prepare('DELETE FROM points WHERE id = ? AND user_id = ?').run(req.params.id, req.user.id);
+    if (result.changes === 0) return res.status(404).json({ error: 'Point not found' });
     res.json({ ok: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/points/sync', authMiddleware, async function(req, res) {
+app.post('/api/points/sync', authMiddleware, function(req, res) {
   try {
     const { points: clientPoints } = req.body;
     if (!Array.isArray(clientPoints)) return res.status(400).json({ error: 'points array required' });
 
-    const client = await pool.connect();
-    try {
-      await client.query('BEGIN');
-      await client.query('DELETE FROM points WHERE user_id = $1', [req.user.id]);
-      for (const p of clientPoints) {
-        await client.query('INSERT INTO points (user_id, name, lat, lon) VALUES ($1, $2, $3, $4)', [req.user.id, p.name, p.lat, p.lon]);
-      }
-      await client.query('COMMIT');
-    } catch (e) {
-      await client.query('ROLLBACK');
-      throw e;
-    } finally {
-      client.release();
-    }
+    const del = db.prepare('DELETE FROM points WHERE user_id = ?');
+    const ins = db.prepare('INSERT INTO points (user_id, name, lat, lon) VALUES (?, ?, ?, ?)');
 
-    const result = await pool.query('SELECT id, name, lat, lon FROM points WHERE user_id = $1 ORDER BY id', [req.user.id]);
-    res.json(result.rows);
+    const transaction = db.transaction(function() {
+      del.run(req.user.id);
+      for (const p of clientPoints) {
+        ins.run(req.user.id, p.name, p.lat, p.lon);
+      }
+    });
+    transaction();
+
+    const points = db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY id').all(req.user.id);
+    res.json(points);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -371,6 +353,126 @@ async function getTideData(stationCode) {
   return data;
 }
 
+// ----- Open-Meteo tide (MSL reference, coordinate-based) -----
+let openMeteoTideCache = {};
+
+async function fetchOpenMeteoTide(lat, lon) {
+  const key = lat.toFixed(2) + '_' + lon.toFixed(2);
+  if (openMeteoTideCache[key] && openMeteoTideCache[key].ts > Date.now() - TIDE_TTL) {
+    return openMeteoTideCache[key].data;
+  }
+  const today = new Date();
+  const startDate = today.toISOString().split('T')[0];
+  const end = new Date(today);
+  end.setDate(end.getDate() + 6);
+  const endDate = end.toISOString().split('T')[0];
+
+  const url = 'https://marine-api.open-meteo.com/v1/marine?latitude=' + lat +
+    '&longitude=' + lon +
+    '&hourly=sea_level_height_msl' +
+    '&start_date=' + startDate + '&end_date=' + endDate +
+    '&timezone=Asia/Hong_Kong';
+
+  const resp = await fetch(url);
+  if (!resp.ok) throw new Error('Open-Meteo returned ' + resp.status);
+  const json = await resp.json();
+  if (!json.hourly || !json.hourly.time || !json.hourly.sea_level_height_msl) {
+    throw new Error('Open-Meteo no tide data for ' + lat + ',' + lon);
+  }
+
+  // Convert to { 'MMDD': [24 values] } format (same as HKO) for each day
+  const data = {};
+  const times = json.hourly.time;
+  const heights = json.hourly.sea_level_height_msl;
+  let currentKey = null;
+  let currentVals = [];
+  for (let i = 0; i < times.length; i++) {
+    const key_ = times[i].substring(5, 7) + times[i].substring(8, 10); // MMDD
+    if (currentKey !== key_) {
+      if (currentKey && currentVals.length === 24) data[currentKey] = currentVals;
+      currentKey = key_;
+      currentVals = [];
+    }
+    currentVals.push(heights[i]);
+  }
+  if (currentKey && currentVals.length === 24) data[currentKey] = currentVals;
+
+  if (Object.keys(data).length === 0) throw new Error('No tide days parsed');
+  openMeteoTideCache[key] = { data: data, ts: Date.now() };
+  return data;
+}
+
+// ----- Weather API (GFS + ECMWF wind) -----
+let weatherCache = {};
+const WEATHER_TTL = 15 * 60 * 1000;
+
+async function fetchWeather(lat, lon, dateStr, timeStr) {
+  const key = lat.toFixed(2) + '_' + lon.toFixed(2) + '_' + (dateStr || 'today') + '_' + (timeStr || 'now');
+  if (weatherCache[key] && weatherCache[key].ts > Date.now() - WEATHER_TTL) {
+    return weatherCache[key].data;
+  }
+
+  // Use the requested date (if available) or today
+  const today = new Date();
+  const reqDate = dateStr || today.toISOString().split('T')[0];
+
+  const base = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon +
+    '&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m' +
+    '&start_date=' + reqDate + '&end_date=' + reqDate +
+    '&timezone=Asia/Hong_Kong&wind_speed_unit=kn';
+
+  const [gfsResp, ecmwfResp] = await Promise.all([
+    fetch(base + '&models=gfs_seamless'),
+    fetch(base + '&models=ecmwf_ifs')
+  ]);
+  const gfs = await gfsResp.json();
+  const ecmwf = await ecmwfResp.json();
+
+  const pick = (j) => {
+    // Find the right hour index
+    const times = j.hourly && j.hourly.time || [];
+    const speeds = j.hourly && j.hourly.wind_speed_10m || [];
+    const gusts = j.hourly && j.hourly.wind_gusts_10m || [];
+    const dirs = j.hourly && j.hourly.wind_direction_10m || [];
+
+    // If no data returned for this date, return null
+    if (times.length === 0) return null;
+
+    let idx = -1;
+    if (timeStr && times.length > 0) {
+      const targetHour = parseInt(timeStr.substring(0, 2), 10);
+      const targetMin = parseInt(timeStr.substring(2, 4), 10);
+      // Find the closest time slot
+      for (let i = 0; i < times.length; i++) {
+        const t = times[i];
+        const h = parseInt(t.substring(11, 13), 10);
+        const m = parseInt(t.substring(14, 16), 10);
+        if (h === targetHour && m === targetMin) { idx = i; break; }
+        if (h === targetHour && m <= targetMin) { idx = i; }
+      }
+      if (idx < 0) idx = 0;
+    } else {
+      idx = 0;
+    }
+
+    const speed = idx >= 0 && idx < speeds.length ? speeds[idx] : null;
+    const gust = idx >= 0 && idx < gusts.length ? gusts[idx] : null;
+    const dir = idx >= 0 && idx < dirs.length ? dirs[idx] : null;
+
+    return {
+      speed_kn: speed != null ? Math.round(speed * 10) / 10 : null,
+      gust_kn: gust != null ? Math.round(gust * 10) / 10 : null,
+      direction: dir != null ? Math.round(dir) : null,
+      compass: dir != null ? degToCompass(dir) : null,
+      compass_cn: dir != null ? (DIR_NAMES[degToCompass(dir)] || String(Math.round(dir))) : null
+    };
+  };
+
+  const data = { gfs: pick(gfs), ecmwf: pick(ecmwf) };
+  weatherCache[key] = { data: data, ts: Date.now() };
+  return data;
+}
+
 // ----- Direction helpers -----
 const DIR_NAMES = {
   'N': '北', 'NNE': '北北東', 'NE': '東北', 'ENE': '東北東',
@@ -411,12 +513,26 @@ app.get('/api/current', async function(req, res) {
 
     const hydroTime = reqDate.replace(/-/g, '') + reqTime;
 
-    // Find nearest valid HKO tide station (skip stations that return 404)
-    const { station: nearestHKO, tideRaw } = await findNearestValidHKO(reqLat || 22.38, reqLon || 113.90);
+    // Find nearest valid HKO tide station as fallback
+    const lat2 = reqLat || 22.38;
+    const lon2 = reqLon || 113.90;
+
+    let tideRaw, tideStation;
+    try {
+      // Open-Meteo first (coordinate-based, no 404 issue)
+      tideRaw = await fetchOpenMeteoTide(lat2, lon2);
+      tideStation = { code: 'OPENMETEO', name: 'Open-Meteo (模型)', lat: lat2, lon: lon2, distance_km: 0 };
+    } catch (e) {
+      console.log('Open-Meteo tide failed, fallback to HKO:', e.message);
+      // HKO fallback
+      const { station, tideRaw: hkoRaw } = await findNearestValidHKO(lat2, lon2);
+      tideRaw = hkoRaw;
+      tideStation = station;
+    }
 
     const targetDate = new Date(reqDate + 'T' + reqTime.substring(0, 2) + ':' + reqTime.substring(2, 4) + ':00');
     const tide = processTideData(tideRaw, targetDate);
-    tide.station = nearestHKO;
+    tide.station = tideStation;
 
     const geojson = await fetchHydroCurrents(hydroTime, reqMode);
 
@@ -459,6 +575,136 @@ app.get('/api/current', async function(req, res) {
 
   } catch (err) {
     console.error('API error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----- HKO Wind Stations (30 stations from HKO CSV) -----
+const HKO_WIND_STATIONS = [
+  { name: 'Central Pier', code: 'CP1', lat: 22.2889, lon: 114.1558 },
+  { name: 'Chek Lap Kok', code: 'CLK', lat: 22.3094, lon: 113.9219 },
+  { name: 'Cheung Chau', code: 'CCH', lat: 22.2011, lon: 114.0267 },
+  { name: 'Cheung Chau Beach', code: 'CCB', lat: 22.2108, lon: 114.0292 },
+  { name: 'Green Island', code: 'GI', lat: 22.2850, lon: 114.1128 },
+  { name: 'Hong Kong Sea School', code: 'HKS', lat: 22.2478, lon: 114.1736 },
+  { name: 'Kai Tak', code: 'SE', lat: 22.3097, lon: 114.2133 },
+  { name: "King's Park", code: 'KP', lat: 22.3119, lon: 114.1728 },
+  { name: 'Lamma Island', code: 'LAM', lat: 22.2261, lon: 114.1086 },
+  { name: 'Lau Fau Shan', code: 'LFS', lat: 22.4689, lon: 113.9836 },
+  { name: 'Ngong Ping', code: 'NGP', lat: 22.2586, lon: 113.9128 },
+  { name: 'North Point', code: 'NP', lat: 22.2944, lon: 114.1997 },
+  { name: 'Peng Chau', code: 'PEN', lat: 22.2911, lon: 114.0433 },
+  { name: 'Sai Kung', code: 'SKG', lat: 22.3756, lon: 114.2744 },
+  { name: 'Sha Chau', code: 'SC', lat: 22.3458, lon: 113.8911 },
+  { name: 'Sha Tin', code: 'SHA', lat: 22.4025, lon: 114.2100 },
+  { name: 'Shek Kong', code: 'SEK', lat: 22.4361, lon: 114.0847 },
+  { name: 'Stanley', code: 'STY', lat: 22.2142, lon: 114.2186 },
+  { name: 'Star Ferry', code: 'SF', lat: 22.2931, lon: 114.1686 },
+  { name: 'Ta Kwu Ling', code: 'TKL', lat: 22.5286, lon: 114.1567 },
+  { name: 'Tai Mei Tuk', code: 'PLC', lat: 22.4753, lon: 114.2375 },
+  { name: 'Tai Po Kau', code: 'TPK', lat: 22.4425, lon: 114.1839 },
+  { name: 'Tap Mun', code: 'TAP', lat: 22.4714, lon: 114.3606 },
+  { name: "Tate's Cairn", code: 'TC', lat: 22.3578, lon: 114.2178 },
+  { name: 'Tseung Kwan O', code: 'JKB', lat: 22.3158, lon: 114.2556 },
+  { name: 'Tsing Yi', code: 'TY1', lat: 22.3442, lon: 114.1100 },
+  { name: 'Tuen Mun', code: 'TU1', lat: 22.3906, lon: 113.9767 },
+  { name: 'Waglan Island', code: 'WGL', lat: 22.1822, lon: 114.3033 },
+  { name: 'Wetland Park', code: 'WLP', lat: 22.4667, lon: 114.0089 },
+  { name: 'Wong Chuk Hang', code: 'WCH', lat: 22.2478, lon: 114.1736 }
+];
+
+function findNearestHkoWind(lat, lon) {
+  let best = null;
+  let bestDist = Infinity;
+  for (const stn of HKO_WIND_STATIONS) {
+    const d = Math.sqrt((stn.lat - lat) ** 2 + (stn.lon - lon) ** 2);
+    if (d < bestDist) {
+      bestDist = d;
+      best = { ...stn, distance_km: Math.round(d * 111 * 100) / 100 };
+    }
+  }
+  return best;
+}
+
+// ----- API: HKO real-time wind (proxy for CSV without CORS) -----
+app.get('/api/hko-wind', async function(req, res) {
+  try {
+    const lat = parseFloat(req.query.lat) || null;
+    const lon = parseFloat(req.query.lon) || null;
+
+    const csvUrl = 'https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_10min_wind.csv';
+    const resp = await fetch(csvUrl, { headers: { 'User-Agent': HYDRO_UA } });
+    if (!resp.ok) throw new Error('HKO wind CSV returned ' + resp.status);
+    const csvText = await resp.text();
+
+    // Parse CSV
+    const lines = csvText.trim().split('\n');
+    const records = [];
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(',');
+      if (parts.length >= 5) {
+        records.push({
+          datetime: parts[0].trim(),
+          station: parts[1].trim(),
+          wind_dir: parts[2].trim(),
+          wind_speed: parts[3].trim(),
+          wind_gust: parts[4].trim()
+        });
+      }
+    }
+
+    // Find 3 nearest stations with data
+    let nearest = [];
+    if (lat != null && lon != null) {
+      // Build a list of all stations with their distance
+      const stationsWithDist = [];
+      for (const stn of HKO_WIND_STATIONS) {
+        const d = Math.sqrt((stn.lat - lat) ** 2 + (stn.lon - lon) ** 2);
+        stationsWithDist.push({
+          ...stn,
+          distance_km: Math.round(d * 111 * 100) / 100
+        });
+      }
+      stationsWithDist.sort((a, b) => a.distance_km - b.distance_km);
+
+      // Match each with CSV record
+      for (const stn of stationsWithDist) {
+        const rec = records.find(r => r.station === stn.name);
+        if (rec) {
+          nearest.push({
+            ...rec,
+            station_lat: stn.lat,
+            station_lon: stn.lon,
+            distance_km: stn.distance_km
+          });
+        }
+        if (nearest.length >= 3) break;
+      }
+    }
+
+    res.json({
+      timestamp: records.length > 0 ? records[0].datetime : null,
+      records: records,
+      nearest: nearest,
+      station_count: records.length
+    });
+  } catch (err) {
+    console.error('HKO wind error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ----- API: Weather (GFS + ECMWF wind) -----
+app.get('/api/weather', async function(req, res) {
+  try {
+    const lat = parseFloat(req.query.lat) || 22.38;
+    const lon = parseFloat(req.query.lon) || 113.90;
+    const date = req.query.date || null;
+    const time = req.query.time || null;
+    const data = await fetchWeather(lat, lon, date, time);
+    res.json(data);
+  } catch (err) {
+    console.error('Weather error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

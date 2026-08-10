@@ -42,24 +42,88 @@
       <button id="addPointBtn" class="add-btn">+</button>
     </div>
 
-    <!-- Current Data -->
-    <div class="current-card" id="currentCard">
-      <div class="loading" id="loading">選擇一個點...</div>
-      <div id="content" class="hidden">
-        <div class="pname" id="pointName"></div>
-        <div class="coords" id="coords"></div>
-        <div class="speed-row">
-          <span class="speed-val" id="speedVal">--</span>
-          <span class="speed-unit">knots</span>
+    <!-- Cards Row: Current + HKO Wind side by side -->
+    <div class="cards-row">
+      <!-- Current Data -->
+      <div class="current-card" id="currentCard">
+        <div class="loading" id="loading">選擇一個點...</div>
+        <div id="content" class="hidden">
+          <div class="pname" id="pointName"></div>
+          <div class="coords" id="coords"></div>
+          <div class="speed-row">
+            <span class="speed-val" id="speedVal">--</span>
+            <span class="speed-unit">knots</span>
+          </div>
+          <div class="dir-row" id="dirRow">
+            <span class="dir-arrow" id="dirArrow">↑</span>
+            <span class="dir-text" id="dirText">--</span>
+          </div>
+          <div class="strength-bar">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+          <div class="hydro-point" id="hydroPoint"></div>
         </div>
-        <div class="dir-row" id="dirRow">
-          <span class="dir-arrow" id="dirArrow">↑</span>
-          <span class="dir-text" id="dirText">--</span>
+      </div>
+
+      <!-- HKO Real-time Wind Card (nearest station) -->
+      <div class="wind-card" id="windCard">
+        <div class="wind-header">
+          <span>🌬️ 天文台 <span style="font-size:10px;color:#4a6a8a;">最近風站</span></span>
+          <span class="wind-toggle" id="windUnitToggle">knot</span>
         </div>
-        <div class="strength-bar">
-          <div class="bar-fill" id="barFill"></div>
+        <div class="wind-body" id="windBody">
+          <select id="windStationSelect" class="wind-station-select">
+            <option value="">載入中...</option>
+          </select>
+          <div class="hko-wind-main">
+            <div class="hko-wind-speed">
+              <span class="hko-speed-val" id="windHkoSpeed">--</span>
+              <span class="hko-speed-unit" id="windHkoUnit">kn</span>
+            </div>
+          </div>
+          <div class="hko-wind-details">
+            <div class="hko-wind-row">
+              <span class="hko-label">陣風</span>
+              <span class="hko-value" id="windHkoGust">--</span>
+            </div>
+            <div class="hko-wind-row dir-row-full">
+              <span class="hko-label">風向</span>
+              <span class="dir-hko-wrap">
+                <span class="dir-arrow-hko" id="windHkoDirArrow">↑</span>
+                <span class="hko-value" id="windHkoDir">--</span>
+              </span>
+            </div>
+            <div class="hko-wind-row">
+              <span class="hko-label">站點</span>
+              <span class="hko-value" id="windHkoStation">--</span>
+            </div>
+            <div class="hko-wind-row">
+              <span class="hko-label">距離</span>
+              <span class="hko-value" id="windHkoDist">--</span>
+            </div>
+            <div class="hko-wind-row">
+              <span class="hko-label">更新</span>
+              <span class="hko-value" id="windHkoTime">--</span>
+            </div>
+          </div>
         </div>
-        <div class="hydro-point" id="hydroPoint"></div>
+      </div>
+    </div>
+
+    <!-- Forecast Wind Card (GFS + ECMWF) — reference only -->
+    <div class="forecast-wind-card" id="forecastWindCard">
+      <div class="wind-header">
+        <span>📡 預報風 (參考)</span>
+      </div>
+      <div class="forecast-wind-body hidden" id="forecastWindBody">
+        <div class="wind-row">
+          <span class="wind-model brand-gfs">GFS</span>
+          <span class="wind-data" id="windGfs">--</span>
+        </div>
+        <div class="wind-row">
+          <span class="wind-model brand-ecmwf">ECMWF</span>
+          <span class="wind-data" id="windEcmwf">--</span>
+        </div>
       </div>
     </div>
 

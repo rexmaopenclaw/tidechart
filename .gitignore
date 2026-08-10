@@ -1,2 +1,12 @@
+*.log
+*.db-shm
+*.db-wal
+*.db-journal
+backup_*/
+wind-test.html
+server/check_db.js
+server/server.log
+server/server_err.log
+server/server_test.log
 node_modules/
-*.db
+.env
