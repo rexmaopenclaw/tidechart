@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>龍鼓灘水流預報</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <h1>🌊 水流預報</h1>
+      <div class="header-row">
+        <p class="subtitle">Current Forecast</p>
+        <button id="loginBtn" class="login-btn">登入</button>
+        <button id="logoutBtn" class="login-btn hidden">登出</button>
+      </div>
+    </header>
+
+    <!-- Date/Time Picker -->
+    <div class="picker">
+      <input type="date" id="datePicker">
+      <select id="hourPicker" class="time-select"></select>
+      <span class="time-colon">:</span>
+      <select id="minPicker" class="time-select">
+        <option value="00">00</option>
+        <option value="15">15</option>
+        <option value="30">30</option>
+        <option value="45">45</option>
+      </select>
+      <button id="modeBtn" class="mode-btn">水面</button>
+      <button id="refreshBtn">⟳</button>
+    </div>
+
+    <!-- Saved Points -->
+    <div class="points-bar" id="pointsBar">
+      <span class="bar-label">📍 監測點</span>
+      <div class="points-list" id="pointsList"></div>
+      <button id="addPointBtn" class="add-btn">+</button>
+    </div>
+
+    <!-- Current Data -->
+    <div class="current-card" id="currentCard">
+      <div class="loading" id="loading">選擇一個點...</div>
+      <div id="content" class="hidden">
+        <div class="pname" id="pointName"></div>
+        <div class="coords" id="coords"></div>
+        <div class="speed-row">
+          <span class="speed-val" id="speedVal">--</span>
+          <span class="speed-unit">knots</span>
+        </div>
+        <div class="dir-row" id="dirRow">
+          <span class="dir-arrow" id="dirArrow">↑</span>
+          <span class="dir-text" id="dirText">--</span>
+        </div>
+        <div class="strength-bar">
+          <div class="bar-fill" id="barFill"></div>
+        </div>
+        <div class="hydro-point" id="hydroPoint"></div>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="map-wrapper" id="mapWrapper">
+      <div id="map"></div>
+    </div>
+
+    <!-- Tide Chart (nearest HKO station) -->
+    <div class="tide-wrapper">
+      <div class="tide-header">
+        <span>🌊 潮汐 <span id="tideSummary">--</span> <span class="tide-source" id="tideStation">載入中...</span></span>
+      </div>
+      <div class="tide-chart" id="tideChart">
+        <canvas id="tideCanvas"></canvas>
+      </div>
+      <div class="tide-info hidden" id="tideInfo">
+        <div class="tide-row">
+          <span class="label">範圍</span>
+          <span id="tideRange">--</span>
+        </div>
+        <div class="tide-row">
+          <span class="label">高低潮</span>
+          <span id="tideEvents">--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Current Speed 24h Chart -->
+    <div class="tide-wrapper">
+      <div class="tide-header">
+        <span>⏱ 24h 水流速度 <span id="currentSummary">--</span></span>
+        <span class="tide-toggle" id="speedToggleBtn">▼ 詳情</span>
+      </div>
+      <div class="tide-chart" id="speedChart">
+        <canvas id="speedCanvas"></canvas>
+      </div>
+      <div class="tide-info hidden" id="speedInfo">
+        <div class="tide-row">
+          <span class="label">最快</span>
+          <span id="currentMax">--</span>
+        </div>
+        <div class="tide-row">
+          <span class="label">最慢</span>
+          <span id="currentMin">--</span>
+        </div>
+        <div class="tide-row">
+          <span class="label">預測點 ID</span>
+          <span id="currentPointId">--</span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>數據：海事處潮汐水流預測 + 天文台潮汐</p>
+    </footer>
+  </div>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay hidden" id="loginModal">
+    <div class="modal">
+      <h3>🔐 登入 / 註冊</h3>
+      <div id="loginError" class="login-error hidden"></div>
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com">
+      <label>密碼</label>
+      <input type="password" id="loginPassword" placeholder="密碼 (最少4位)">
+      <div class="modal-btns">
+        <button class="cancel" id="loginCancel">取消</button>
+        <button class="save" id="loginRegisterBtn">註冊</button>
+        <button class="save" id="loginSubmitBtn">登入</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
