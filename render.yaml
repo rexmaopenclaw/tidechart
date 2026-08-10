@@ -1,3 +1,11 @@
+databases:
+  - name: tide-db
+    databaseName: tideapp
+    user: tideapp
+    region: singapore
+    plan: free
+    ipAllowList: []
+
 services:
   - type: web
     name: tide-app
@@ -6,7 +14,11 @@ services:
     plan: free
     buildCommand: cd server && npm install
     startCommand: cd server && node index.js
-    healthCheckPath: /api/current?date=2026-08-10&time=180000&mode=S&lat=22.38&lon=113.9003
+    healthCheckPath: /api/current?date=2026-08-10&time=180000&mode=S&lat=22.30&lon=113.933
     envVars:
       - key: NODE_VERSION
         value: 22
+      - key: DATABASE_URL
+        fromDatabase:
+          name: tide-db
+          property: connectionString
