@@ -40,18 +40,6 @@ header h1 { font-size: 18px; color: #60b0f4; }
   background: #1a4a7a; border-color: #2a6a9a; color: #fff;
   font-weight: 600; cursor: pointer; padding: 6px 8px; font-size: 13px;
 }
-.now-btn {
-  background: #4a9eff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 4px 10px;
-  font-size: 13px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.now-btn:hover { background: #3a8aee; }
-
 .mode-btn { background: #2a3a50; border-color: #4a6a8a; }
 .mode-btn.active { background: #1a4a7a; border-color: #60b0f4; }
 
