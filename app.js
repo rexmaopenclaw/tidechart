@@ -198,6 +198,9 @@ function selectPoint(p) {
   state.activePoint = p;
   renderPointsBar();
   highlightMarker(p);
+  if (map && p.lat && p.lon) {
+    map.flyTo([p.lat, p.lon], 12, { duration: 0.8 });
+  }
   loadData();
 }
 
