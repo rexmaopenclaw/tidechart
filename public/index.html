@@ -29,15 +29,15 @@
         <option value="30">30</option>
         <option value="45">45</option>
       </select>
-      <button id="modeBtn" class="mode-btn">水面</button>
       <button id="refreshBtn">⟳</button>
     </div>
 
     <!-- Saved Points -->
     <div class="points-bar" id="pointsBar">
       <span class="bar-label">📍 監測點</span>
-      <div class="points-list" id="pointsList"></div>
+      <select id="pointsSelect" class="points-select"></select>
       <button id="addPointBtn" class="add-btn">+</button>
+      <button id="deletePointBtn" class="add-btn del-btn">🗑️</button>
     </div>
 
     <!-- Cards Row: HKO Wind + Current side by side -->
@@ -146,6 +146,7 @@
     <div class="tide-wrapper">
       <div class="tide-header">
         <span>🌊 潮汐 <span id="tideSummary">--</span> <span class="tide-source" id="tideStation">載入中...</span></span>
+        <button id="modeBtn" class="mode-btn tide-mode-btn">水面</button>
       </div>
       <div class="tide-chart" id="tideChart">
         <canvas id="tideCanvas"></canvas>

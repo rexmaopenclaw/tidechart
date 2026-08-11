@@ -168,8 +168,9 @@ const hourPicker = document.getElementById('hourPicker');
 const minPicker = document.getElementById('minPicker');
 const refreshBtn = document.getElementById('refreshBtn');
 const modeBtn = document.getElementById('modeBtn');
-const pointsList = document.getElementById('pointsList');
+const pointsSelect = document.getElementById('pointsSelect');
 const addPointBtn = document.getElementById('addPointBtn');
+const deletePointBtn = document.getElementById('deletePointBtn');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const loading = document.getElementById('loading');
@@ -289,18 +290,32 @@ function selectPoint(p) {
 }
 
 function renderPointsBar() {
-  pointsList.innerHTML = '';
+  if (!pointsSelect) return;
+  const prev = pointsSelect.value;
+  pointsSelect.innerHTML = '';
+  if (points.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = '選擇一個點...';
+    pointsSelect.appendChild(opt);
+    pointsSelect.disabled = true;
+    return;
+  }
+  pointsSelect.disabled = false;
   points.forEach(function(p) {
-    const chip = document.createElement('span');
-    chip.className = 'point-chip' + (state.activePoint && state.activePoint.id === p.id ? ' active' : '');
-    chip.innerHTML = p.name + ' <span class="del" data-id="' + p.id + '">&times;</span>';
-    chip.querySelector('.del').addEventListener('click', function(e) {
-      e.stopPropagation();
-      deletePoint(p.id);
-    });
-    chip.addEventListener('click', function() { selectPoint(p); });
-    pointsList.appendChild(chip);
+    const opt = document.createElement('option');
+    opt.value = String(p.id);
+    opt.textContent = p.name;
+    pointsSelect.appendChild(opt);
   });
+  // Restore or select active point
+  if (state.activePoint && points.some(function(p) { return String(p.id) === String(state.activePoint.id); })) {
+    pointsSelect.value = String(state.activePoint.id);
+  } else if (prev && points.some(function(p) { return String(p.id) === prev; })) {
+    pointsSelect.value = prev;
+  } else {
+    pointsSelect.value = String(points[0].id);
+  }
 }
 
 function deletePoint(id) {
@@ -1214,6 +1229,14 @@ modeBtn.addEventListener('click', function() {
 });
 addPointBtn.addEventListener('click', function() {
   showAddPointModal(22.38, 113.92);
+});
+pointsSelect.addEventListener('change', function() {
+  const id = pointsSelect.value;
+  const p = points.find(function(x) { return String(x.id) === String(id); });
+  if (p) selectPoint(p);
+});
+deletePointBtn.addEventListener('click', function() {
+  if (state.activePoint) deletePoint(state.activePoint.id);
 });
 loginBtn.addEventListener('click', showLogin);
 logoutBtn.addEventListener('click', doLogout);
