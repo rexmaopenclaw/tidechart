@@ -755,7 +755,6 @@ function drawWindHistoryChart(data) {
     return windUnit === 'kn' ? v / 1.852 : v;
   };
   const speeds = rows.map(function(r) { return toUnit(parseFloat(r.wind_speed)); });
-  const gusts = rows.map(function(r) { return toUnit(parseFloat(r.wind_gust)); });
   const valid = speeds.filter(function(v) { return v != null; });
   if (valid.length < 2) { drawWindHistLabel('暫無數據'); return; }
   const minS = Math.min.apply(null, valid);
@@ -776,20 +775,6 @@ function drawWindHistoryChart(data) {
     const y = pad.top + (chartH / 4) * i;
     ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + chartW, y); ctx.stroke();
   }
-
-  // Gust line (dashed, orange)
-  ctx.beginPath();
-  gusts.forEach(function(v, i) {
-    if (v == null) return;
-    const x = pad.left + i * stepX;
-    if (i === 0 || gusts[i-1] == null) ctx.moveTo(x, yFor(v));
-    else ctx.lineTo(x, yFor(v));
-  });
-  ctx.strokeStyle = 'rgba(255,107,107,0.6)';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([3, 3]);
-  ctx.stroke();
-  ctx.setLineDash([]);
 
   // Speed area + line
   ctx.beginPath();
@@ -819,7 +804,7 @@ function drawWindHistoryChart(data) {
 
   // Time labels (every ~4h)
   ctx.fillStyle = '#4a5a70';
-  ctx.font = '7px sans-serif';
+  ctx.font = '9px sans-serif';
   ctx.textAlign = 'center';
   const total = rows.length;
   const labelStep = Math.max(1, Math.round(total / 6));
@@ -827,19 +812,17 @@ function drawWindHistoryChart(data) {
     const x = pad.left + (i / (total - 1)) * chartW;
     const dt = rows[i].datetime || '';
     const timeStr = dt.length >= 12 ? dt.substring(8, 10) + ':' + dt.substring(10, 12) : '';
-    ctx.fillText(timeStr, x, h - 1);
+    ctx.fillText(timeStr, x, h - 2);
   }
 
   // Legend
-  ctx.font = '7px sans-serif';
+  ctx.font = '9px sans-serif';
   ctx.textAlign = 'left';
   ctx.fillStyle = '#4ecdc4';
-  ctx.fillText('風速', pad.left + 2, pad.top + 7);
-  ctx.fillStyle = '#ff6b6b';
-  ctx.fillText('陣風', pad.left + 26, pad.top + 7);
+  ctx.fillText('風速', pad.left + 2, pad.top + 9);
   ctx.fillStyle = '#4a5a70';
   ctx.textAlign = 'right';
-  ctx.fillText(windUnit === 'kn' ? 'kn' : 'km/h', pad.left + chartW - 2, pad.top + 7);
+  ctx.fillText(windUnit === 'kn' ? 'kn' : 'km/h', pad.left + chartW - 2, pad.top + 9);
 }
 
 // Range toggle: 24h -> 48h -> 7d
@@ -906,7 +889,7 @@ function drawLabel(canvas, msg) {
 // Draw Y-axis ticks (max / mid / min) + grid lines
 function drawYAxis(ctx, pad, chartW, chartH, minVal, maxVal, fmt) {
   const ticks = [maxVal, (maxVal + minVal) / 2, minVal];
-  ctx.font = '7px sans-serif';
+  ctx.font = '9px sans-serif';
   ctx.textAlign = 'right';
   ticks.forEach(function(v, i) {
     const y = pad.top + (chartH * i) / 2;
@@ -919,7 +902,7 @@ function drawYAxis(ctx, pad, chartW, chartH, minVal, maxVal, fmt) {
     ctx.stroke();
     // Label (max highlighted)
     ctx.fillStyle = i === 0 ? '#e0a060' : '#4a5a70';
-    ctx.fillText(fmt(v), pad.left - 4, y + 2);
+    ctx.fillText(fmt(v), pad.left - 5, y + 3);
   });
 }
 
@@ -977,11 +960,11 @@ function drawTideChart(tide) {
   ctx.stroke();
 
   ctx.fillStyle = '#4a5a70';
-  ctx.font = '7px sans-serif';
+  ctx.font = '9px sans-serif';
   ctx.textAlign = 'center';
   for (let i = 0; i < 24; i += 6) {
     const x = pad.left + (i / 23) * chartW;
-    ctx.fillText(String(i).padStart(2, '0') + ':00', x, h - 1);
+    ctx.fillText(String(i).padStart(2, '0') + ':00', x, h - 2);
   }
 
   // Query time indicator (red dot)
@@ -1006,7 +989,7 @@ function drawTideChart(tide) {
     ctx.stroke();
     // Label
     ctx.fillStyle = '#ff6b6b';
-    ctx.font = '7px sans-serif';
+    ctx.font = '9px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
@@ -1079,13 +1062,13 @@ function drawSpeedChart(series) {
 
   // Time labels (every 6 hours)
   ctx.fillStyle = '#4a5a70';
-  ctx.font = '7px sans-serif';
+  ctx.font = '9px sans-serif';
   ctx.textAlign = 'center';
   const total = speeds.length; // 96 entries for 24h at 15min intervals
   for (let i = 0; i < total; i += Math.round(total / 4)) {
     const x = pad.left + (i / (total - 1)) * chartW;
     const timeStr = series.series[i] ? series.series[i].time.substring(11, 16) : '';
-    ctx.fillText(timeStr, x, h - 1);
+    ctx.fillText(timeStr, x, h - 2);
   }
 
   // Query time indicator (red dot)
@@ -1109,7 +1092,7 @@ function drawSpeedChart(series) {
     ctx.stroke();
     // Label
     ctx.fillStyle = '#ff6b6b';
-    ctx.font = '7px sans-serif';
+    ctx.font = '9px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
