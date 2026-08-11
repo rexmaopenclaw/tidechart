@@ -109,6 +109,11 @@ function clearAuth() {
 }
 
 // ----- Saved Points -----
+const DEFAULT_POINTS = [
+  { id: 'default_1', name: '龍鼓下水點', lat: 22.39, lon: 113.9183, isHydro: false },
+  { id: 'default_2', name: '龍鼓水道', lat: 22.3804, lon: 113.9014, isHydro: false },
+  { id: 'default_3', name: '大門', lat: 22.1989, lon: 114.2453, isHydro: false }
+];
 function loadLocalPoints() {
   try { return JSON.parse(localStorage.getItem('tidePoints') || '[]'); } catch { return []; }
 }
@@ -116,6 +121,7 @@ function saveLocalPoints(pts) {
   localStorage.setItem('tidePoints', JSON.stringify(pts));
 }
 let points = loadLocalPoints();
+if (points.length === 0) points = DEFAULT_POINTS.map(function(p) { return Object.assign({}, p); });
 let pointIdCounter = parseInt(localStorage.getItem('tidePointId') || '100');
 
 // ----- Sync with server -----

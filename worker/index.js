@@ -401,6 +401,15 @@ export default {
         const hash = await hashPassword(body.password);
         const result = await db.prepare('INSERT INTO users (email, password) VALUES (?, ?)').bind(body.email, hash).run();
         const userId = result.meta.last_row_id;
+        // Seed default points for new user
+        const DEFAULT_POINTS = [
+          { name: '龍鼓下水點', lat: 22.39, lon: 113.9183 },
+          { name: '龍鼓水道', lat: 22.3804, lon: 113.9014 },
+          { name: '大門', lat: 22.1989, lon: 114.2453 }
+        ];
+        for (const p of DEFAULT_POINTS) {
+          await db.prepare('INSERT INTO points (user_id, name, lat, lon) VALUES (?, ?, ?, ?)').bind(userId, p.name, p.lat, p.lon).run();
+        }
         const token = await createToken(userId, body.email, jwtSecret);
         return json({ token, user: { id: userId, email: body.email } });
       }
