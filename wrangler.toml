@@ -7,3 +7,6 @@ assets = { directory = "public", binding = "ASSETS" }
 binding = "DB"
 database_name = "tide-app-db"
 database_id = "2cdc4305-1d31-410e-bba2-8c04f42537bb"
+
+[triggers]
+crons = ["*/10 * * * *"]

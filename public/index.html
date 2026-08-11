@@ -127,6 +127,18 @@
       </div>
     </div>
 
+    <!-- HKO Wind History Card (collected via cron) -->
+    <div class="forecast-wind-card" id="windHistoryCard">
+      <div class="wind-header">
+        <span>📈 天文台 過去風速 <span style="font-size:10px;color:#4a6a8a;" id="windHistInfo">--</span></span>
+        <span class="wind-toggle" id="windHistRange">24h</span>
+      </div>
+      <div class="tide-chart" id="windHistChart">
+        <canvas id="windHistCanvas"></canvas>
+      </div>
+      <div class="wind-history-note" id="windHistNote" style="font-size:10px;color:#4a6a8a;padding:2px 0 0;">收集數據中...</div>
+    </div>
+
     <!-- Map -->
     <div class="map-wrapper" id="mapWrapper">
       <div id="map"></div>

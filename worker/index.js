@@ -376,7 +376,73 @@ async function verifyPassword(password, hash) {
 
 // ===== ROUTE HANDLER =====
 
+// ===== HKO WIND HISTORY COLLECTOR (cron) =====
+
+async function ensureWindTable(db) {
+  await db.prepare(`CREATE TABLE IF NOT EXISTS wind_history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    station TEXT NOT NULL,
+    datetime TEXT NOT NULL,
+    wind_dir TEXT,
+    wind_speed REAL,
+    wind_gust REAL,
+    UNIQUE(station, datetime)
+  )`).run();
+}
+
+async function collectHkoWind(env) {
+  try {
+    const db = env.DB;
+    await ensureWindTable(db);
+
+    const csvUrl = 'https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_10min_wind.csv';
+    const resp = await fetch(csvUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    if (!resp.ok) {
+      console.error('collectHkoWind: CSV returned', resp.status);
+      return { ok: false, error: 'CSV status ' + resp.status };
+    }
+    const csvText = await resp.text();
+    const lines = csvText.trim().split('\n');
+    const stmt = db.prepare('INSERT OR IGNORE INTO wind_history (station, datetime, wind_dir, wind_speed, wind_gust) VALUES (?, ?, ?, ?, ?)');
+    let inserted = 0;
+    for (let i = 1; i < lines.length; i++) {
+      const parts = lines[i].split(',');
+      if (parts.length >= 5) {
+        const datetime = parts[0].trim();
+        const station = parts[1].trim();
+        const wind_dir = parts[2].trim();
+        const wind_speed = parseFloat(parts[3].trim());
+        const wind_gust = parseFloat(parts[4].trim());
+        if (!isNaN(wind_speed)) {
+          const r = await stmt.bind(station, datetime, wind_dir, wind_speed, wind_gust).run();
+          inserted += r.meta.changes;
+        }
+      }
+    }
+    console.log('collectHkoWind: inserted', inserted, 'records');
+    return { ok: true, inserted };
+  } catch (e) {
+    console.error('collectHkoWind error:', e.message);
+    return { ok: false, error: e.message };
+  }
+}
+
+function windTimeKey(d) {
+  return String(d.getFullYear()) +
+    String(d.getMonth() + 1).padStart(2, '0') +
+    String(d.getDate()).padStart(2, '0') +
+    String(d.getHours()).padStart(2, '0') +
+    String(Math.floor(d.getMinutes() / 10) * 10).padStart(2, '0');
+}
+
+// ===== WORKER =====
+
 export default {
+  // ---- Cron: collect HKO wind data every 10 min ----
+  async scheduled(event, env, ctx) {
+    await collectHkoWind(env);
+  },
+
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
@@ -612,6 +678,17 @@ export default {
           date: reqDate,
           series
         });
+      }
+
+      // ---- API: HKO wind history (collected via cron) ----
+      if (path === '/api/wind-history') {
+        await ensureWindTable(db);
+        const station = url.searchParams.get('station') || 'Sha Chau';
+        const hours = parseInt(url.searchParams.get('hours')) || 24;
+        const since = new Date(Date.now() - hours * 3600 * 1000);
+        const sinceKey = windTimeKey(since);
+        const rows = await db.prepare('SELECT datetime, wind_dir, wind_speed, wind_gust FROM wind_history WHERE station = ? AND datetime >= ? ORDER BY datetime ASC').bind(station, sinceKey).all();
+        return json({ station, hours, count: rows.results.length, rows: rows.results });
       }
 
       // ---- API: HKO real-time wind ----

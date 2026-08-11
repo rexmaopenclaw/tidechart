@@ -219,6 +219,10 @@ const windHkoDirArrow = document.getElementById('windHkoDirArrow');
 const windHkoDist = document.getElementById('windHkoDist');
 const windHkoTime = document.getElementById('windHkoTime');
 const windHkoUnit = document.getElementById('windHkoUnit');
+const windHistCanvas = document.getElementById('windHistCanvas');
+const windHistInfo = document.getElementById('windHistInfo');
+const windHistRange = document.getElementById('windHistRange');
+const windHistNote = document.getElementById('windHistNote');
 const forecastWindCard = document.getElementById('forecastWindCard');
 const forecastWindBody = document.getElementById('forecastWindBody');
 const windGfs = document.getElementById('windGfs');
@@ -591,6 +595,8 @@ function renderHkoWind() {
   if (!isCurrentTime) {
     windBody.classList.add('hidden');
     windCard.classList.add('hidden');
+    // History chart still works for past/future times (collected data)
+    if (h && h.nearest && h.nearest.length > 0) loadWindHistory(h.nearest[0].station);
     return;
   }
 
@@ -673,6 +679,160 @@ function showHkoWindStation(idx) {
   windHkoStation.textContent = stn.station || '--';
   windHkoDist.textContent = stn.distance_km ? stn.distance_km.toFixed(1) + ' km' : '--';
   windHkoTime.textContent = h.timestamp ? h.timestamp.substring(11, 16) + ' (' + h.timestamp.substring(0, 10) + ')' : '--';
+
+  // Load history chart for this station
+  loadWindHistory(stn.station);
+}
+
+// ----- HKO Wind History (collected via cron) -----
+let windHistHours = 24;
+
+async function loadWindHistory(station) {
+  if (!windHistCanvas) return;
+  if (!station) {
+    drawWindHistLabel('揀個站先');
+    return;
+  }
+  if (windHistInfo) windHistInfo.textContent = station;
+  try {
+    const resp = await fetch(apiUrl('/api/wind-history?station=' + encodeURIComponent(station) + '&hours=' + windHistHours));
+    if (!resp.ok) {
+      drawWindHistLabel('載入失敗 (' + resp.status + ')');
+      return;
+    }
+    const j = await resp.json();
+    drawWindHistoryChart(j);
+  } catch (e) {
+    drawWindHistLabel('載入失敗');
+  }
+}
+
+function drawWindHistLabel(msg) {
+  if (!windHistCanvas) return;
+  drawLabel(windHistCanvas, msg);
+}
+
+function drawWindHistoryChart(data) {
+  if (!windHistCanvas) return;
+  const rows = data && data.rows ? data.rows : [];
+  if (rows.length < 2) {
+    drawWindHistLabel(rows.length === 0 ? '儲數據中... (每10分鐘)' : '數據太少');
+    if (windHistNote) windHistNote.textContent = rows.length === 0 ? '而家開始收集，要過一陣先有圖' : '已儲 ' + rows.length + ' 筆';
+    return;
+  }
+  if (windHistNote) windHistNote.textContent = '已儲 ' + data.count + ' 筆 (每10分鐘自動)';
+
+  const ctx = windHistCanvas.getContext('2d');
+  const rect = windHistCanvas.parentElement.getBoundingClientRect();
+  windHistCanvas.width = rect.width || 300;
+  windHistCanvas.height = rect.height || 60;
+  const w = windHistCanvas.width, h = windHistCanvas.height;
+  if (w < 10 || h < 10) return;
+  const pad = { top: 2, bottom: 10, left: 2, right: 2 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+
+  // Convert km/h -> kn if needed (HKO CSV is km/h)
+  const toUnit = function(v) {
+    if (v == null || isNaN(v)) return null;
+    return windUnit === 'kn' ? v / 1.852 : v;
+  };
+  const speeds = rows.map(function(r) { return toUnit(parseFloat(r.wind_speed)); });
+  const gusts = rows.map(function(r) { return toUnit(parseFloat(r.wind_gust)); });
+  const valid = speeds.filter(function(v) { return v != null; });
+  if (valid.length < 2) { drawWindHistLabel('暫無數據'); return; }
+  const minS = Math.min.apply(null, valid);
+  const maxS = Math.max.apply(null, valid);
+  const range = (maxS - minS) || 1;
+  const stepX = chartW / (rows.length - 1);
+  const yFor = function(v) { return pad.top + chartH - ((v - minS) / range) * chartH; };
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(74,90,112,0.25)';
+  ctx.lineWidth = 1;
+  for (let i = 1; i < 4; i++) {
+    const y = pad.top + (chartH / 4) * i;
+    ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + chartW, y); ctx.stroke();
+  }
+
+  // Gust line (dashed, orange)
+  ctx.beginPath();
+  gusts.forEach(function(v, i) {
+    if (v == null) return;
+    const x = pad.left + i * stepX;
+    if (i === 0 || gusts[i-1] == null) ctx.moveTo(x, yFor(v));
+    else ctx.lineTo(x, yFor(v));
+  });
+  ctx.strokeStyle = 'rgba(255,107,107,0.6)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Speed area + line
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top + chartH);
+  speeds.forEach(function(v, i) {
+    if (v == null) return;
+    ctx.lineTo(pad.left + i * stepX, yFor(v));
+  });
+  ctx.lineTo(pad.left + (rows.length - 1) * stepX, pad.top + chartH);
+  ctx.closePath();
+  const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + chartH);
+  grad.addColorStop(0, 'rgba(78,205,196,0.18)');
+  grad.addColorStop(1, 'rgba(78,205,196,0.01)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  ctx.beginPath();
+  speeds.forEach(function(v, i) {
+    if (v == null) return;
+    const x = pad.left + i * stepX;
+    if (i === 0 || speeds[i-1] == null) ctx.moveTo(x, yFor(v));
+    else ctx.lineTo(x, yFor(v));
+  });
+  ctx.strokeStyle = '#4ecdc4';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Time labels (every ~4h)
+  ctx.fillStyle = '#4a5a70';
+  ctx.font = '7px sans-serif';
+  ctx.textAlign = 'center';
+  const total = rows.length;
+  const labelStep = Math.max(1, Math.round(total / 6));
+  for (let i = 0; i < total; i += labelStep) {
+    const x = pad.left + (i / (total - 1)) * chartW;
+    const dt = rows[i].datetime || '';
+    const timeStr = dt.length >= 12 ? dt.substring(8, 10) + ':' + dt.substring(10, 12) : '';
+    ctx.fillText(timeStr, x, h - 1);
+  }
+
+  // Legend
+  ctx.font = '7px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = '#4ecdc4';
+  ctx.fillText('風速', pad.left + 2, pad.top + 7);
+  ctx.fillStyle = '#ff6b6b';
+  ctx.fillText('陣風', pad.left + 26, pad.top + 7);
+  ctx.fillStyle = '#4a5a70';
+  ctx.textAlign = 'right';
+  ctx.fillText(windUnit === 'kn' ? 'kn' : 'km/h', pad.left + chartW - 2, pad.top + 7);
+}
+
+// Range toggle: 24h -> 48h -> 7d
+function cycleWindHistRange() {
+  windHistHours = windHistHours === 24 ? 48 : (windHistHours === 48 ? 168 : 24);
+  if (windHistRange) {
+    windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
+  }
+  const stn = windHkoStation ? windHkoStation.textContent : null;
+  if (stn && stn !== '--') loadWindHistory(stn);
+  else if (state.hkoWind && state.hkoWind.nearest && state.hkoWind.nearest.length > 0) {
+    loadWindHistory(state.hkoWind.nearest[0].station);
+  }
 }
 
 // ----- Forecast Wind (GFS + ECMWF) — reference card -----
@@ -956,6 +1116,11 @@ function init() {
   // Wind unit toggle
   if (windUnitToggle) {
     windUnitToggle.addEventListener('click', toggleWindUnit);
+  }
+
+  // Wind history range toggle (24h / 48h / 7d)
+  if (windHistRange) {
+    windHistRange.addEventListener('click', cycleWindHistRange);
   }
 
   // Wind station dropdown change
