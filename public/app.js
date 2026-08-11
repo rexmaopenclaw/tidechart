@@ -15,7 +15,6 @@ function apiUrl(path) {
   if (base) return base + path;
   // When deployed on Cloudflare Pages, same-origin
   return path;
-}  return path;
 }
 
 // ----- Direction helpers -----
