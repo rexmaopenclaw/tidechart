@@ -613,7 +613,8 @@ function renderHkoWind() {
     windBody.classList.add('hidden');
     windCard.classList.add('hidden');
     // History chart still works for past/future times (collected data)
-    if (h && h.nearest && h.nearest.length > 0) loadWindHistory(h.nearest[0].station);
+    const hw = state.hkoWind;
+    if (hw && hw.nearest && hw.nearest.length > 0) loadWindHistory(hw.nearest[0].station);
     return;
   }
 
