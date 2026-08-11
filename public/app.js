@@ -200,11 +200,7 @@ const currentMin = document.getElementById('currentMin');
 const currentPointId = document.getElementById('currentPointId');
 const speedToggleBtn = document.getElementById('speedToggleBtn');
 const speedInfo = document.getElementById('speedInfo');
-const settingsBtn = document.getElementById('settingsBtn');
-const settingsModal = document.getElementById('settingsModal');
-const settingsCancel = document.getElementById('settingsCancel');
-const settingsSaveBtn = document.getElementById('settingsSaveBtn');
-const apiUrlInput = document.getElementById('apiUrlInput');
+const deleteAccountBtn = document.getElementById('deleteAccountBtn');
 
 // Wind DOM refs
 const windCard = document.getElementById('windCard');
@@ -227,7 +223,7 @@ const forecastWindCard = document.getElementById('forecastWindCard');
 const forecastWindBody = document.getElementById('forecastWindBody');
 const windGfs = document.getElementById('windGfs');
 const windEcmwf = document.getElementById('windEcmwf');
-let windUnit = 'kn'; // default knot
+let windUnit = 'kmh'; // default km/h
 
 // ----- Map -----
 let map, markerLayer;
@@ -369,6 +365,10 @@ function showLogin() {
   loginError.classList.add('hidden');
   loginEmail.value = '';
   loginPassword.value = '';
+  // If already logged in, show delete account option instead
+  if (state.user && deleteAccountBtn) {
+    deleteAccountBtn.classList.remove('hidden');
+  }
   loginEmail.focus();
 }
 
@@ -381,9 +381,11 @@ function updateLoginUI() {
     loginBtn.classList.add('hidden');
     logoutBtn.classList.remove('hidden');
     logoutBtn.textContent = state.user.email;
+    if (deleteAccountBtn) deleteAccountBtn.classList.remove('hidden');
   } else {
     loginBtn.classList.remove('hidden');
     logoutBtn.classList.add('hidden');
+    if (deleteAccountBtn) deleteAccountBtn.classList.add('hidden');
   }
 }
 
@@ -728,7 +730,7 @@ function drawWindHistoryChart(data) {
   windHistCanvas.height = rect.height || 60;
   const w = windHistCanvas.width, h = windHistCanvas.height;
   if (w < 10 || h < 10) return;
-  const pad = { top: 2, bottom: 10, left: 2, right: 2 };
+  const pad = { top: 2, bottom: 10, left: 30, right: 2 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
 
@@ -748,6 +750,9 @@ function drawWindHistoryChart(data) {
   const yFor = function(v) { return pad.top + chartH - ((v - minS) / range) * chartH; };
 
   ctx.clearRect(0, 0, w, h);
+
+  // Y-axis: max / mid / min
+  drawYAxis(ctx, pad, chartW, chartH, minS, maxS, function(v) { return windUnit === 'kn' ? v.toFixed(1) : Math.round(v) + ''; });
 
   // Grid lines
   ctx.strokeStyle = 'rgba(74,90,112,0.25)';
@@ -883,6 +888,26 @@ function drawLabel(canvas, msg) {
   ctx.fillText(msg, canvas.width / 2, canvas.height / 2 + 4);
 }
 
+// Draw Y-axis ticks (max / mid / min) + grid lines
+function drawYAxis(ctx, pad, chartW, chartH, minVal, maxVal, fmt) {
+  const ticks = [maxVal, (maxVal + minVal) / 2, minVal];
+  ctx.font = '7px sans-serif';
+  ctx.textAlign = 'right';
+  ticks.forEach(function(v, i) {
+    const y = pad.top + (chartH * i) / 2;
+    // Grid line
+    ctx.strokeStyle = 'rgba(74,90,112,0.18)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(pad.left + chartW, y);
+    ctx.stroke();
+    // Label (max highlighted)
+    ctx.fillStyle = i === 0 ? '#e0a060' : '#4a5a70';
+    ctx.fillText(fmt(v), pad.left - 4, y + 2);
+  });
+}
+
 // ----- Tide Chart -----
 function drawTideLabel(msg) { drawLabel(tideCanvas, msg); }
 
@@ -895,7 +920,7 @@ function drawTideChart(tide) {
   tideCanvas.height = rect.height || 60;
   const w = tideCanvas.width, h = tideCanvas.height;
   if (w < 10 || h < 10) return;
-  const pad = { top: 2, bottom: 10, left: 2, right: 2 };
+  const pad = { top: 2, bottom: 10, left: 30, right: 2 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
   const heights = tide.hours.map(function(h) { return h.height; });
@@ -906,6 +931,9 @@ function drawTideChart(tide) {
   const stepX = chartW / (heights.length - 1);
 
   ctx.clearRect(0, 0, w, h);
+
+  // Y-axis: max / mid / min
+  drawYAxis(ctx, pad, chartW, chartH, minH, maxH, function(v) { return v.toFixed(1); });
 
   ctx.beginPath();
   ctx.moveTo(pad.left, pad.top + chartH);
@@ -943,11 +971,12 @@ function drawTideChart(tide) {
 
   // Query time indicator (red dot)
   const queryHour = parseInt(hourPicker.value) + parseInt(minPicker.value) / 60;
-  if (queryHour >= 0 && queryHour <= 23) {
-    const frac = queryHour / 23;
+  if (queryHour >= 0 && queryHour <= 23.99) {
+    const clamped = Math.min(queryHour, 23);
+    const frac = clamped / 23;
     const x = pad.left + frac * chartW;
-    const hIdx = Math.floor(queryHour);
-    const hFrac = queryHour - hIdx;
+    const hIdx = Math.floor(clamped);
+    const hFrac = clamped - hIdx;
     const nextIdx = hIdx < 23 ? hIdx + 1 : 23;
     const yVal = heights[hIdx] + (heights[nextIdx] - heights[hIdx]) * hFrac;
     const y = pad.top + chartH - ((yVal - minH) / range) * chartH;
@@ -981,7 +1010,7 @@ function drawSpeedChart(series) {
   speedCanvas.height = rect.height || 60;
   const w = speedCanvas.width, h = speedCanvas.height;
   if (w < 10 || h < 10) return;
-  const pad = { top: 2, bottom: 10, left: 2, right: 2 };
+  const pad = { top: 2, bottom: 10, left: 30, right: 2 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
 
@@ -1001,6 +1030,9 @@ function drawSpeedChart(series) {
   currentPointId.textContent = series.point_id;
 
   ctx.clearRect(0, 0, w, h);
+
+  // Y-axis: max / mid / min
+  drawYAxis(ctx, pad, chartW, chartH, minS, maxS, function(v) { return v.toFixed(1); });
 
   // Fill area
   ctx.beginPath();
@@ -1074,7 +1106,7 @@ function init() {
   updateLoginUI();
 
   const now = new Date();
-  datePicker.value = now.toISOString().split('T')[0];
+  datePicker.value = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   hourPicker.innerHTML = '';
   for (let i = 0; i < 24; i++) {
     const opt = document.createElement('option');
@@ -1099,17 +1131,33 @@ function init() {
     tideInfo.classList.remove('hidden');
   }
 
-  // Settings modal
-  if (settingsBtn && settingsModal) {
-    settingsBtn.addEventListener('click', function() {
-      apiUrlInput.value = getApiBase();
-      settingsModal.classList.remove('hidden');
-    });
-    settingsCancel.addEventListener('click', function() { settingsModal.classList.add('hidden'); });
-    settingsSaveBtn.addEventListener('click', function() {
-      setApiBase(apiUrlInput.value.trim());
-      settingsModal.classList.add('hidden');
-      if (state.activePoint) loadData();
+  // Delete account (註銷帳號) — shown in login modal when logged in
+  if (deleteAccountBtn) {
+    deleteAccountBtn.addEventListener('click', async function() {
+      if (!state.token) return;
+      const email = state.user && state.user.email ? state.user.email : '此帳號';
+      if (!confirm('確定註銷帳號「' + email + '」？\n會刪除所有 saved points，且無法復原！')) return;
+      try {
+        const resp = await fetch(apiUrl('/api/account'), {
+          method: 'DELETE',
+          headers: { 'Authorization': '***' + state.token }
+        });
+        if (resp.ok) {
+          loginModal.classList.add('hidden');
+          clearAuth();
+          updateLoginUI();
+          points = DEFAULT_POINTS.map(function(p) { return Object.assign({}, p); });
+          saveLocalPoints(points);
+          renderPointsBar();
+          renderMarkers();
+          if (state.activePoint) loadData();
+        } else {
+          const j = await resp.json().catch(function(){ return {}; });
+          alert('註銷失敗: ' + (j.error || resp.status));
+        }
+      } catch (e) {
+        alert('註銷失敗: ' + e.message);
+      }
     });
   }
 

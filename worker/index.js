@@ -499,6 +499,14 @@ export default {
       // ---- Points routes (auth required) ----
       const auth = await verifyAuth(request, db, jwtSecret);
 
+      // ---- Account deletion (註銷帳號) ----
+      if (path === '/api/account' && request.method === 'DELETE') {
+        if (!auth) return error('Unauthorized', 401);
+        await db.prepare('DELETE FROM points WHERE user_id = ?').bind(auth.id).run();
+        await db.prepare('DELETE FROM users WHERE id = ?').bind(auth.id).run();
+        return json({ ok: true });
+      }
+
       if (path === '/api/points' && request.method === 'GET') {
         if (!auth) return error('Unauthorized', 401);
         const points = await db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY created_at').bind(auth.id).all();

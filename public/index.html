@@ -9,14 +9,12 @@
 </head>
 <body>
   <div class="app">
-    <!-- Header -->
+    <!-- Header (removed to save space) -->
     <header>
-      <h1>🌊 水流預報</h1>
       <div class="header-row">
         <p class="subtitle">Current Forecast</p>
         <button id="loginBtn" class="login-btn">登入</button>
         <button id="logoutBtn" class="login-btn hidden">登出</button>
-        <button id="settingsBtn" class="settings-btn">⚙️</button>
       </div>
     </header>
 
@@ -42,34 +40,13 @@
       <button id="addPointBtn" class="add-btn">+</button>
     </div>
 
-    <!-- Cards Row: Current + HKO Wind side by side -->
+    <!-- Cards Row: HKO Wind + Current side by side -->
     <div class="cards-row">
-      <!-- Current Data -->
-      <div class="current-card" id="currentCard">
-        <div class="loading" id="loading">選擇一個點...</div>
-        <div id="content" class="hidden">
-          <div class="pname" id="pointName"></div>
-          <div class="coords" id="coords"></div>
-          <div class="speed-row">
-            <span class="speed-val" id="speedVal">--</span>
-            <span class="speed-unit">knots</span>
-          </div>
-          <div class="dir-row" id="dirRow">
-            <span class="dir-arrow" id="dirArrow">↑</span>
-            <span class="dir-text" id="dirText">--</span>
-          </div>
-          <div class="strength-bar">
-            <div class="bar-fill" id="barFill"></div>
-          </div>
-          <div class="hydro-point" id="hydroPoint"></div>
-        </div>
-      </div>
-
       <!-- HKO Real-time Wind Card (nearest station) -->
       <div class="wind-card" id="windCard">
         <div class="wind-header">
           <span>🌬️ 天文台 <span style="font-size:10px;color:#4a6a8a;">最近風站</span></span>
-          <span class="wind-toggle" id="windUnitToggle">knot</span>
+          <span class="wind-toggle" id="windUnitToggle">km/h</span>
         </div>
         <div class="wind-body" id="windBody">
           <select id="windStationSelect" class="wind-station-select">
@@ -78,7 +55,7 @@
           <div class="hko-wind-main">
             <div class="hko-wind-speed">
               <span class="hko-speed-val" id="windHkoSpeed">--</span>
-              <span class="hko-speed-unit" id="windHkoUnit">kn</span>
+              <span class="hko-speed-unit" id="windHkoUnit">km/h</span>
             </div>
           </div>
           <div class="hko-wind-details">
@@ -108,6 +85,39 @@
           </div>
         </div>
       </div>
+
+      <!-- Current Data -->
+      <div class="current-card" id="currentCard">
+        <div class="loading" id="loading">選擇一個點...</div>
+        <div id="content" class="hidden">
+          <div class="pname" id="pointName"></div>
+          <div class="coords" id="coords"></div>
+          <div class="speed-row">
+            <span class="speed-val" id="speedVal">--</span>
+            <span class="speed-unit">knots</span>
+          </div>
+          <div class="dir-row" id="dirRow">
+            <span class="dir-arrow" id="dirArrow">↑</span>
+            <span class="dir-text" id="dirText">--</span>
+          </div>
+          <div class="strength-bar">
+            <div class="bar-fill" id="barFill"></div>
+          </div>
+          <div class="hydro-point" id="hydroPoint"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HKO Wind History Card (collected via cron) -->
+    <div class="forecast-wind-card" id="windHistoryCard">
+      <div class="wind-header">
+        <span>📈 天文台 過去風速 <span style="font-size:10px;color:#4a6a8a;" id="windHistInfo">--</span></span>
+        <span class="wind-toggle" id="windHistRange">24h</span>
+      </div>
+      <div class="tide-chart" id="windHistChart">
+        <canvas id="windHistCanvas"></canvas>
+      </div>
+      <div class="wind-history-note" id="windHistNote" style="font-size:10px;color:#4a6a8a;padding:2px 0 0;">收集數據中...</div>
     </div>
 
     <!-- Forecast Wind Card (GFS + ECMWF) — reference only -->
@@ -125,18 +135,6 @@
           <span class="wind-data" id="windEcmwf">--</span>
         </div>
       </div>
-    </div>
-
-    <!-- HKO Wind History Card (collected via cron) -->
-    <div class="forecast-wind-card" id="windHistoryCard">
-      <div class="wind-header">
-        <span>📈 天文台 過去風速 <span style="font-size:10px;color:#4a6a8a;" id="windHistInfo">--</span></span>
-        <span class="wind-toggle" id="windHistRange">24h</span>
-      </div>
-      <div class="tide-chart" id="windHistChart">
-        <canvas id="windHistCanvas"></canvas>
-      </div>
-      <div class="wind-history-note" id="windHistNote" style="font-size:10px;color:#4a6a8a;padding:2px 0 0;">收集數據中...</div>
     </div>
 
     <!-- Map -->
@@ -208,20 +206,8 @@
         <button class="save" id="loginRegisterBtn">註冊</button>
         <button class="save" id="loginSubmitBtn">登入</button>
       </div>
-    </div>
-  </div>
-
-  <!-- Settings Modal -->
-  <div class="modal-overlay hidden" id="settingsModal">
-    <div class="modal">
-      <h3>⚙️ 設定</h3>
-      <label>API 伺服器網址</label>
-      <input type="url" id="apiUrlInput" placeholder="https://your-tunnel.trycloudflare.com">
-      <p class="hint">留空 = 使用當前網址（同源）</p>
-      <div class="modal-btns">
-        <button class="cancel" id="settingsCancel">取消</button>
-        <button class="save" id="settingsSaveBtn">儲存</button>
-      </div>
+      <hr style="border-color:#2a3a50;margin:10px 0;">
+      <button class="danger-btn hidden" id="deleteAccountBtn">🗑️ 註銷帳號</button>
     </div>
   </div>
 
