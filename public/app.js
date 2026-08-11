@@ -603,7 +603,7 @@ function renderHkoWind() {
 
   // HKO wind CSV is real-time only — only show when selected time is approximately "now"
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const selectedDate = datePicker.value;
   const selectedMinutes = parseInt(hourPicker.value) * 60 + parseInt(minPicker.value, 10);
   const currentMinutes = now.getHours() * 60 + Math.round(now.getMinutes() / 15) * 15;
