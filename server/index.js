@@ -41,7 +41,7 @@ db.exec(`CREATE TABLE IF NOT EXISTS points (
 console.log('DB tables ready (SQLite)');
 
 // ----- Middleware -----
-app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 app.use(express.json());
 
 function authMiddleware(req, res, next) {

@@ -10,3 +10,7 @@ server/server_err.log
 server/server_test.log
 node_modules/
 .env
+.wrangler/
+github_backup_*/
+*.db
+server/tideapp.db

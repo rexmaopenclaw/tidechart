@@ -1,0 +1,9 @@
+name = "tidechart"
+main = "worker/index.js"
+compatibility_date = "2025-07-01"
+assets = { directory = "public", binding = "ASSETS" }
+
+[[d1_databases]]
+binding = "DB"
+database_name = "tide-app-db"
+database_id = "2cdc4305-1d31-410e-bba2-8c04f42537bb"

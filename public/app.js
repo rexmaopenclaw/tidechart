@@ -1,5 +1,5 @@
 // ----- Configurable API Base -----
-const API_KEY = '***';
+const API_KEY = 'tideAppApiBase';
 function getApiBase() {
   try { return localStorage.getItem(API_KEY) || ''; } catch { return ''; }
 }
@@ -13,7 +13,9 @@ function setApiBase(url) {
 function apiUrl(path) {
   const base = getApiBase();
   if (base) return base + path;
+  // When deployed on Cloudflare Pages, same-origin
   return path;
+}  return path;
 }
 
 // ----- Direction helpers -----
@@ -122,7 +124,7 @@ async function syncPointsToServer() {
   try {
     const resp = await fetch(apiUrl('/api/points/sync'), {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': '***' + state.token },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + state.token },
       body: JSON.stringify({ points: points })
     });
     if (resp.ok) {
@@ -141,7 +143,7 @@ async function loadServerPoints() {
   if (!state.token) return;
   try {
     const resp = await fetch(apiUrl('/api/points'), {
-      headers: { 'Authorization': '***' + state.token }
+      headers: { 'Authorization': 'Bearer ' + state.token }
     });
     if (resp.ok) {
       const serverPoints = await resp.json();
@@ -308,7 +310,7 @@ function deletePoint(id) {
     renderMarkers();
   }
   if (state.token && typeof id === 'number') {
-    fetch(apiUrl('/api/points/' + id), { method: 'DELETE', headers: { 'Authorization': '***' + state.token } }).catch(function(){});
+    fetch(apiUrl('/api/points/' + id), { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + state.token } }).catch(function(){});
   }
 }
 
