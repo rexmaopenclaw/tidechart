@@ -428,11 +428,13 @@ async function collectHkoWind(env) {
 }
 
 function windTimeKey(d) {
-  return String(d.getFullYear()) +
-    String(d.getMonth() + 1).padStart(2, '0') +
-    String(d.getDate()).padStart(2, '0') +
-    String(d.getHours()).padStart(2, '0') +
-    String(Math.floor(d.getMinutes() / 10) * 10).padStart(2, '0');
+  // HKO CSV uses Hong Kong time (UTC+8) — convert before extracting
+  const hkt = new Date(d.getTime() + 8 * 3600 * 1000);
+  return String(hkt.getUTCFullYear()) +
+    String(hkt.getUTCMonth() + 1).padStart(2, '0') +
+    String(hkt.getUTCDate()).padStart(2, '0') +
+    String(hkt.getUTCHours()).padStart(2, '0') +
+    String(Math.floor(hkt.getUTCMinutes() / 10) * 10).padStart(2, '0');
 }
 
 // ===== WORKER =====
@@ -689,6 +691,14 @@ export default {
         const sinceKey = windTimeKey(since);
         const rows = await db.prepare('SELECT datetime, wind_dir, wind_speed, wind_gust FROM wind_history WHERE station = ? AND datetime >= ? ORDER BY datetime ASC').bind(station, sinceKey).all();
         return json({ station, hours, count: rows.results.length, rows: rows.results });
+      }
+
+      // ---- Debug: manual collect trigger (requires COLLECT_KEY) ----
+      if (path === '/api/debug-collect-wind') {
+        const key = url.searchParams.get('key');
+        if (!env.COLLECT_KEY || key !== env.COLLECT_KEY) return error('Forbidden', 403);
+        const result = await collectHkoWind(env);
+        return json(result);
       }
 
       // ---- API: HKO real-time wind ----
