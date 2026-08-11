@@ -440,7 +440,12 @@ async function fetchWeather(lat, lon, dateStr, timeStr) {
     ecmwf = {};
   }
 
-  const pick = (j) => {
+  const pick = (j, modelName) => {
+    // Check if Open-Meteo returned an error
+    if (j.error) {
+      console.log('Open-Meteo ' + modelName + ' error:', j.reason || JSON.stringify(j));
+      return null;
+    }
     // Find the right hour index
     const times = j.hourly && j.hourly.time || [];
     const speeds = j.hourly && j.hourly.wind_speed_10m || [];
@@ -448,7 +453,10 @@ async function fetchWeather(lat, lon, dateStr, timeStr) {
     const dirs = j.hourly && j.hourly.wind_direction_10m || [];
 
     // If no data returned for this date, return null
-    if (times.length === 0) return null;
+    if (times.length === 0) {
+      console.log('Open-Meteo ' + modelName + ': no hourly data returned');
+      return null;
+    }
 
     let idx = -1;
     if (timeStr && times.length > 0) {
@@ -736,7 +744,7 @@ app.get('/api/debug-openmeteo', async function(req, res) {
 });
 
 // ----- API: Weather (GFS + ECMWF wind) -----
-app.get('/api/weather', async function(req, res)
+app.get('/api/weather', async function(req, res) {
   try {
     const lat = parseFloat(req.query.lat) || 22.38;
     const lon = parseFloat(req.query.lon) || 113.90;
