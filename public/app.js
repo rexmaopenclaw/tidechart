@@ -606,7 +606,8 @@ function renderHkoWind() {
   const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const selectedDate = datePicker.value;
   const selectedMinutes = parseInt(hourPicker.value) * 60 + parseInt(minPicker.value, 10);
-  const currentMinutes = now.getHours() * 60 + Math.round(now.getMinutes() / 15) * 15;
+  let currentMinutes = now.getHours() * 60 + Math.round(now.getMinutes() / 15) * 15;
+  if (currentMinutes >= 1440) currentMinutes -= 1440; // 23:55 → 00:00 wrap
   const isCurrentTime = selectedDate === todayStr && Math.abs(selectedMinutes - currentMinutes) <= 15;
 
   if (!isCurrentTime) {
@@ -1113,9 +1114,11 @@ function init() {
     opt.textContent = String(i).padStart(2, '0');
     hourPicker.appendChild(opt);
   }
-  hourPicker.value = String(now.getHours()).padStart(2, '0');
-  const mins = Math.round(now.getMinutes() / 15) * 15;
-  minPicker.value = String(mins >= 60 ? 0 : mins).padStart(2, '0');
+  let mins = Math.round(now.getMinutes() / 15) * 15;
+  let hrs = now.getHours();
+  if (mins >= 60) { mins = 0; hrs = (hrs + 1) % 24; }
+  hourPicker.value = String(hrs).padStart(2, '0');
+  minPicker.value = String(mins).padStart(2, '0');
 
   // Show initial state on charts
   drawTideLabel('載入中...');
