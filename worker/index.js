@@ -160,19 +160,45 @@ function processTideData(rawData, targetDate) {
   const todayData = rawData[dateKey];
   if (!todayData) return { error: 'No tide data for ' + dateKey };
 
+  // Parabolic interpolation: estimate true peak time (minutes) from 3 hourly points
+  // Given (x0,y0)=(h-1,y0), (x1,y1)=(h,y1), (x2,y2)=(h+1,y2)
+  // parabola vertex x* = h + (y0 - y2) / (2*(y0 - 2*y1 + y2)), y* = y1 - (y0-y2)^2/(8*(y0-2*y1+y2))
+  function fitPeak(h) {
+    const y0 = todayData[h - 1], y1 = todayData[h], y2 = todayData[h + 1];
+    if (y0 == null || y1 == null || y2 == null) return null;
+    const denom = y0 - 2 * y1 + y2;
+    if (Math.abs(denom) < 1e-6) return null;
+    const offset = (y0 - y2) / (2 * denom);
+    const peakHour = h + offset;
+    const peakVal = y1 - ((y0 - y2) * (y0 - y2)) / (8 * denom);
+    if (peakHour < h - 0.9 || peakHour > h + 0.9) return null;
+    return { hour: peakHour, height: Math.round(peakVal * 100) / 100 };
+  }
+
+  const fmtTime = (hourFloat) => {
+    const hh = Math.floor(hourFloat);
+    const mm = Math.round((hourFloat - hh) * 60);
+    if (mm === 60) return String(hh + 1).padStart(2, '0') + ':00';
+    return String(hh).padStart(2, '0') + ':' + String(mm).padStart(2, '0');
+  };
+
   const highs = [], lows = [];
   for (let h = 1; h < 23; h++) {
-    if (todayData[h] > todayData[h - 1] && todayData[h] > todayData[h + 1])
-      highs.push({ hour: h, height: Math.round(todayData[h] * 100) / 100 });
-    if (todayData[h] < todayData[h - 1] && todayData[h] < todayData[h + 1])
-      lows.push({ hour: h, height: Math.round(todayData[h] * 100) / 100 });
+    if (todayData[h] > todayData[h - 1] && todayData[h] > todayData[h + 1]) {
+      const p = fitPeak(h);
+      if (p) highs.push({ hour: p.hour, height: p.height });
+    }
+    if (todayData[h] < todayData[h - 1] && todayData[h] < todayData[h + 1]) {
+      const p = fitPeak(h);
+      if (p) lows.push({ hour: p.hour, height: p.height });
+    }
   }
+  // Edge hours: no interpolation, keep raw
   if (todayData[0] > todayData[1]) highs.push({ hour: 0, height: Math.round(todayData[0] * 100) / 100 });
   if (todayData[0] < todayData[1]) lows.push({ hour: 0, height: Math.round(todayData[0] * 100) / 100 });
   if (todayData[23] > todayData[22]) highs.push({ hour: 23, height: Math.round(todayData[23] * 100) / 100 });
   if (todayData[23] < todayData[22]) lows.push({ hour: 23, height: Math.round(todayData[23] * 100) / 100 });
 
-  const fmtTime = (h) => String(h).padStart(2, '0') + ':00';
   const minH = Math.min(...todayData);
   const maxH = Math.max(...todayData);
 
@@ -181,8 +207,8 @@ function processTideData(rawData, targetDate) {
     minHeight: Math.round(minH * 100) / 100,
     maxHeight: Math.round(maxH * 100) / 100,
     range: Math.round((maxH - minH) * 100) / 100,
-    highs: highs.map(h => ({ hour: h.hour, height: h.height, time: fmtTime(h.hour) })),
-    lows: lows.map(h => ({ hour: h.hour, height: h.height, time: fmtTime(h.hour) })),
+    highs: highs.map(h => ({ hour: Math.round(h.hour * 4) / 4, height: h.height, time: fmtTime(h.hour) })),
+    lows: lows.map(h => ({ hour: Math.round(h.hour * 4) / 4, height: h.height, time: fmtTime(h.hour) })),
     hours: todayData.map((h, i) => ({ hour: i, height: Math.round(h * 100) / 100, time: fmtTime(i) }))
   };
 }
