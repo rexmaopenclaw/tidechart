@@ -90,7 +90,10 @@
       <div class="current-card" id="currentCard">
         <div class="loading" id="loading">選擇一個點...</div>
         <div id="content" class="hidden">
-          <div class="pname" id="pointName"></div>
+          <div class="current-header">
+            <div class="pname" id="pointName"></div>
+            <button id="modeBtn" class="mode-btn tide-mode-btn">水面</button>
+          </div>
           <div class="coords" id="coords"></div>
           <div class="speed-row">
             <span class="speed-val" id="speedVal">--</span>
@@ -146,7 +149,6 @@
     <div class="tide-wrapper">
       <div class="tide-header">
         <span>🌊 潮汐 <span id="tideSummary">--</span> <span class="tide-source" id="tideStation">載入中...</span></span>
-        <button id="modeBtn" class="mode-btn tide-mode-btn">水面</button>
       </div>
       <div class="tide-chart" id="tideChart">
         <canvas id="tideCanvas"></canvas>
