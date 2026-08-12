@@ -1,0 +1,1703 @@
+<html  lang= "en" >
+<head>
+<meta name= "Comments" content= "WCAG2.0_Non_Conforming:wcag_url=#;" />
+<meta http-equiv= "Content-Type" content= "text/html; CHARSET=UTF-8">
+<script type= "text/javascript" src= "/js/jquery.min.js"></script>
+<script type= "text/javascript" src= "/js/jquery-ui.min.js"></script>
+<title>Hong Kong Observatory</title>
+</head>
+<style>
+	div.content_holder {
+		padding: 25px;
+	}
+</style>
+<script>
+
+var redirecturl = new Array();
+var fast_redirecturl = new Array();
+var para_redirecturl = new Array();
+
+//No wait
+
+
+// Added on 23/12/2025
+fast_redirecturl['/en/wxinfo/ts/index.htm'] = "/en/wxinfo/awsgis/regional_portal.html";
+fast_redirecturl['/tc/wxinfo/ts/index.htm'] = "/tc/wxinfo/awsgis/regional_portal.html";
+fast_redirecturl['/sc/wxinfo/ts/index.htm'] = "/sc/wxinfo/awsgis/regional_portal.html";
+
+
+// Added on 19/8/2025
+//fast_redirecturl['/cgi-bin/gts/time5a.pr'] = "https://time.weather.gov.hk/cgi-bin/time5a.pr";
+
+// Added on 11 Apr 2024, SSO(F)2 request to redirect on 11 Apr 2024 email
+fast_redirecturl['/en/IPRightNotice-and-Disclaimer.html'] = "/en/readme/readme.htm";
+
+// Added on 23 Jan 2024, F2 request to redirect on 23 Jan 2024 email
+fast_redirecturl['/wxinfo/currwx/fnd.htm'] = "/en/wxinfo/currwx/fnd.htm";
+
+
+// Added on 21 Dec 2023, F3 request to redirect on 21 Dec 2023 email
+
+fast_redirecturl['/tc/nowcast/prd/api/api_frame.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+fast_redirecturl['/tc/nowcast/prd/api/api_frame_12min.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+fast_redirecturl['/tc/nowcast/prd/api/remark_ue.html'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+fast_redirecturl['/tc/nowcast/prd/api/samplee.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+
+fast_redirecturl['/en/nowcast/prd/api/api_frame.htm'] = "https://maps.weather.gov.hk/ocf/?data=ncrf";
+fast_redirecturl['/en/nowcast/prd/api/api_frame_12min.htm'] = "https://maps.weather.gov.hk/ocf/?data=ncrf";
+fast_redirecturl['/en/nowcast/prd/api/remark_ue.html'] = "https://maps.weather.gov.hk/ocf/?data=ncrf";
+fast_redirecturl['/en/nowcast/prd/api/samplee.htm'] = "https://maps.weather.gov.hk/ocf/?data=ncrf";
+
+fast_redirecturl['/sc/nowcast/prd/api/api_frame.htm'] = "https://maps.weather.gov.hk/ocf/index_sc.html?data=ncrf";
+fast_redirecturl['/sc/nowcast/prd/api/api_frame_12min.htm'] = "https://maps.weather.gov.hk/ocf/index_sc.html?data=ncrf";
+fast_redirecturl['/sc/nowcast/prd/api/remark_ue.html'] = "https://maps.weather.gov.hk/ocf/index_sc.html?data=ncrf";
+fast_redirecturl['/sc/nowcast/prd/api/samplee.htm'] = "https://maps.weather.gov.hk/ocf/index_sc.html?data=ncrf";
+	
+
+// Added on 22 Nov 2023, AWS url redirect by SA(A)14 on 13 Nov 2023 email
+fast_redirecturl['/en/aviat/outreach/mail.htm'] = "/en/aviat/amt/amsmain.htm";
+fast_redirecturl['/en/aviat/outreach/register.htm'] = "/en/aviat/amt/amsmain.htm";
+fast_redirecturl['/en/aviat/outreach/de-register.htm'] = "/en/aviat/amt/amsmain.htm";
+
+
+//Added on 29 Mar 2023, upper case url redirect
+fast_redirecturl['/EN/GTS/EQUAKE/MAP.HTM'] = "/en/gts/equake/map.htm";
+fast_redirecturl['/EN/GTS/EQUAKE/MMS.HTM'] = "/en/gts/equake/mms.htm";
+
+//Added on 8 Mar 2023, as requested by SO(F)21
+fast_redirecturl['/tc/textonly/explain/cartoon.htm'] = "/tc/textonly/explain/wxicon.htm";
+fast_redirecturl['/en/textonly/explain/cartoon.htm'] = "/en/textonly/explain/wxicon.htm";
+fast_redirecturl['/sc/textonly/explain/cartoon.htm'] = "/sc/textonly/explain/wxicon.htm";
+
+//Added on 18 Aug 2022, for F3 request to remove windtable.shtml
+fast_redirecturl['/tc/sports/windtable.shtml'] = "/tc/sports/wind.htm";
+fast_redirecturl['/en/sports/windtable.shtml'] = "/en/sports/wind.htm";
+
+/* mobile link redirection start */
+fast_redirecturl['/blog/en/index.htm'] = "/en/blog/index.htm";
+fast_redirecturl['/wxinfo/ts/pre/tpopre.png'] = "/wxinfo/ts/pre/yctpre.png";
+fast_redirecturl['/wxinfo/ts/temp/tpotemp.png'] = "/wxinfo/ts/temp/ycttemp.png";
+fast_redirecturl['/contente.htm'] = "/en/index.html#";
+fast_redirecturl['/contentc.htm'] = "/tc/index.html#";
+fast_redirecturl['/m/rhr/mobile.html'] = "/en/rhr/main.html";
+fast_redirecturl['/m/rhr/mobile_uc.html'] = "/tc/rhr/main.html";
+fast_redirecturl['/gts/s/q_e.htm'] = "/en/gts/s/q.htm";
+fast_redirecturl['/gts/s/q_uc.htm'] = "/tc/gts/s/q.htm";
+fast_redirecturl['/m/fnd_uc.htm'] = "/tc/wxinfo/currwx/fnd.htm#north";
+fast_redirecturl['/m/forecaster_blog_index_uc.htm'] = "/tc/forecaster_blog/index.htm";
+fast_redirecturl['/m/uvinfo/m_uvinfo_e.html'] = "/en/wxinfo/uvinfo/uvinfo.html?wv";
+fast_redirecturl['/m/uvinfo/m_uvinfo_uc.html'] = "/tc/wxinfo/uvinfo/uvinfo.html";
+fast_redirecturl['/m/edu_e.htm'] = "/en/education/edu.htm";
+fast_redirecturl['/m/edu_uc.htm'] = "/tc/education/edu.htm";
+fast_redirecturl['/m/hkclimate.htm'] = "/en/index.html#ps8";
+fast_redirecturl['/m/hkclimate_uc.htm'] = "/tc/index.html#ps8";
+fast_redirecturl['/m/news.htm'] = "/en/index.html#ps7";
+fast_redirecturl['/m/news_uc.htm'] = "/tc/index.html#ps7";
+fast_redirecturl['/m/wechat.htm'] = "/tc/WeChat/wx_info_wechat.htm";
+fast_redirecturl['/m/wechat_uc.htm'] = "/tc/WeChat/wx_info_wechat.htm";
+fast_redirecturl['/m/wwi.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+fast_redirecturl['/m/wwi_uc.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+fast_redirecturl['/wxinfo/ts/display_graph_c.htm'] = "/tc/wxinfo/ts/display_graph.htm";
+fast_redirecturl['/wxinfo/rainfall/isohyet_ydayc.htm'] = "/tc/wxinfo/rainfall/isohyet_yesterday.shtml";
+fast_redirecturl['/forecaster_blog/2019/fb_20190510_uc.htm'] = "/tc/forecaster_blog/fb_20190510.htm";
+//20200204 updated by Nicky for the revamped page
+//fast_redirecturl['/m/service.htm'] = "/m/links.htm";
+//fast_redirecturl['/m/service.htm'] = "/en/hko-online-service.html";
+
+fast_redirecturl['/aviat/articles/WS-turb-booklet-web-ver.pdf'] = "/en/aviat/articles/files/WS-turb-booklet-eng-3rd.pdf";
+fast_redirecturl['/m/wechat_intro_uc.htm'] = "http://pda.weather.gov.hk/wechat/wechat_intro_uc.htm";
+
+fast_redirecturl['/tc/education/edu05spacewx.htm'] = "https://www.hko.gov.hk/tc/education/spacewx/index.htm#/zh_hk";
+fast_redirecturl['/en/education/edu05spacewx.htm'] = "https://www.hko.gov.hk/en/education/spacewx/index.htm#/en";
+
+//Added on 4 Apr, For Bing search engine 
+fast_redirecturl['/m/home_uc.htm'] = "https://www.hko.gov.hk/tc/index.html";
+fast_redirecturl['/wxinfo/pastwx/pastc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/pastwx/past.htm";
+fast_redirecturl['/wxinfo/aws/kpinfoc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/aws/kpinfo.htm";
+fast_redirecturl['/probfcst/tempfcst_uc.htm'] = "https://www.hko.gov.hk/tc/probfcst/tempfcst.htm";
+fast_redirecturl['/nowcast/prd/api/index_uc.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+fast_redirecturl['/wxinfo/currwx/fmarc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/currwx/fmar.htm";
+fast_redirecturl['/nhm/nhm_uc.htm'] = "https://www.hko.gov.hk/tc/nhm/nhme.htm";
+fast_redirecturl['/m/wxwarntoday_uc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/dailywx/wxwarntoday.htm";
+fast_redirecturl['/fishermen/mainc.htm'] = "https://www.hko.gov.hk/tc/fishermen/main.htm";
+fast_redirecturl['/wservice/tsheet/pms/index_c.htm'] = "https://www.hko.gov.hk/tc/aviat/amt/amsmain.htm";
+fast_redirecturl['/wxinfo/llis/gm_indexc.htm'] =  "https://www.hko.gov.hk/tc/wxinfo/llis/gm_index.htm";
+fast_redirecturl['/wxinfo/intersat/satellite/satc_uc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/intersat/satellite/sate.htm";
+fast_redirecturl['/wxinfo/ts/indexc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/ts/index.htm";
+fast_redirecturl['/informtc/tcMain_uc.htm'] = "https://www.hko.gov.hk/tc/informtc/tcMain.htm";
+fast_redirecturl['/wxinfo/worldwx/wwi_uc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/worldwx/wwi.htm";
+fast_redirecturl['/cis/statistic_c.htm'] = "https://www.hko.gov.hk/tc/cis/statistic.htm";
+fast_redirecturl['/wxinfo/season/seasonc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/season/season.htm";
+fast_redirecturl['/gts/equake/quake-info_uc.htm'] = "https://www.hko.gov.hk/tc/gts/equake/quake-info.htm";
+fast_redirecturl['/gts/equake/und_tsu_c.htm'] = "https://www.hko.gov.hk/tc/gts/equake/und_tsu.htm";
+fast_redirecturl['/tide/ctide_main.htm'] = "https://www.hko.gov.hk/tc/tide/etide_main.htm";
+fast_redirecturl['/tide/predtide_uc.htm'] = "https://www.hko.gov.hk/tc/tide/predtide.htm";
+fast_redirecturl['/gts/astronomy/astro_portal_uc.html'] = "https://www.hko.gov.hk/tc/gts/astronomy/astro_portal.html";
+fast_redirecturl['/nts/ntimec.htm'] = "https://www.hko.gov.hk/tc/nts/ntime.htm";
+fast_redirecturl['/gts/time/worldtime2c.htm'] = "https://www.hko.gov.hk/tc/gts/time/worldtime2.htm";
+fast_redirecturl['/aviat/soaring_c/index.htm'] = "https://www.hko.gov.hk/tc/aviat/soaring/index.shtml";
+fast_redirecturl['/sports/watersportsc.shtml'] = "https://www.hko.gov.hk/tc/sports/watersports.shtml";
+fast_redirecturl['/wxinfo/wxwizard/wxwizardc.htm'] = "https://www.hko.gov.hk/tc/wxinfo/wxwizard/wxwizard.htm";
+
+
+
+
+//  Add on 9 Jan 2020
+fast_redirecturl['/sports/watersports.shtml'] = "/en/sports/watersports.shtml";
+fast_redirecturl['/sports/watersportsc.shtml'] = "/tc/sports/watersports.shtml";
+fast_redirecturl['/sports/hiking_e.html'] = "/en/sports/hiking.html";
+fast_redirecturl['/sports/hiking_uc.html'] = "/tc/sports/hiking.html";
+fast_redirecturl['/aviat/soaring/index_new_en.shtml'] = "/en/aviat/soaring/index_new_en.shtml";
+fast_redirecturl['/aviat/soaring_c/index_new_uc.shtml'] = "/tc/aviat/soaring/index.shtml";
+fast_redirecturl['/gts/astronomy/astro_portal.html'] = "/en/gts/astronomy/astro_portal.html";
+fast_redirecturl['/gts/astronomy/astro_portal_uc.html'] = "/tc/gts/astronomy/astro_portal.html";
+fast_redirecturl['/out_photo/outdoor_photo.htm'] = "/en/out_photo/outdoor_photo.htm";
+fast_redirecturl['/out_photo/outdoor_photo_uc.htm'] = "/tc/out_photo/outdoor_photo.htm";
+
+fast_redirecturl['/sports/watersports.shtml'] = "/en/sports/watersports.shtml";
+fast_redirecturl['/sports/watersportsc.shtml'] = "/tc/sports/watersports.shtml";
+fast_redirecturl['/sports/hiking_e.html'] = "/en/sports/hiking.html";
+fast_redirecturl['/sports/hiking_uc.html'] = "/tc/sports/hiking.html";
+fast_redirecturl['/aviat/soaring/index_new_en.shtml'] = "/en/aviat/soaring/index_new_en.shtml";
+fast_redirecturl['/aviat/soaring_c/index_new_uc.shtml'] = "/tc/aviat/soaring/index.shtml";
+fast_redirecturl['/gts/astronomy/astro_portal.html'] = "/en/gts/astronomy/astro_portal.html";
+fast_redirecturl['/gts/astronomy/astro_portal_uc.html'] = "/tc/gts/astronomy/astro_portal.html";
+fast_redirecturl['/out_photo/outdoor_photo.htm'] = "/en/out_photo/outdoor_photo.htm";
+fast_redirecturl['/out_photo/outdoor_photo_uc.htm'] = "/tc/out_photo/outdoor_photo.htm";
+fast_redirecturl['/gts/astronomy/astro_portal_nclf.html'] = "/en/gts/astronomy/astro_portal_nclf.html";
+fast_redirecturl['/gts/astronomy/astro_portal_nclf_uc.html'] = "/tc/gts/astronomy/astro_portal_nclf.html";
+fast_redirecturl['/sports/hiking_nclf_uc.html'] = "/tc/sports/hiking_nclf.html";
+fast_redirecturl['/sports/wind_uc_nclf.html'] = "/tc/sports/wind_nclf.html";
+fast_redirecturl['/myobservatory_e.htm'] = "/en/myobservatory.htm";
+fast_redirecturl['/myobservatory_uc.htm'] = "/tc/myobservatory.htm";
+fast_redirecturl['/wservice/tsheet/nwpc.htm'] = "/tc/wservice/tsheet/nwp.htm";
+fast_redirecturl['/wservice/tsheet/nwp.htm' ] = "/en/wservice/tsheet/nwp.htm"; 
+
+//  For Search result of 
+//  Hong Kong LIDAR site:www.hko.gov.hk
+//  Hong Kong wake turbulence site:www.hko.gov.hk
+//  Hong Kong wake vortex site:www.hko.gov.hk
+//  Hong Kong Lidar testbed site:www.hko.gov.hk
+
+fast_redirecturl['/hkonews/news-p80e.htm'] = "/en/hkonews/news-p80e.htm";
+fast_redirecturl['/hkonews/news-p70e.htm'] = "/en/hkonews/news-p70e.htm";
+fast_redirecturl['/hkonews/A2/news-CAACe.htm'] = "/en/hkonews/news-20121231e.htm";
+fast_redirecturl['/hkonews/A3/sidelight_a3_20110919.htm'] = "/en/hkonews/sidelight_a3_20110919.htm";
+fast_redirecturl['/prtver/html/docs/publica/pubreprint20.shtml'] = "/en/education/article.htm?title=ele_00212";
+fast_redirecturl['/hkonews/A2/news-20130215e.htm'] = "/en/hkonews/news-20130215e.htm";
+fast_redirecturl['/detail.htm'] = "/en/detail.htm";
+fast_redirecturl['/press/WP/2019/pre20190321.htm'] = "/en/press/pre20190321.htm";
+fast_redirecturl['/whatsnew/d4/2018/whatsnew_20180914.htm'] = "/en/whatsnew/d4_whatsnew_20180914.htm";
+fast_redirecturl['/blog/en/archives/00000209.htm'] = "/en/blog/00000209.htm";
+fast_redirecturl['/hkonews/news-p142e.htm'] = "/en/hkonews/news-p142e.htm";
+fast_redirecturl['/blog/en/archives/00000148.htm'] = "/en/blog/00000148.htm";
+fast_redirecturl['/whatsnew/f2/wn20160830.htm'] = "/en/whatsnew/f2_wn20160830.htm";
+fast_redirecturl['/cwsrc/index_mangkhut.html'] = "/en/cwsrc/index_mangkhut.html";
+fast_redirecturl['/appweb/commercial.htm'] = "/en/appweb/commercial.htm";
+fast_redirecturl['/whatsnew/f1/HotWxSpecialAdvisory.htm'] = "/en/whatsnew/f1_HotWxSpecialAdvisory.htm";
+fast_redirecturl['/hkonews/A1/sidelight_a1_101116.htm'] = "/en/hkonews/sidelight_a1_101116.htm";
+fast_redirecturl['/hkonews/F3/sl20140411_e.htm'] = "/en/hkonews/sl20140411.htm";
+fast_redirecturl['/whatsnew/d4/2017/whatsnew_20170630.htm'] = "/en/whatsnew/d4_2017_whatsnew_20170630.htm";
+fast_redirecturl['/prtver/html/docs/publica/pubreprint22.shtml'] = "/en/publica/pubreprint22.htm";
+fast_redirecturl['/prtver/html/docs/publica/pubreprint21.shtml'] = "/en/publica/pubreprint21.htm";
+fast_redirecturl['/prtver/html/docs/publica/pubreprint23a.shtml'] = "/en/publica/pubreprint23a.htm";
+fast_redirecturl['/prtver/html/docs/aviat/outreach/1024index032.shtml'] = "/en/publica/pubreprint23a.htm";
+fast_redirecturl['/prtver/pdf/docs/aviat/outreach/1024index.pdf'] = "/en/publica/pubreprint23a.htm";
+fast_redirecturl['/blog/en/archives/'] = "/en/blog/index.htm";
+fast_redirecturl['/prtver/pdf/docs/publica/pubreprint22c_uc.pdf'] = "/en/publica/pubreprint22.htm";
+fast_redirecturl['/blog/en/archives/00000105.htm'] = "/en/blog/00000105.htm";
+fast_redirecturl['/prtver/pdf/docs/publica/pubreprint23ac_uc.pdf'] = "/en/publica/pubreprint23a.htm";
+fast_redirecturl['/prtver/html/docs/publica/pubreprint23a.shtml'] = "/en/publica/pubreprint23a.htm";
+fast_redirecturl['prtver/html/docs/publica/pubreprint23ac_uc.shtml'] = "/en/publica/pubreprint23a.htm";
+
+
+//  For Search result of 
+//  https://www.weather.gov.hk/tc/aviat/amt/amsmain.htm, right hand side's slider
+fast_redirecturl['/aviat/outreach/data/39_turb.htm'] = "/en/aviat/outreach/data/39_turb.htm";
+fast_redirecturl['/aviat/outreach/data/39_mangkhut.htm'] = "/en/aviat/outreach/data/39_mangkhut.htm";
+fast_redirecturl['/press/WP/2018/pre20180711_uc.htm'] = "/tc/press/pre20180711.htm";
+fast_redirecturl['/hkonews/A6/sl_a6_20181018.htm'] = "/tc/hkonews/news-20181008e.htm";
+fast_redirecturl['/aviat/outreach/data/39_enhanced.htm'] = "/en/aviat/outreach/data/39_enhanced.htm";
+fast_redirecturl['/press/WP/2018/pre20180727_uc.htm'] = "/tc/press/pre20180727.htm";
+fast_redirecturl['/press/WP/2018/pre20181002_uc.htm'] = "/tc/press/pre20181002.htm";
+fast_redirecturl['/hkonews/A2/news-20180820e.htm'] = "/tc/hkonews/news-20180820e.htm";
+fast_redirecturl['/hkonews/D3/d3_sl20180327_uc.htm'] = "/tc/hkonews/D1sidelight_20180327.htm";
+fast_redirecturl['/press/WP/2018/pre20180913_uc.htm'] = "/tc/press/pre20180913.htm";
+fast_redirecturl['/press/WP/2018/pre20180703_uc.htm'] = "/tc/press/pre20180703.htm";
+fast_redirecturl['/aviat/outreach/data/39_workshop.htm'] = "/en/aviat/outreach/data/39_workshop.htm";
+fast_redirecturl['/hkonews/A6/sl_a6_20181018_uc.htm'] = "/tc/hkonews/sl_a6_20181018.htm";
+fast_redirecturl['/hkonews/A1/sidelight_a1_180606_uc.htm'] = "/tc/hkonews/sidelight_a1_180606.htm";
+fast_redirecturl['/aviat/outreach/data/39_video.htm'] = "/en/aviat/outreach/data/39_video.htm";
+fast_redirecturl['/aviat/outreach/data/39_courses.htm'] = "/en/aviat/outreach/data/39_courses.htm";
+fast_redirecturl['/aviat/outreach/data/39_talk.htm'] = "/en/aviat/outreach/data/39_talk.htm";
+fast_redirecturl['/aviat/outreach/data/39_visit.htm'] = "/en/aviat/outreach/data/39_visit.htm";
+
+
+// Request from D3 team
+fast_redirecturl['/climate_change/album/co2.htm'] = "/tc/climate_change/album/co2.htm";
+fast_redirecturl['/climate_change/album/DYK1.htm'] = "/tc/climate_change/album/DYK1.htm";
+fast_redirecturl['/climate_change/album/DYK2.htm'] = "/tc/climate_change/album/DYK2.htm";
+fast_redirecturl['/climate_change/album/DYK3.htm'] = "/tc/climate_change/album/DYK3.htm";
+fast_redirecturl['/climate_change/album/DYK4.htm'] = "/tc/climate_change/album/DYK4.htm";
+fast_redirecturl['/climate_change/album/DYK5.htm'] = "/tc/climate_change/album/DYK5.htm";
+fast_redirecturl['/climate_change/album/DYK6.htm'] = "/tc/climate_change/album/DYK6.htm";
+fast_redirecturl['/climate_change/album/DYK5.htm'] = "/tc/climate_change/album/DYK5.htm";
+fast_redirecturl['/climate_change/album/DYK6.htm'] = "/tc/climate_change/album/DYK6.htm";
+fast_redirecturl['/climate_change/album/hkbsap.htm'] = "/tc/climate_change/album/hkbsap.htm";
+fast_redirecturl['/climate_change/album/hkcap.htm'] = "/tc/climate_change/album/hkcap.htm";
+fast_redirecturl['/climate_change/album/kelvin-helmholtz.htm'] = "/tc/climate_change/album/kelvin-helmholtz.htm";
+fast_redirecturl['/climate_change/album/microclimate.htm'] = "/tc/climate_change/album/microclimate.htm";
+fast_redirecturl['/climate_change/album/ohc.htm'] = "/tc/climate_change/album/ohc.htm";
+fast_redirecturl['/climate_change/album/pextrf.htm'] = "/tc/climate_change/album/pextrf.htm";
+fast_redirecturl['/climate_change/album/pmsl.htm'] = "/tc/climate_change/album/pmsl.htm";
+fast_redirecturl['/climate_change/album/prfbar.htm'] = "/tc/climate_change/album/prfbar.htm";
+fast_redirecturl['/climate_change/album/ptemp.htm'] = "/tc/climate_change/album/ptemp.htm";
+fast_redirecturl['/climate_change/album/ptempbar.htm'] = "/tc/climate_change/album/ptempbar.htm";
+fast_redirecturl['/climate_change/album/pwet.htm'] = "/tc/climate_change/album/pwet.htm";
+fast_redirecturl['/tc/wxinfo/currwx/%E9%A2%B1%E9%A2%A8%E8%B7%AF%E5%BE%91.htm'] = "/tc/wxinfo/currwx/tc_gis.htm";
+
+
+//Educational Resource
+fast_redirecturl['/tc/education/article.htm?title=ele_00001'] = "tc/education/weather/meteorology-basics/00001-what-is-a-trough.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00002'] = "tc/education/weather/meteorology-basics/00002-fronts-and-weather.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00003'] = "tc/education/weather/meteorology-basics/00003-what-is-foehn-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00004'] = "tc/education/weather/meteorology-basics/00004-what-is-radiation-cooling.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00008'] = "tc/education/weather/meteorology-basics/00008-what-is-gravity-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00009'] = "tc/education/weather/meteorology-basics/00009-convergence-and-divergence.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00010'] = "tc/education/weather/meteorology-basics/00010-geostrophic-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00011'] = "tc/education/weather/meteorology-basics/00011-glossary-of-some-meteorological-terms.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00012'] = "tc/education/weather/thunderstorm-and-lightning/00012-predict-lightning-positions-by-tracking-thunderstorms-airport-thunderstorm-and-lightning-alerting-system.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00013'] = "tc/education/weather/thunderstorm-and-lightning/00013-does-lightning-always-strike-the-tallest-object.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00014'] = "tc/education/weather/thunderstorm-and-lightning/00014-the-physics-of-lightning.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00015'] = "tc/education/weather/thunderstorm-and-lightning/00015-dont-be-a-lightning-rod.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00016'] = "tc/education/weather/thunderstorm-and-lightning/00016-how-to-determine-the-lightning-location.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00017'] = "tc/education/weather/thunderstorm-and-lightning/00017-how-to-detect-lightning.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00018'] = "tc/education/weather/thunderstorm-and-lightning/00018-what-is-cloudtocloud-lightning.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00019'] = "tc/education/weather/thunderstorm-and-lightning/00019-what-is-a-dry-thunderstorm.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00020'] = "tc/education/weather/thunderstorm-and-lightning/00020-why-we-cannot-hear-the-thunder-of-a-distant-lightning.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00021'] = "tc/education/weather/thunderstorm-and-lightning/00021-why-does-lightning-always-come-before-thunder.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00022'] = "tc/education/weather/thunderstorm-and-lightning/00022-why-lightning-looks-the-way-it-does-crooked-and-forked.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00023'] = "tc/education/weather/thunderstorm-and-lightning/00023-why-does-a-thunder-sound-the-way-it-does.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00025'] = "tc/education/weather/thunderstorm-and-lightning/00025-microburst-induced-by-thunderstorms.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00027'] = "tc/education/weather/thunderstorm-and-lightning/00027-northwest-shi-hu-feng-and-northeast-shi-hu-feng.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00028'] = "tc/education/weather/thunderstorm-and-lightning/00028-why-do-squalls-suddenly-blow-ahead-of-thunderstorms.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00030'] = "tc/education/weather/thunderstorm-and-lightning/00030-squall-lines-and-shi-hu-feng-what-you-want-to-know-about-the-violent-squalls-hitting-hong-kong-on-9-may-2005.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00031'] = "tc/education/weather/thunderstorm-and-lightning/00031-what-are-thunderstorms.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00036'] = "tc/education/weather/weather-phenomena/00036-a-rare-spectacular-sight-of-rime-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00037'] = "tc/education/weather/weather-phenomena/00037-frost-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00039'] = "tc/education/weather/weather-phenomena/00039-the-looks-of-water-in-spring.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00040'] = "tc/education/weather/weather-phenomena/00040-the-looks-of-water-in-summer.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00041'] = "tc/education/weather/weather-phenomena/00041-the-looks-of-water-in-autumn.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00042'] = "tc/education/weather/weather-phenomena/00042-the-looks-of-water-in-winter.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00043'] = "tc/education/weather/rain/00043-interesting-statistics-on-rainstorm-warning-signals.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00044'] = "tc/education/weather/rain/00044-why-does-it-rain.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00045'] = "tc/education/weather/rain/00045-why-is-there-more-rain-in-tai-mo-shan-.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00046'] = "tc/education/weather/hot-and-cold-weather/00046-a-chat-of-very-hot-weather.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00047'] = "tc/education/weather/hot-and-cold-weather/00047-the-wind-chill-effect.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00171'] = "tc/education/aviation-and-marine/marine/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00048'] = "tc/education/weather/hot-and-cold-weather/00048-an-abrupt-change-of-weather-due-to-the-passage-of-a-severe-cold-front.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00049'] = "tc/education/weather/hot-and-cold-weather/00049-the-2008-south-china-snow-storm-and-the-cold-weather-of-hong-kong-a-retrospect.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00054'] = "tc/education/weather/weather-warnings/00054-the-tropical-cyclone-warning-system-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00068'] = "tc/education/weather/monsoons/00068-why-the-winter-monsoon-in-hong-kong-is-generally-called-the-northeast-monsoon.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00070'] = "tc/education/weather/monsoons/00070-winter-monsoon-from-the-perspective-of-strong-monsoon-signal.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00071'] = "tc/education/weather/monsoons/00071-the-northeast-monsoon-and-its-effects-to-the-weather-of-southern-china-in-autumn.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00072'] = "tc/education/weather/monsoons/00072-the-monsoons-and-climate-change.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00074'] = "tc/education/weather/monsoons/00074-effects-of-winter-monsoon.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00076'] = "tc/education/weather/monsoons/00076-combined-effect-of-tropical-cyclone-and-northeast-monsoon.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00077'] = "tc/education/weather/folklore/00077-morning-thunder-seldom-lasts-till-noon-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00078'] = "tc/education/weather/folklore/00078-sleeping-in-springtime-oblivious-of-dawn-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00079'] = "tc/education/weather/folklore/00079-the-higher-you-climb-the-colder-it-gets-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00080'] = "tc/education/weather/folklore/00080-mackerel-sky-not-twentyfour-hours-dry-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00081'] = "tc/education/weather/folklore/00081-the-kind-of-cloud-brings-the-kind-of-rain.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00082'] = "tc/education/weather/folklore/00082-red-sky-in-the-morning-sailors-take-warning-red-sky-at-night-sailors-delight-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00083'] = "tc/education/weather/visibility/00083-effects-of-low-visibility-to-aviation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00083'] = "tc/education/weather/visibility/00083-effects-of-low-visibility-to-aviation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00084'] = "tc/education/weather/visibility/00084-upslope-fog.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00085'] = "tc/education/weather/visibility/00085-visibility-observations-by-light-detection-and-ranging-system-lidar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00086'] = "tc/education/weather/visibility/00086-regional-variations-in-visibility-over-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00087'] = "tc/education/weather/visibility/00087-more-on-fog.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00088'] = "tc/education/weather/visibility/00088-use-of-fog-a-source-of-water-supply.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00089'] = "tc/education/weather/visibility/00089-influence-of-tropical-cyclones-on-visibility-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00089'] = "tc/education/weather/visibility/00089-influence-of-tropical-cyclones-on-visibility-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00090'] = "tc/education/weather/visibility/00090-fog-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00091'] = "tc/education/weather/visibility/00091-haze-as-a-result-of-northeast-monsoon.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00092'] = "tc/education/weather/visibility/00092-duststorms-over-northeastern-china-8-april-2002.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00093'] = "tc/education/weather/visibility/00093-duststorms-over-northern-china-and-the-east-china-sea-21-march-2002.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00094'] = "tc/education/weather/visibility/00094-haboobs.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00095'] = "tc/education/weather/clouds/00095-cloud-street-and-vortex-street.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00096'] = "tc/education/weather/clouds/00096-clouds-of-gloomy-weather-stratus.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00097'] = "tc/education/weather/clouds/00097-the-classification-and-nomenclature-of-clouds-3-the-forms-and-features-of-medium-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00098'] = "tc/education/weather/clouds/00098-the-classification-and-nomenclature-of-clouds-2-the-forms-and-features-of-high-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00099'] = "tc/education/weather/clouds/00099-the-classification-and-nomenclature-of-clouds-1.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00100'] = "tc/education/weather/clouds/00100-cap-cloud.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00101'] = "tc/education/weather/clouds/00101-cirrus.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00102'] = "tc/education/weather/clouds/00102-stratocumulus-undulatus.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00103'] = "tc/education/weather/clouds/00103-stratocumulus-cloud-in-summertime.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00104'] = "tc/education/weather/clouds/00104-cumulus-congestus-cloud.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00105'] = "tc/education/weather/clouds/00105-cumulus-a-play-in-the-sky.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00107'] = "tc/education/weather/clouds/00107-lenticular-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00111'] = "tc/education/weather/wind-and-pressure/00111-the-origin-of-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00112'] = "tc/education/weather/wind-and-pressure/00112-beaufort-wind-scale.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00114'] = "tc/education/weather/wind-and-pressure/00114-measurement-of-upper-air-winds-wind-profiler.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00115'] = "tc/education/tropical-cyclone/intensity/00115-aircraft-meteorological-observation-for-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00116'] = "tc/education/weather/wind-and-pressure/00116-introduction-to-air-pressure-part-i.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00117'] = "tc/education/weather/wind-and-pressure/00117-introduction-to-air-pressure-part-ii.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00118'] = "tc/education/weather/sunshine-and-uv/00118-how-to-measure-sunshine-duration.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00120'] = "tc/education/weather/sunshine-and-uv/00120-ultraviolet-radiation-at-high-altitude.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00121'] = "tc/education/weather/sunshine-and-uv/00121-tips-for-sunburn-protection-in-summer.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00122'] = "tc/education/weather/sunshine-and-uv/00122-what-is-uva.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00123'] = "tc/education/weather/sunshine-and-uv/00123-some-statistics-on-uv-index.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00124'] = "tc/education/weather/sunshine-and-uv/00124-special-care-for-children-in-the-sun.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00125'] = "tc/education/weather/sunshine-and-uv/00125-sun-protective-clothing-for-summer.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00126'] = "tc/education/weather/sunshine-and-uv/00126-myths-about-protection-against-uv-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00127'] = "tc/education/weather/sunshine-and-uv/00127-harmful-and-beneficial-effects-of-uv-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00128'] = "tc/education/weather/sunshine-and-uv/00128-do-we-get-sunburned-on-a-cloudy-day.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00129'] = "tc/education/weather/sunshine-and-uv/00129-more-about-sunburn-protection-sunburn-and-spf-part-2.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00130'] = "tc/education/weather/sunshine-and-uv/00130-sunburn-and-spf.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00132'] = "tc/education/weather/forecasting/00132-simulating-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00133'] = "tc/education/weather/forecasting/00133-the-dwarfs-behind-numerical-weather-prediction.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00134'] = "tc/education/weather/forecasting/00134-formulation-of-weather-forecasts.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00136'] = "tc/education/weather/forecasting/00136-butterfly-effect-model-ensemble-and-probabilistic-forecast.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00137'] = "tc/education/weather/forecasting/00137-what-is-the-locationbased-rain-forecast.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00139'] = "tc/education/weather/weather-phenomena/00139-sastrugi.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00140'] = "tc/education/earth-science/optical-phenomena/00140-sun-dogs.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00141'] = "tc/education/weather/weather-and-life/00141-weather-and-influenza.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00142'] = "tc/education/weather/weather-and-life/00142-weather-and-aedes-albopictus.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00143'] = "tc/education/weather/weather-and-life/00143-weather-feng-shui.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00144'] = "tc/education/tropical-cyclone/classification-naming-characteristics/00144-tropical-cyclone-names-in-the-western-north-pacific.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00145'] = "tc/education/tropical-cyclone/classification-naming-characteristics/00145-tropical-cyclone-classification.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00146'] = "tc/education/tropical-cyclone/classification-naming-characteristics/00146-extratropical-cyclone-vs-tropical-cyclone.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00147'] = "tc/education/tropical-cyclone/classification-naming-characteristics/00147-structure-of-typhoons.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00150'] = "tc/education/tropical-cyclone/intensity/00150-why-do-tropical-cyclones-always-form-more-than-5-degrees-of-latitude-away-from-the-equator.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00151'] = "tc/education/tropical-cyclone/intensity/00151-why-do-tropical-cyclones-require-sea-surface-temperatures-of-26suposupc-to-form.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00152'] = "tc/education/tropical-cyclone/intensity/00152-how-to-assess-the-intensity-of-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00153'] = "tc/education/tropical-cyclone/intensity/00153-the-use-of-ship-reports-in-determining-the-intensity-of-a-tropical-cyclone.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00155'] = "tc/education/tropical-cyclone/tracking/00155-why-tropical-cyclone-recurves.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00156'] = "tc/education/tropical-cyclone/tracking/00156-tracking-and-forecasting-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00157'] = "tc/education/tropical-cyclone/tracking/00157-tracking-by-actual-observations.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00158'] = "tc/education/tropical-cyclone/tracking/00158-tracking-by-radar-observations.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00159'] = "tc/education/tropical-cyclone/tracking/00159-tracking-by-satellite-observations.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00160'] = "tc/education/tropical-cyclone/tracking/00160-what-is-fujiwhara-effect.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00161'] = "tc/education/tropical-cyclone/forecasting/00161-typhoon-56-average-number-of-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00162'] = "tc/education/tropical-cyclone/forecasting/00162-forecast-of-tropical-cyclone-tracks-with-ensemble-forecast.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00163'] = "tc/education/tropical-cyclone/forecasting/00163-forecasting-yearly-number-of-tropical-cyclones-affecting-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00164'] = "tc/education/tropical-cyclone/forecasting/00164-kidney-and-beach-ball-wind-speed-and-direction-forecast.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00166'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00166-to-the-east-to-the-west-effects-of-landfall-position.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00168'] = "tc/education/aviation-and-marine/marine/00168-what-is-a-storm-surge.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00171'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00171'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00173'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00173-very-hot-weather-ahead-of-an-approaching-tropical-cyclone.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00175'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00175-impact-of-strong-wind-associated-with-tropical-cyclones-on-aviation-operation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00175'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00175-impact-of-strong-wind-associated-with-tropical-cyclones-on-aviation-operation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00176'] = "tc/education/tropical-cyclone/associated-weather-warnings/00176-significant-weather-information-of-tropical-cyclone-tc-sigmet.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00179'] = "tc/education/tropical-cyclone/associated-weather-warnings/00179-tropical-cyclone-season-in-2011-when-would-the-observatory-issue-the-no8-signal.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00181'] = "tc/education/tropical-cyclone/case-studies/00181-occurrence-of-multiple-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00182'] = "tc/education/tropical-cyclone/case-studies/00182-satellite-imagery-of-super-typhoon-nida.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00183'] = "tc/education/tropical-cyclone/case-studies/00183-changes-in-typhoon-nuri-during-landfall-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00184'] = "tc/education/tropical-cyclone/case-studies/00184-the-storm-surge-brought-by-typhoon-hagupit.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00187'] = "tc/education/meteorological-instruments/weather-radar/00187-extraordinary-lightning-protection-system-for-weather-radar-stations.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00188'] = "tc/education/meteorological-instruments/weather-radar/00188-on-terminal-doppler-weather-radar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00189'] = "tc/education/meteorological-instruments/weather-radar/00189-what-is-a-weather-radar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00192'] = "tc/education/meteorological-instruments/weather-radar/00192-weather-radar-observations-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00196'] = "tc/education/meteorological-instruments/meteorological-satellite/00196-what-is-a-meteorological-satellite.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00200'] = "tc/education/meteorological-instruments/meteorological-satellite/00200-monitoring-of-volcanic-ash.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00201'] = "tc/education/meteorological-instruments/meteorological-satellite/00201-meteorological-satellite-reception-system-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00203'] = "tc/education/meteorological-instruments/meteorological-satellite/00203-polarorbiting-meteorological-satellite-images.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00206'] = "tc/education/aviation-and-marine/aviation/00206-severe-thunderstorms-bringing-hazard-to-aviation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00207'] = "tc/education/aviation-and-marine/aviation/00207-aviation-weather-observation-and-reports.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00208'] = "tc/education/aviation-and-marine/aviation/00208-crosswind-and-aviation-safety.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00209'] = "tc/education/aviation-and-marine/aviation/00209-roadblocks-in-the-sky-convective-weather-impact-on-aircraft.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00210'] = "tc/education/aviation-and-marine/aviation/00210-nocturnal-jet.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00212'] = "tc/education/aviation-and-marine/aviation/00212-advantages-of-short-range-lidar-in-windshear-alerting.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00221'] = "tc/education/aviation-and-marine/aviation/00221-what-is-clearair-turbulence.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00231'] = "/tc/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/tc/education/aviation-and-marine/aviation/00231-tsunami-monitoring-in-hong-kong.html'] = "/tc/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/tc/education/aviation-and-marine/marine/00231-tsunami-monitoring-in-hong-kong.html'] = "/tc/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/tc/education/article.htm?title=ele_00232'] = "tc/education/earth-science/physics-in-daily-life/00232-why-are-waves-always-parallel-to-the-shore-on-approaching-the-seashore.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00232'] = "tc/education/earth-science/physics-in-daily-life/00232-why-are-waves-always-parallel-to-the-shore-on-approaching-the-seashore.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00245'] = "tc/education/climate/climatological-information-of-hong-kong/00245-where-is-the-coldest-place-in-hong-kong-on-average-why.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00246'] = "tc/education/climate/general-climatology/00246-volcanoes-weather-and-climate.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00247'] = "tc/education/climate/general-climatology/00247-last-time-it-snowed-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00249'] = "tc/education/climate/general-climatology/00249-what-is-climate-normal.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00250'] = "tc/education/climate/general-climatology/00250-what-is-carbon-cycle.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00251'] = "tc/education/climate/general-climatology/00251-a-new-frontier-for-aviation-meteorology-support-carbon-reduction-in-the-air.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00254'] = "tc/education/climate/general-climatology/00254-a-brief-introduction-to-standardized-precipitation-indexspi.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00256'] = "tc/education/climate/general-climatology/00256-what-are-the-ozone-conditions-now-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00261'] = "tc/education/climate/general-climatology/00261-onset-of-southwest-monsoon-end-of-the-fog-season-and-start-of-the-rain-season.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00268'] = "tc/education/climate/climate-change/00268-cold-winter-in-20092010-global-cooling.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00275'] = "tc/education/climate/climate-change/00275-new-record-low-for-arctic-sea-ice.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00276'] = "tc/education/climate/climate-change/00276-under-the-influence-of-global-warming-are-tropical-cyclone-activities-changing.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00277'] = "tc/education/climate/climate-change/00277-can-the-warming-of-the-20th-century-be-explained-by-natural-factors.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00290'] = "tc/education/radiation/ionizing-radiation/00290-the-phantom-of-the-atoms-alpha-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00291'] = "tc/education/radiation/ionizing-radiation/00291-halflife.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00292'] = "tc/education/radiation/ionizing-radiation/00292-curie-and-radioactivity.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00294'] = "tc/education/radiation/ionizing-radiation/00294-radiation-from-wind-and-rain.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00295'] = "tc/education/radiation/ionizing-radiation/00295-exposure-to-cosmic-radiation-during-air-travel.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00296'] = "tc/education/radiation/ionizing-radiation/00296-radiation-emitted-by-human-body-thermal-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00298'] = "tc/education/radiation/ionizing-radiation/00298-variations-in-the-environmental-radiation-levels-around-the-world.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00299'] = "tc/education/radiation/monitoring-and-assessment/00299-trajectory-analysis-on-the-transport-of-radioactive-substances-to-hong-kong-arising-from-the-fukushima-nuclear-accident.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00304'] = "tc/education/radiation/ionizing-radiation/00304-radioactive-polonium210.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00306'] = "tc/education/radiation/ionizing-radiation/00306-radon.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00307'] = "tc/education/radiation/ionizing-radiation/00307-what-is-caesium137.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00308'] = "tc/education/radiation/ionizing-radiation/00308-dirty-bomb.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00309'] = "tc/education/radiation/ionizing-radiation/00309-how-to-determine-the-age-of-an-antique.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00310'] = "tc/education/radiation/ionizing-radiation/00310-glossary-on-radiation-terminology-and-radiation-reference-materials.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00311'] = "tc/education/radiation/nuclear-power/00311-how-safe-are-the-nuclear-power-stations-at-daya-bay.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00314'] = "tc/education/radiation/nuclear-power/00314-inexhaustible-supply-of-nuclear-energy.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00315'] = "tc/education/radiation/nuclear-power/00315-the-use-of-nuclear-fusion-technology-in-the-21st-century.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00317'] = "tc/education/radiation/monitoring-and-assessment/00317-how-was-cosmic-radiation-discovered-and-how-does-the-hong-kong-observatory-measure-cosmic-rays.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00318'] = "tc/education/radiation/monitoring-and-assessment/00318-radiation-contamination-monitoring-system.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00320'] = "tc/education/radiation/monitoring-and-assessment/00320-monitoring-of-radioactive-substances.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00327'] = "tc/education/radiation/monitoring-and-assessment/00327-the-chernobyl-forum-major-findings-and-recommendations.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00332'] = "tc/education/radiation/radiological-effects/00332-relative-vulnerability-to-human-body-of-some-common-ionizing-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00333'] = "tc/education/radiation/radiological-effects/00333-effect-of-radiation-on-human-beings.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00339'] = "tc/education/radiation/radiation-protection/00339-safety-inspection-of-radiation-laboratory.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00340'] = "tc/education/radiation/radiation-protection/00340-wireless-networking-communication-products-how-safe-are-they.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00341'] = "tc/education/earth-science/general/00341-the-art-of-mother-nature-wind-water-landscape.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00342'] = "tc/education/earth-science/general/00342-how-deep-is-the-earth-and-what-is-at-its-centre.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00343'] = "tc/education/earth-science/general/00343-what-is-isostasy.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00344'] = "tc/education/earth-science/general/00344-the-development-of-biofuels.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00345'] = "tc/education/earth-science/general/00345-more-on-tides.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00346'] = "tc/education/earth-science/general/00346-know-more-about-tides.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00347'] = "tc/education/earth-science/optical-phenomena/00347-sun-dogs-hovering-over-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00348'] = "tc/education/earth-science/optical-phenomena/00348-the-mysterious-glory.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00349'] = "tc/education/earth-science/optical-phenomena/00349-colours-of-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00352'] = "tc/education/earth-science/optical-phenomena/00352-what-is-cerenkov-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00353'] = "tc/education/earth-science/optical-phenomena/00353-indepth-anatomy-of-the-atmospheric-optical-phenomenon-sun-dog.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00354'] = "tc/education/earth-science/optical-phenomena/00354-why-is-candlelight-yellow-and-gasgrill-light-blue.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00355'] = "tc/education/earth-science/optical-phenomena/00355-what-are-primary-colours.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00356'] = "tc/education/earth-science/optical-phenomena/00356-why-do-stars-twinkle.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00357'] = "tc/education/earth-science/optical-phenomena/00357-what-is-the-colour-of-water.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00358'] = "tc/education/earth-science/optical-phenomena/00358-which-is-darker-coarse-sand-or-fine-sand.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00359'] = "tc/education/earth-science/optical-phenomena/00359-why-are-spectacles-or-camera-lens-so-difficult-to-clean.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00360'] = "tc/education/earth-science/optical-phenomena/00360-red-eye-and-glory.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00361'] = "tc/education/earth-science/optical-phenomena/00361-why-do-breaking-waves-appear-white.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00362'] = "tc/education/earth-science/optical-phenomena/00362-why-does-wet-sand-look-darker-than-dry-sand.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00363'] = "tc/education/earth-science/optical-phenomena/00363-obscured-hills-why-is-a-distant-hill-less-distinct-than-a-near-one.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00364'] = "tc/education/earth-science/optical-phenomena/00364-why-is-the-sky-blue.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00365'] = "tc/education/earth-science/optical-phenomena/00365-what-causes-a-rainbow.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00366'] = "tc/education/earth-science/optical-phenomena/00366-why-is-the-region-outside-the-primary-rainbow-much-darker-than-that-inside-the-primary-rainbow.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00368'] = "tc/education/earth-science/optical-phenomena/00368-moonlit-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00369'] = "tc/education/climate/general-climatology/00369-an-introduction-to-phenology.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00371'] = "tc/education/earth-science/earthquake/00371-a-groundbreaking-tidal-story.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00372'] = "tc/education/earth-science/earthquake/00372-earthquake-monitoring-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00376'] = "tc/education/earth-science/earthquake/00376-records-of-felt-earth-tremors-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00381'] = "tc/education/earth-science/earthquake/00381-what-have-earthquakes-to-do-with-the-earths-climate.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00386'] = "tc/education/earth-science/physics-in-daily-life/00386-sounds-in-the-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00387'] = "tc/education/aviation-and-marine/aviation/00387-in-the-wake-of-a-duck.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00388'] = "tc/education/earth-science/physics-in-daily-life/00388-why-are-steel-and-stone-bridges-arched-in-opposite-directions-one-upward-and-one-downward.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00390'] = "tc/education/earth-science/physics-in-daily-life/00390-science-in-coffee-and-tea.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00391'] = "tc/education/earth-science/physics-in-daily-life/00391-the-physics-of-gurgling.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00392'] = "tc/education/earth-science/physics-in-daily-life/00392-the-science-of-slit-eyes.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00394'] = "tc/education/earth-science/physics-in-daily-life/00394-bubbles-in-a-soft-drink-part-ii.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00395'] = "tc/education/earth-science/physics-in-daily-life/00395-bubbles-in-a-soft-drink-part-i.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00397'] = "tc/education/earth-science/physics-in-daily-life/00397-weather-forecasting-knee-does-it-exist.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00402'] = "tc/education/astronomy-and-time/astronomy/00402-what-is-a-comet.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00405'] = "tc/education/astronomy-and-time/astronomy/00405-apparent-motion-of-planets-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00406'] = "tc/education/astronomy-and-time/astronomy/00406-what-is-opposition-of-jupiter.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00407'] = "tc/education/astronomy-and-time/astronomy/00407-what-is-parade-of-the-five-planets.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00408'] = "tc/education/astronomy-and-time/astronomy/00408-what-is-twilight.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00409'] = "tc/education/astronomy-and-time/time-service/00409-astronomical-time-and-atomic-time.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00413'] = "tc/education/astronomy-and-time/time-service/00413-the-chinese-agricultural-calendar-explained.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00415'] = "tc/education/space-weather/general/00415-space-weather-an-introduction.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00416'] = "tc/education/space-weather/general/00416-body-checking-the-sun-3d-images.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00418'] = "tc/education/space-weather/general/00418-why-can-the-sun-persistently-produce-energy-for-the-stable-output-of-light-and-heat.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00419'] = "tc/education/space-weather/general/00419-shock-wave.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00420'] = "tc/education/space-weather/general/00420-origin-of-solar-flare.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00421'] = "tc/education/space-weather/general/00421-spectacular-fireworks-show-on-the-sun.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00424'] = "tc/education/space-weather/general/00424-the-relationship-between-sunspot-activity-and-the-reversal-of-the-suns-magnetic-polarity.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00425'] = "tc/education/space-weather/effects-of-space-weather/00425-effects-of-space-weather.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00426'] = "tc/education/space-weather/effects-of-space-weather/00426-effect-of-solar-activities-to-the-earths-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00427'] = "tc/education/space-weather/effects-of-space-weather/00427-atmospheric-drag-on-the-motion-of-satellites.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00429'] = "tc/education/space-weather/effects-of-space-weather/00429-space-weather-and-polar-flights.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00430'] = "tc/education/space-weather/effects-of-space-weather/00430-the-possible-effects-on-earths-climate-by-the-solar-spectral-change-in-a-solar-cycle.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00432'] = "tc/education/space-weather/space-weather-events/00432-from-space-weather-to-earths-weather-a-discussion-of-the-effects-of-sunspots-on-the-unusually-cold-winter-of-20102011.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00433'] = "tc/education/space-weather/space-weather-events/00433-extreme-space-weather-events-in-history.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00435'] = "tc/education/space-weather/space-weather-events/00435-intense-solar-activity-in-september-2005.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00436'] = "tc/education/space-weather/monitoring-and-warnings/00436-space-weather-alert-categorization.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00437'] = "tc/education/space-weather/monitoring-and-warnings/00437-how-is-space-weather-monitored-the-latest-prediction-of-soloar-activity.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00441'] = "tc/education/earth-science/geomagnetism/00441-geomagnetism.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00442'] = "tc/education/climate/climate-change/00442-is-the-melting-of-glaciers-in-west-antarctica-unstoppable.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00443'] = "tc/education/weather/sunshine-and-uv/00443-solar-energy-resources-in-hong-kong-from-a-climatological-point-of-view.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00444'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00444-know-more-about-storm-surge.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00445'] = "tc/education/tropical-cyclone/classification-naming-characteristics/00445-typhoon-and-hurricane.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00446'] = "tc/education/weather/monsoons/00446-will-easterlies-bring-a-fine-or-gloomy-day.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00447'] = "tc/education/weather/weather-and-life/00447-get-to-know-more-channels-for-acquiring-weather-information.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00448'] = "tc/education/weather/forecasting/00448-swirls-nowcasting-system.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00449'] = "tc/education/weather/wind-and-pressure/00449-the-higher-the-place-the-stronger-the-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00450'] = "tc/education/weather/data-and-technology/00450-weather-services-and-it-security.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00451'] = "tc/education/meteorological-instruments/automatic-weather-stations/00451-portable-upperair-sounding-system.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00452'] = "tc/education/climate/general-climatology/00452-upper-air-ozone-monitoring-by-the-observatory.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00453'] = "tc/education/weather/monsoons/00453-who-has-stolen-our-permafrost-tundra.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00453'] = "tc/education/weather/monsoons/00453-who-has-stolen-our-permafrost-tundra.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00454'] = "tc/education/meteorological-instruments/automatic-weather-stations/00454-conventional-instruments-installed-at-an-automatic-weather-station-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00455'] = "tc/education/radiation/radiological-effects/00455-medical-radiation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00456'] = "tc/education/meteorological-instruments/meteorological-satellite/00456-how-does-a-satellite-measure-the-vertical-profiles-in-the-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00457'] = "tc/education/aviation-and-marine/aviation/00457-terraininduced-windshear-turbulence-over-the-hong-kong-international-airport.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00458'] = "tc/education/meteorological-instruments/weather-radar/00458-profiling-rain-areas-using-radar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00459'] = "tc/education/tropical-cyclone/weather-effects-and-impact/00459-can-aircraft-takeoff-and-land-at-the-hong-kong-international-airport-under-the-influence-of-a-tropical-cyclone.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00460'] = "tc/education/tropical-cyclone/tracking/00460-interactions-between-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00461'] = "tc/education/weather/weather-phenomena/00461--winds-freshening-from-the-east-later-with-a-few-rain-patches-in-weather-forecasts.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00462'] = "tc/education/aviation-and-marine/aviation/00462-the-impact-of-global-warming-on-aviation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00463'] = "tc/education/aviation-and-marine/aviation/00463-the-tail-of-an-aircraft.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00464'] = "tc/education/weather/clouds/00464-arcus-cloud.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00465'] = "tc/education/weather/clouds/00465-asperitas-appearing-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00466'] = "tc/education/weather/clouds/00466-pileus-cloud.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00467'] = "tc/education/weather/clouds/00467-iridescent-cloud.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00468'] = "tc/education/weather/clouds/00468-mountain-wave-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00469'] = "tc/education/climate/climatological-information-of-hong-kong/00469-34dual-standard34-of-climatological-normals.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00470'] = "tc/education/astronomy-and-time/time-service/00470-a-brief-history-about-the-authoritative-organizations-for-compiling-calendar-in-china.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00471'] = "tc/education/climate/climatological-information-of-hong-kong/00471-recordbreaking-summer-temperatures-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00472'] = "tc/education/weather/clouds/00472-fallstreak-hole.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00473'] = "tc/education/earth-science/physics-in-daily-life/00473-supercooling-and-superheating.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00475'] = "tc/education/weather/weather-and-life/00475-happy-hiking-with-myobservatory.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00476'] = "tc/education/weather/data-and-technology/00476-processing-and-preservation-of-meteorological-observation-data.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00477'] = "tc/education/weather/forecasting/00477-your-weather-crystal-ball.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00478'] = "tc/education/weather/meteorology-basics/00478-what-is-upperair-disturbance.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00479'] = "tc/education/weather/data-and-technology/00479-abc-of-meteorological-data-encoding.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00480'] = "tc/education/weather/weather-phenomena/00480-hong-kong-at-freezing-point-historical-perspective.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00481'] = "tc/education/weather/weather-phenomena/00481-hong-kong-at-freezing-point-observation-perspective.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00482'] = "tc/education/weather/weather-phenomena/00482-cloudy-morning-or-foggy-night-high-resolution-upperair-observations-help-catch-them-right.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00483'] = "tc/education/radiation/ionizing-radiation/00483-becquerel-and-curie.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00484'] = "tc/education/weather/clouds/00484-waterfalllike-orographic-clouds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00485'] = "tc/education/space-weather/space-weather-events/00485-the-revelation-of-a-thinning-martian-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00486'] = "tc/education/weather/forecasting/00486-does-god-play-dice-v-randomness-in-weather-evolution.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00487'] = "tc/education/weather/weather-phenomena/00487-ice-pellets-v-a-rarely-observed-winter-precipitation-phenomenon-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00488'] = "tc/education/meteorological-instruments/meteorological-satellite/00488-a-new-era-of-meteorological-satellites.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00489'] = "tc/education/astronomy-and-time/astronomy/00489-a-day-that-lasts-one-year.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00490'] = "tc/education/climate/climate-change/00490-milankovitch-cycles.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00491'] = "tc/education/weather/monsoons/00491-monsoon-lows-and-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00492'] = "tc/education/weather/wind-and-pressure/00492-beware-of-gusts.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00493'] = "tc/education/astronomy-and-time/astronomy/00493-effect-of-atmospheric-refraction-on-the-times-of-sunrise-and-sunset.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00494'] = "tc/education/weather/forecasting/00494-temperature-trend-at-fingertips.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00495'] = "tc/education/weather/thunderstorm-and-lightning/00495-observe-the-observatory-to-prevent-lightning-strokes.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00496'] = "tc/education/weather/forecasting/00496-forecasting-extreme-weather.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00497'] = "tc/education/weather/data-and-technology/00497-intelligent-meteorological-monitoring-assistant.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00498'] = "tc/education/weather/data-and-technology/00498-characteristics-of-meteorological-databases.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00499'] = "tc/education/weather/clouds/00499-circumhorizontal-arc.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00501'] = "tc/education/aviation-and-marine/aviation/00501-ice-crystal-icing-a-threat-to-aircraft-engine.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00502'] = "tc/education/tropical-cyclone/tracking/00502-besttrack-a-2020-hindsight.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00503'] = "tc/education/weather/weather-and-life/00503-why-does-food-taste-bland-on-airplanes.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00504'] = "tc/education/meteorological-instruments/automatic-weather-stations/00504-assessing-atmospheric-stability-by-tephigram.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00505'] = "tc/education/aviation-and-marine/marine/00505-on-sea-level-rise-and-abnormal-sea-level-in-hong-kong.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00506'] = "tc/education/astronomy-and-time/time-service/00506-what-year-is-it-today.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00507'] = "tc/education/climate/climate-change/00507-corals-facing-the-double-whammy-brought-about-by-climate-change.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00508'] = "tc/education/tropical-cyclone/tracking/00508-super-computer-super-accurate.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00509'] = "tc/education/climate/general-climatology/00509-what-is-microclimate-.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00510'] = "tc/education/weather/weather-phenomena/00510-waterspout.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00511'] = "tc/education/radiation/monitoring-and-assessment/00511-nuclear-accident-consequence-assessment.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00512'] = "tc/education/astronomy-and-time/astronomy/00512-no-lunar-eclipses-are-identical.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00513'] = "tc/education/weather/forecasting/00513-a-new-milestone-in-weather.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00514'] = "tc/education/weather/thunderstorm-and-lightning/00514-can-outdoor-activities-continue-under-thunderstorm-warning.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00515'] = "tc/education/weather/data-and-technology/00515-exploring-big-data-for-weatherrelated-societal-impact-assessment.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00516'] = "tc/education/weather/forecasting/00516-maintaining-high-availability-of-hong-kong-observatory-operational-computer-systems.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00517'] = "tc/education/weather/weather-and-life/00517-meteorologist-x-artist.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00518'] = "tc/education/tropical-cyclone/tracking/00518-tropical-cyclone-track-probability-forecast.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00519'] = "tc/education/meteorological-instruments/meteorological-satellite/00519-how-to-measure-cloud-top-height-from-a-meteorological-satellite.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00520'] = "tc/education/aviation-and-marine/aviation/00520-icao-meteorological-information-exchange-model-101.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00521'] = "tc/education/meteorological-instruments/automatic-weather-stations/00521-inversion-layer-impose-its-own-bounds.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00522'] = "tc/education/meteorological-instruments/weather-radar/00522-how-to-interpret-velocity-field-from-doppler-weather-radar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00523'] = "tc/education/aviation-and-marine/marine/00523-how-to-measure-tide-level-and-storm-surge.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00524'] = "tc/education/aviation-and-marine/marine/00524-storm-surge-and-sea-waves.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00525'] = "tc/education/climate/general-climatology/00525-why-carbon-dioxide-is-a-greenhouse-gas.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00526'] = "tc/education/meteorological-instruments/automatic-weather-stations/00526-thermometers-under-the-shed.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00527'] = "tc/education/tropical-cyclone/tracking/00527-data-for-tracking-tropical-cyclones.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00528'] = "tc/education/tropical-cyclone/tracking/00528-tropical-cyclone-forecast-track-information.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00529'] = "tc/education/weather/wind-and-pressure/00529-gust-vs-sustained-wind.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00530'] = "tc/education/weather/data-and-technology/00530-using-the-observatorys-app-to-cope-with-extreme-situation.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00531'] = "tc/education/weather/forecasting/00531-hong-kong-observatory-using-nowcasting-to-support-drainage-services-department.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00532'] = "tc/education/weather/forecasting/00532-conveying-highimpact-weather-forecasts-with-uncertainties-a-new-challenge-for-public-communication.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_140603'] = "tc/education/aviation-and-marine/aviation/140603-a-brief-account-of-aircraft-icing.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00537'] = "tc/education/aviation-and-marine/aviation/00537-collaboration-of-aviation-weather-services-in-issuance-of-sigmet.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00534'] = "tc/education/aviation-and-marine/aviation/00534-st-elmos-fire-as-seen-from-aircraft.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00535'] = "tc/education/aviation-and-marine/aviation/00535-magnetism-of-airport-runways.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00538'] = "tc/education/meteorological-instruments/weather-radar/00538-use-of-building-information-modelling-to-help-maintain-weather-radar.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00536'] = "tc/education/weather/meteorology-basics/00536-ripples-in-the-atmosphere.html";
+fast_redirecturl['/tc/education/article.htm?title=ele_00533'] = "tc/education/weather/rain/00533-the-shape-of-raindrops.html";
+
+fast_redirecturl['/en/education/article.htm?title=ele_00001'] = "en/education/weather/meteorology-basics/00001-what-is-a-trough.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00002'] = "en/education/weather/meteorology-basics/00002-fronts-and-weather.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00003'] = "en/education/weather/meteorology-basics/00003-what-is-foehn-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00004'] = "en/education/weather/meteorology-basics/00004-what-is-radiation-cooling.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00008'] = "en/education/weather/meteorology-basics/00008-what-is-gravity-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00009'] = "en/education/weather/meteorology-basics/00009-convergence-and-divergence.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00010'] = "en/education/weather/meteorology-basics/00010-geostrophic-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00011'] = "en/education/weather/meteorology-basics/00011-glossary-of-some-meteorological-terms.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00012'] = "en/education/weather/thunderstorm-and-lightning/00012-predict-lightning-positions-by-tracking-thunderstorms-airport-thunderstorm-and-lightning-alerting-system.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00013'] = "en/education/weather/thunderstorm-and-lightning/00013-does-lightning-always-strike-the-tallest-object.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00014'] = "en/education/weather/thunderstorm-and-lightning/00014-the-physics-of-lightning.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00015'] = "en/education/weather/thunderstorm-and-lightning/00015-dont-be-a-lightning-rod.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00016'] = "en/education/weather/thunderstorm-and-lightning/00016-how-to-determine-the-lightning-location.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00017'] = "en/education/weather/thunderstorm-and-lightning/00017-how-to-detect-lightning.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00018'] = "en/education/weather/thunderstorm-and-lightning/00018-what-is-cloudtocloud-lightning.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00019'] = "en/education/weather/thunderstorm-and-lightning/00019-what-is-a-dry-thunderstorm.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00020'] = "en/education/weather/thunderstorm-and-lightning/00020-why-we-cannot-hear-the-thunder-of-a-distant-lightning.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00021'] = "en/education/weather/thunderstorm-and-lightning/00021-why-does-lightning-always-come-before-thunder.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00022'] = "en/education/weather/thunderstorm-and-lightning/00022-why-lightning-looks-the-way-it-does-crooked-and-forked.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00023'] = "en/education/weather/thunderstorm-and-lightning/00023-why-does-a-thunder-sound-the-way-it-does.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00025'] = "en/education/weather/thunderstorm-and-lightning/00025-microburst-induced-by-thunderstorms.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00027'] = "en/education/weather/thunderstorm-and-lightning/00027-northwest-shi-hu-feng-and-northeast-shi-hu-feng.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00028'] = "en/education/weather/thunderstorm-and-lightning/00028-why-do-squalls-suddenly-blow-ahead-of-thunderstorms.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00030'] = "en/education/weather/thunderstorm-and-lightning/00030-squall-lines-and-shi-hu-feng-what-you-want-to-know-about-the-violent-squalls-hitting-hong-kong-on-9-may-2005.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00031'] = "en/education/weather/thunderstorm-and-lightning/00031-what-are-thunderstorms.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00036'] = "en/education/weather/weather-phenomena/00036-a-rare-spectacular-sight-of-rime-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00037'] = "en/education/weather/weather-phenomena/00037-frost-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00039'] = "en/education/weather/weather-phenomena/00039-the-looks-of-water-in-spring.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00040'] = "en/education/weather/weather-phenomena/00040-the-looks-of-water-in-summer.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00041'] = "en/education/weather/weather-phenomena/00041-the-looks-of-water-in-autumn.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00042'] = "en/education/weather/weather-phenomena/00042-the-looks-of-water-in-winter.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00043'] = "en/education/weather/rain/00043-interesting-statistics-on-rainstorm-warning-signals.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00044'] = "en/education/weather/rain/00044-why-does-it-rain.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00045'] = "en/education/weather/rain/00045-why-is-there-more-rain-in-tai-mo-shan-.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00046'] = "en/education/weather/hot-and-cold-weather/00046-a-chat-of-very-hot-weather.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00047'] = "en/education/weather/hot-and-cold-weather/00047-the-wind-chill-effect.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00171'] = "en/education/aviation-and-marine/marine/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00048'] = "en/education/weather/hot-and-cold-weather/00048-an-abrupt-change-of-weather-due-to-the-passage-of-a-severe-cold-front.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00049'] = "en/education/weather/hot-and-cold-weather/00049-the-2008-south-china-snow-storm-and-the-cold-weather-of-hong-kong-a-retrospect.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00054'] = "en/education/weather/weather-warnings/00054-the-tropical-cyclone-warning-system-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00068'] = "en/education/weather/monsoons/00068-why-the-winter-monsoon-in-hong-kong-is-generally-called-the-northeast-monsoon.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00070'] = "en/education/weather/monsoons/00070-winter-monsoon-from-the-perspective-of-strong-monsoon-signal.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00071'] = "en/education/weather/monsoons/00071-the-northeast-monsoon-and-its-effects-to-the-weather-of-southern-china-in-autumn.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00072'] = "en/education/weather/monsoons/00072-the-monsoons-and-climate-change.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00074'] = "en/education/weather/monsoons/00074-effects-of-winter-monsoon.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00076'] = "en/education/weather/monsoons/00076-combined-effect-of-tropical-cyclone-and-northeast-monsoon.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00077'] = "en/education/weather/folklore/00077-morning-thunder-seldom-lasts-till-noon-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00078'] = "en/education/weather/folklore/00078-sleeping-in-springtime-oblivious-of-dawn-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00079'] = "en/education/weather/folklore/00079-the-higher-you-climb-the-colder-it-gets-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00080'] = "en/education/weather/folklore/00080-mackerel-sky-not-twentyfour-hours-dry-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00081'] = "en/education/weather/folklore/00081-the-kind-of-cloud-brings-the-kind-of-rain.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00082'] = "en/education/weather/folklore/00082-red-sky-in-the-morning-sailors-take-warning-red-sky-at-night-sailors-delight-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00083'] = "en/education/weather/visibility/00083-effects-of-low-visibility-to-aviation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00083'] = "en/education/weather/visibility/00083-effects-of-low-visibility-to-aviation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00084'] = "en/education/weather/visibility/00084-upslope-fog.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00085'] = "en/education/weather/visibility/00085-visibility-observations-by-light-detection-and-ranging-system-lidar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00086'] = "en/education/weather/visibility/00086-regional-variations-in-visibility-over-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00087'] = "en/education/weather/visibility/00087-more-on-fog.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00088'] = "en/education/weather/visibility/00088-use-of-fog-a-source-of-water-supply.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00089'] = "en/education/weather/visibility/00089-influence-of-tropical-cyclones-on-visibility-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00089'] = "en/education/weather/visibility/00089-influence-of-tropical-cyclones-on-visibility-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00090'] = "en/education/weather/visibility/00090-fog-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00091'] = "en/education/weather/visibility/00091-haze-as-a-result-of-northeast-monsoon.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00092'] = "en/education/weather/visibility/00092-duststorms-over-northeastern-china-8-april-2002.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00093'] = "en/education/weather/visibility/00093-duststorms-over-northern-china-and-the-east-china-sea-21-march-2002.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00094'] = "en/education/weather/visibility/00094-haboobs.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00095'] = "en/education/weather/clouds/00095-cloud-street-and-vortex-street.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00096'] = "en/education/weather/clouds/00096-clouds-of-gloomy-weather-stratus.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00097'] = "en/education/weather/clouds/00097-the-classification-and-nomenclature-of-clouds-3-the-forms-and-features-of-medium-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00098'] = "en/education/weather/clouds/00098-the-classification-and-nomenclature-of-clouds-2-the-forms-and-features-of-high-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00099'] = "en/education/weather/clouds/00099-the-classification-and-nomenclature-of-clouds-1.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00100'] = "en/education/weather/clouds/00100-cap-cloud.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00101'] = "en/education/weather/clouds/00101-cirrus.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00102'] = "en/education/weather/clouds/00102-stratocumulus-undulatus.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00103'] = "en/education/weather/clouds/00103-stratocumulus-cloud-in-summertime.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00104'] = "en/education/weather/clouds/00104-cumulus-congestus-cloud.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00105'] = "en/education/weather/clouds/00105-cumulus-a-play-in-the-sky.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00107'] = "en/education/weather/clouds/00107-lenticular-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00111'] = "en/education/weather/wind-and-pressure/00111-the-origin-of-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00112'] = "en/education/weather/wind-and-pressure/00112-beaufort-wind-scale.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00114'] = "en/education/weather/wind-and-pressure/00114-measurement-of-upper-air-winds-wind-profiler.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00115'] = "en/education/tropical-cyclone/intensity/00115-aircraft-meteorological-observation-for-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00116'] = "en/education/weather/wind-and-pressure/00116-introduction-to-air-pressure-part-i.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00117'] = "en/education/weather/wind-and-pressure/00117-introduction-to-air-pressure-part-ii.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00118'] = "en/education/weather/sunshine-and-uv/00118-how-to-measure-sunshine-duration.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00120'] = "en/education/weather/sunshine-and-uv/00120-ultraviolet-radiation-at-high-altitude.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00121'] = "en/education/weather/sunshine-and-uv/00121-tips-for-sunburn-protection-in-summer.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00122'] = "en/education/weather/sunshine-and-uv/00122-what-is-uva.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00123'] = "en/education/weather/sunshine-and-uv/00123-some-statistics-on-uv-index.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00124'] = "en/education/weather/sunshine-and-uv/00124-special-care-for-children-in-the-sun.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00125'] = "en/education/weather/sunshine-and-uv/00125-sun-protective-clothing-for-summer.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00126'] = "en/education/weather/sunshine-and-uv/00126-myths-about-protection-against-uv-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00127'] = "en/education/weather/sunshine-and-uv/00127-harmful-and-beneficial-effects-of-uv-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00128'] = "en/education/weather/sunshine-and-uv/00128-do-we-get-sunburned-on-a-cloudy-day.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00129'] = "en/education/weather/sunshine-and-uv/00129-more-about-sunburn-protection-sunburn-and-spf-part-2.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00130'] = "en/education/weather/sunshine-and-uv/00130-sunburn-and-spf.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00132'] = "en/education/weather/forecasting/00132-simulating-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00133'] = "en/education/weather/forecasting/00133-the-dwarfs-behind-numerical-weather-prediction.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00134'] = "en/education/weather/forecasting/00134-formulation-of-weather-forecasts.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00136'] = "en/education/weather/forecasting/00136-butterfly-effect-model-ensemble-and-probabilistic-forecast.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00137'] = "en/education/weather/forecasting/00137-what-is-the-locationbased-rain-forecast.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00139'] = "en/education/weather/weather-phenomena/00139-sastrugi.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00140'] = "en/education/earth-science/optical-phenomena/00140-sun-dogs.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00141'] = "en/education/weather/weather-and-life/00141-weather-and-influenza.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00142'] = "en/education/weather/weather-and-life/00142-weather-and-aedes-albopictus.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00143'] = "en/education/weather/weather-and-life/00143-weather-feng-shui.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00144'] = "en/education/tropical-cyclone/classification-naming-characteristics/00144-tropical-cyclone-names-in-the-western-north-pacific.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00145'] = "en/education/tropical-cyclone/classification-naming-characteristics/00145-tropical-cyclone-classification.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00146'] = "en/education/tropical-cyclone/classification-naming-characteristics/00146-extratropical-cyclone-vs-tropical-cyclone.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00147'] = "en/education/tropical-cyclone/classification-naming-characteristics/00147-structure-of-typhoons.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00150'] = "en/education/tropical-cyclone/intensity/00150-why-do-tropical-cyclones-always-form-more-than-5-degrees-of-latitude-away-from-the-equator.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00151'] = "en/education/tropical-cyclone/intensity/00151-why-do-tropical-cyclones-require-sea-surface-temperatures-of-26suposupc-to-form.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00152'] = "en/education/tropical-cyclone/intensity/00152-how-to-assess-the-intensity-of-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00153'] = "en/education/tropical-cyclone/intensity/00153-the-use-of-ship-reports-in-determining-the-intensity-of-a-tropical-cyclone.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00155'] = "en/education/tropical-cyclone/tracking/00155-why-tropical-cyclone-recurves.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00156'] = "en/education/tropical-cyclone/tracking/00156-tracking-and-forecasting-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00157'] = "en/education/tropical-cyclone/tracking/00157-tracking-by-actual-observations.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00158'] = "en/education/tropical-cyclone/tracking/00158-tracking-by-radar-observations.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00159'] = "en/education/tropical-cyclone/tracking/00159-tracking-by-satellite-observations.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00160'] = "en/education/tropical-cyclone/tracking/00160-what-is-fujiwhara-effect.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00161'] = "en/education/tropical-cyclone/forecasting/00161-typhoon-56-average-number-of-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00162'] = "en/education/tropical-cyclone/forecasting/00162-forecast-of-tropical-cyclone-tracks-with-ensemble-forecast.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00163'] = "en/education/tropical-cyclone/forecasting/00163-forecasting-yearly-number-of-tropical-cyclones-affecting-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00164'] = "en/education/tropical-cyclone/forecasting/00164-kidney-and-beach-ball-wind-speed-and-direction-forecast.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00166'] = "en/education/tropical-cyclone/weather-effects-and-impact/00166-to-the-east-to-the-west-effects-of-landfall-position.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00168'] = "en/education/aviation-and-marine/marine/00168-what-is-a-storm-surge.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00171'] = "en/education/tropical-cyclone/weather-effects-and-impact/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00171'] = "en/education/tropical-cyclone/weather-effects-and-impact/00171-swells-from-distant-typhoons.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00173'] = "en/education/tropical-cyclone/weather-effects-and-impact/00173-very-hot-weather-ahead-of-an-approaching-tropical-cyclone.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00175'] = "en/education/tropical-cyclone/weather-effects-and-impact/00175-impact-of-strong-wind-associated-with-tropical-cyclones-on-aviation-operation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00175'] = "en/education/tropical-cyclone/weather-effects-and-impact/00175-impact-of-strong-wind-associated-with-tropical-cyclones-on-aviation-operation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00176'] = "en/education/tropical-cyclone/associated-weather-warnings/00176-significant-weather-information-of-tropical-cyclone-tc-sigmet.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00179'] = "en/education/tropical-cyclone/associated-weather-warnings/00179-tropical-cyclone-season-in-2011-when-would-the-observatory-issue-the-no8-signal.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00181'] = "en/education/tropical-cyclone/case-studies/00181-occurrence-of-multiple-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00182'] = "en/education/tropical-cyclone/case-studies/00182-satellite-imagery-of-super-typhoon-nida.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00183'] = "en/education/tropical-cyclone/case-studies/00183-changes-in-typhoon-nuri-during-landfall-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00184'] = "en/education/tropical-cyclone/case-studies/00184-the-storm-surge-brought-by-typhoon-hagupit.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00187'] = "en/education/meteorological-instruments/weather-radar/00187-extraordinary-lightning-protection-system-for-weather-radar-stations.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00188'] = "en/education/meteorological-instruments/weather-radar/00188-on-terminal-doppler-weather-radar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00189'] = "en/education/meteorological-instruments/weather-radar/00189-what-is-a-weather-radar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00192'] = "en/education/meteorological-instruments/weather-radar/00192-weather-radar-observations-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00196'] = "en/education/meteorological-instruments/meteorological-satellite/00196-what-is-a-meteorological-satellite.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00200'] = "en/education/meteorological-instruments/meteorological-satellite/00200-monitoring-of-volcanic-ash.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00201'] = "en/education/meteorological-instruments/meteorological-satellite/00201-meteorological-satellite-reception-system-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00203'] = "en/education/meteorological-instruments/meteorological-satellite/00203-polarorbiting-meteorological-satellite-images.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00206'] = "en/education/aviation-and-marine/aviation/00206-severe-thunderstorms-bringing-hazard-to-aviation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00207'] = "en/education/aviation-and-marine/aviation/00207-aviation-weather-observation-and-reports.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00208'] = "en/education/aviation-and-marine/aviation/00208-crosswind-and-aviation-safety.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00209'] = "en/education/aviation-and-marine/aviation/00209-roadblocks-in-the-sky-convective-weather-impact-on-aircraft.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00210'] = "en/education/aviation-and-marine/aviation/00210-nocturnal-jet.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00212'] = "en/education/aviation-and-marine/aviation/00212-advantages-of-short-range-lidar-in-windshear-alerting.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00221'] = "en/education/aviation-and-marine/aviation/00221-what-is-clearair-turbulence.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00231'] = "/en/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/en/education/aviation-and-marine/aviation/00231-tsunami-monitoring-in-hong-kong.html'] = "/en/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/en/education/aviation-and-marine/marine/00231-tsunami-monitoring-in-hong-kong.html'] = "/en/gts/equake/tsunami_mon.htm";
+fast_redirecturl['/en/education/article.htm?title=ele_00232'] = "en/education/earth-science/physics-in-daily-life/00232-why-are-waves-always-parallel-to-the-shore-on-approaching-the-seashore.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00232'] = "en/education/earth-science/physics-in-daily-life/00232-why-are-waves-always-parallel-to-the-shore-on-approaching-the-seashore.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00245'] = "en/education/climate/climatological-information-of-hong-kong/00245-where-is-the-coldest-place-in-hong-kong-on-average-why.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00246'] = "en/education/climate/general-climatology/00246-volcanoes-weather-and-climate.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00247'] = "en/education/climate/general-climatology/00247-last-time-it-snowed-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00249'] = "en/education/climate/general-climatology/00249-what-is-climate-normal.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00250'] = "en/education/climate/general-climatology/00250-what-is-carbon-cycle.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00251'] = "en/education/climate/general-climatology/00251-a-new-frontier-for-aviation-meteorology-support-carbon-reduction-in-the-air.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00254'] = "en/education/climate/general-climatology/00254-a-brief-introduction-to-standardized-precipitation-indexspi.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00256'] = "en/education/climate/general-climatology/00256-what-are-the-ozone-conditions-now-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00261'] = "en/education/climate/general-climatology/00261-onset-of-southwest-monsoon-end-of-the-fog-season-and-start-of-the-rain-season.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00268'] = "en/education/climate/climate-change/00268-cold-winter-in-20092010-global-cooling.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00275'] = "en/education/climate/climate-change/00275-new-record-low-for-arctic-sea-ice.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00276'] = "en/education/climate/climate-change/00276-under-the-influence-of-global-warming-are-tropical-cyclone-activities-changing.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00277'] = "en/education/climate/climate-change/00277-can-the-warming-of-the-20th-century-be-explained-by-natural-factors.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00290'] = "en/education/radiation/ionizing-radiation/00290-the-phantom-of-the-atoms-alpha-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00291'] = "en/education/radiation/ionizing-radiation/00291-halflife.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00292'] = "en/education/radiation/ionizing-radiation/00292-curie-and-radioactivity.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00294'] = "en/education/radiation/ionizing-radiation/00294-radiation-from-wind-and-rain.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00295'] = "en/education/radiation/ionizing-radiation/00295-exposure-to-cosmic-radiation-during-air-travel.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00296'] = "en/education/radiation/ionizing-radiation/00296-radiation-emitted-by-human-body-thermal-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00298'] = "en/education/radiation/ionizing-radiation/00298-variations-in-the-environmental-radiation-levels-around-the-world.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00299'] = "en/education/radiation/monitoring-and-assessment/00299-trajectory-analysis-on-the-transport-of-radioactive-substances-to-hong-kong-arising-from-the-fukushima-nuclear-accident.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00304'] = "en/education/radiation/ionizing-radiation/00304-radioactive-polonium210.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00306'] = "en/education/radiation/ionizing-radiation/00306-radon.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00307'] = "en/education/radiation/ionizing-radiation/00307-what-is-caesium137.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00308'] = "en/education/radiation/ionizing-radiation/00308-dirty-bomb.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00309'] = "en/education/radiation/ionizing-radiation/00309-how-to-determine-the-age-of-an-antique.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00310'] = "en/education/radiation/ionizing-radiation/00310-glossary-on-radiation-terminology-and-radiation-reference-materials.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00311'] = "en/education/radiation/nuclear-power/00311-how-safe-are-the-nuclear-power-stations-at-daya-bay.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00314'] = "en/education/radiation/nuclear-power/00314-inexhaustible-supply-of-nuclear-energy.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00315'] = "en/education/radiation/nuclear-power/00315-the-use-of-nuclear-fusion-technology-in-the-21st-century.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00317'] = "en/education/radiation/monitoring-and-assessment/00317-how-was-cosmic-radiation-discovered-and-how-does-the-hong-kong-observatory-measure-cosmic-rays.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00318'] = "en/education/radiation/monitoring-and-assessment/00318-radiation-contamination-monitoring-system.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00320'] = "en/education/radiation/monitoring-and-assessment/00320-monitoring-of-radioactive-substances.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00327'] = "en/education/radiation/monitoring-and-assessment/00327-the-chernobyl-forum-major-findings-and-recommendations.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00332'] = "en/education/radiation/radiological-effects/00332-relative-vulnerability-to-human-body-of-some-common-ionizing-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00333'] = "en/education/radiation/radiological-effects/00333-effect-of-radiation-on-human-beings.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00339'] = "en/education/radiation/radiation-protection/00339-safety-inspection-of-radiation-laboratory.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00340'] = "en/education/radiation/radiation-protection/00340-wireless-networking-communication-products-how-safe-are-they.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00341'] = "en/education/earth-science/general/00341-the-art-of-mother-nature-wind-water-landscape.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00342'] = "en/education/earth-science/general/00342-how-deep-is-the-earth-and-what-is-at-its-centre.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00343'] = "en/education/earth-science/general/00343-what-is-isostasy.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00344'] = "en/education/earth-science/general/00344-the-development-of-biofuels.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00345'] = "en/education/earth-science/general/00345-more-on-tides.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00346'] = "en/education/earth-science/general/00346-know-more-about-tides.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00347'] = "en/education/earth-science/optical-phenomena/00347-sun-dogs-hovering-over-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00348'] = "en/education/earth-science/optical-phenomena/00348-the-mysterious-glory.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00349'] = "en/education/earth-science/optical-phenomena/00349-colours-of-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00352'] = "en/education/earth-science/optical-phenomena/00352-what-is-cerenkov-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00353'] = "en/education/earth-science/optical-phenomena/00353-indepth-anatomy-of-the-atmospheric-optical-phenomenon-sun-dog.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00354'] = "en/education/earth-science/optical-phenomena/00354-why-is-candlelight-yellow-and-gasgrill-light-blue.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00355'] = "en/education/earth-science/optical-phenomena/00355-what-are-primary-colours.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00356'] = "en/education/earth-science/optical-phenomena/00356-why-do-stars-twinkle.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00357'] = "en/education/earth-science/optical-phenomena/00357-what-is-the-colour-of-water.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00358'] = "en/education/earth-science/optical-phenomena/00358-which-is-darker-coarse-sand-or-fine-sand.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00359'] = "en/education/earth-science/optical-phenomena/00359-why-are-spectacles-or-camera-lens-so-difficult-to-clean.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00360'] = "en/education/earth-science/optical-phenomena/00360-red-eye-and-glory.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00361'] = "en/education/earth-science/optical-phenomena/00361-why-do-breaking-waves-appear-white.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00362'] = "en/education/earth-science/optical-phenomena/00362-why-does-wet-sand-look-darker-than-dry-sand.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00363'] = "en/education/earth-science/optical-phenomena/00363-obscured-hills-why-is-a-distant-hill-less-distinct-than-a-near-one.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00364'] = "en/education/earth-science/optical-phenomena/00364-why-is-the-sky-blue.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00365'] = "en/education/earth-science/optical-phenomena/00365-what-causes-a-rainbow.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00366'] = "en/education/earth-science/optical-phenomena/00366-why-is-the-region-outside-the-primary-rainbow-much-darker-than-that-inside-the-primary-rainbow.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00368'] = "en/education/earth-science/optical-phenomena/00368-moonlit-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00369'] = "en/education/climate/general-climatology/00369-an-introduction-to-phenology.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00371'] = "en/education/earth-science/earthquake/00371-a-groundbreaking-tidal-story.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00372'] = "en/education/earth-science/earthquake/00372-earthquake-monitoring-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00376'] = "en/education/earth-science/earthquake/00376-records-of-felt-earth-tremors-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00381'] = "en/education/earth-science/earthquake/00381-what-have-earthquakes-to-do-with-the-earths-climate.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00386'] = "en/education/earth-science/physics-in-daily-life/00386-sounds-in-the-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00387'] = "en/education/aviation-and-marine/aviation/00387-in-the-wake-of-a-duck.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00388'] = "en/education/earth-science/physics-in-daily-life/00388-why-are-steel-and-stone-bridges-arched-in-opposite-directions-one-upward-and-one-downward.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00390'] = "en/education/earth-science/physics-in-daily-life/00390-science-in-coffee-and-tea.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00391'] = "en/education/earth-science/physics-in-daily-life/00391-the-physics-of-gurgling.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00392'] = "en/education/earth-science/physics-in-daily-life/00392-the-science-of-slit-eyes.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00394'] = "en/education/earth-science/physics-in-daily-life/00394-bubbles-in-a-soft-drink-part-ii.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00395'] = "en/education/earth-science/physics-in-daily-life/00395-bubbles-in-a-soft-drink-part-i.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00397'] = "en/education/earth-science/physics-in-daily-life/00397-weather-forecasting-knee-does-it-exist.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00402'] = "en/education/astronomy-and-time/astronomy/00402-what-is-a-comet.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00405'] = "en/education/astronomy-and-time/astronomy/00405-apparent-motion-of-planets-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00406'] = "en/education/astronomy-and-time/astronomy/00406-what-is-opposition-of-jupiter.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00407'] = "en/education/astronomy-and-time/astronomy/00407-what-is-parade-of-the-five-planets.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00408'] = "en/education/astronomy-and-time/astronomy/00408-what-is-twilight.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00409'] = "en/education/astronomy-and-time/time-service/00409-astronomical-time-and-atomic-time.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00413'] = "en/education/astronomy-and-time/time-service/00413-the-chinese-agricultural-calendar-explained.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00415'] = "en/education/space-weather/general/00415-space-weather-an-introduction.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00416'] = "en/education/space-weather/general/00416-body-checking-the-sun-3d-images.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00418'] = "en/education/space-weather/general/00418-why-can-the-sun-persistently-produce-energy-for-the-stable-output-of-light-and-heat.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00419'] = "en/education/space-weather/general/00419-shock-wave.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00420'] = "en/education/space-weather/general/00420-origin-of-solar-flare.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00421'] = "en/education/space-weather/general/00421-spectacular-fireworks-show-on-the-sun.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00424'] = "en/education/space-weather/general/00424-the-relationship-between-sunspot-activity-and-the-reversal-of-the-suns-magnetic-polarity.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00425'] = "en/education/space-weather/effects-of-space-weather/00425-effects-of-space-weather.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00426'] = "en/education/space-weather/effects-of-space-weather/00426-effect-of-solar-activities-to-the-earths-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00427'] = "en/education/space-weather/effects-of-space-weather/00427-atmospheric-drag-on-the-motion-of-satellites.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00429'] = "en/education/space-weather/effects-of-space-weather/00429-space-weather-and-polar-flights.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00430'] = "en/education/space-weather/effects-of-space-weather/00430-the-possible-effects-on-earths-climate-by-the-solar-spectral-change-in-a-solar-cycle.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00432'] = "en/education/space-weather/space-weather-events/00432-from-space-weather-to-earths-weather-a-discussion-of-the-effects-of-sunspots-on-the-unusually-cold-winter-of-20102011.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00433'] = "en/education/space-weather/space-weather-events/00433-extreme-space-weather-events-in-history.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00435'] = "en/education/space-weather/space-weather-events/00435-intense-solar-activity-in-september-2005.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00436'] = "en/education/space-weather/monitoring-and-warnings/00436-space-weather-alert-categorization.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00437'] = "en/education/space-weather/monitoring-and-warnings/00437-how-is-space-weather-monitored-the-latest-prediction-of-soloar-activity.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00441'] = "en/education/earth-science/geomagnetism/00441-geomagnetism.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00442'] = "en/education/climate/climate-change/00442-is-the-melting-of-glaciers-in-west-antarctica-unstoppable.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00443'] = "en/education/weather/sunshine-and-uv/00443-solar-energy-resources-in-hong-kong-from-a-climatological-point-of-view.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00444'] = "en/education/tropical-cyclone/weather-effects-and-impact/00444-know-more-about-storm-surge.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00445'] = "en/education/tropical-cyclone/classification-naming-characteristics/00445-typhoon-and-hurricane.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00446'] = "en/education/weather/monsoons/00446-will-easterlies-bring-a-fine-or-gloomy-day.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00447'] = "en/education/weather/weather-and-life/00447-get-to-know-more-channels-for-acquiring-weather-information.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00448'] = "en/education/weather/forecasting/00448-swirls-nowcasting-system.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00449'] = "en/education/weather/wind-and-pressure/00449-the-higher-the-place-the-stronger-the-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00450'] = "en/education/weather/data-and-technology/00450-weather-services-and-it-security.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00451'] = "en/education/meteorological-instruments/automatic-weather-stations/00451-portable-upperair-sounding-system.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00452'] = "en/education/climate/general-climatology/00452-upper-air-ozone-monitoring-by-the-observatory.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00453'] = "en/education/weather/monsoons/00453-who-has-stolen-our-permafrost-tundra.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00453'] = "en/education/weather/monsoons/00453-who-has-stolen-our-permafrost-tundra.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00454'] = "en/education/meteorological-instruments/automatic-weather-stations/00454-conventional-instruments-installed-at-an-automatic-weather-station-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00455'] = "en/education/radiation/radiological-effects/00455-medical-radiation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00456'] = "en/education/meteorological-instruments/meteorological-satellite/00456-how-does-a-satellite-measure-the-vertical-profiles-in-the-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00457'] = "en/education/aviation-and-marine/aviation/00457-terraininduced-windshear-turbulence-over-the-hong-kong-international-airport.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00458'] = "en/education/meteorological-instruments/weather-radar/00458-profiling-rain-areas-using-radar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00459'] = "en/education/tropical-cyclone/weather-effects-and-impact/00459-can-aircraft-takeoff-and-land-at-the-hong-kong-international-airport-under-the-influence-of-a-tropical-cyclone.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00460'] = "en/education/tropical-cyclone/tracking/00460-interactions-between-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00461'] = "en/education/weather/weather-phenomena/00461--winds-freshening-from-the-east-later-with-a-few-rain-patches-in-weather-forecasts.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00462'] = "en/education/aviation-and-marine/aviation/00462-the-impact-of-global-warming-on-aviation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00463'] = "en/education/aviation-and-marine/aviation/00463-the-tail-of-an-aircraft.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00464'] = "en/education/weather/clouds/00464-arcus-cloud.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00465'] = "en/education/weather/clouds/00465-asperitas-appearing-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00466'] = "en/education/weather/clouds/00466-pileus-cloud.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00467'] = "en/education/weather/clouds/00467-iridescent-cloud.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00468'] = "en/education/weather/clouds/00468-mountain-wave-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00469'] = "en/education/climate/climatological-information-of-hong-kong/00469-34dual-standard34-of-climatological-normals.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00470'] = "en/education/astronomy-and-time/time-service/00470-a-brief-history-about-the-authoritative-organizations-for-compiling-calendar-in-china.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00471'] = "en/education/climate/climatological-information-of-hong-kong/00471-recordbreaking-summer-temperatures-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00472'] = "en/education/weather/clouds/00472-fallstreak-hole.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00473'] = "en/education/earth-science/physics-in-daily-life/00473-supercooling-and-superheating.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00475'] = "en/education/weather/weather-and-life/00475-happy-hiking-with-myobservatory.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00476'] = "en/education/weather/data-and-technology/00476-processing-and-preservation-of-meteorological-observation-data.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00477'] = "en/education/weather/forecasting/00477-your-weather-crystal-ball.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00478'] = "en/education/weather/meteorology-basics/00478-what-is-upperair-disturbance.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00479'] = "en/education/weather/data-and-technology/00479-abc-of-meteorological-data-encoding.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00480'] = "en/education/weather/weather-phenomena/00480-hong-kong-at-freezing-point-historical-perspective.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00481'] = "en/education/weather/weather-phenomena/00481-hong-kong-at-freezing-point-observation-perspective.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00482'] = "en/education/weather/weather-phenomena/00482-cloudy-morning-or-foggy-night-high-resolution-upperair-observations-help-catch-them-right.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00483'] = "en/education/radiation/ionizing-radiation/00483-becquerel-and-curie.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00484'] = "en/education/weather/clouds/00484-waterfalllike-orographic-clouds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00485'] = "en/education/space-weather/space-weather-events/00485-the-revelation-of-a-thinning-martian-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00486'] = "en/education/weather/forecasting/00486-does-god-play-dice-v-randomness-in-weather-evolution.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00487'] = "en/education/weather/weather-phenomena/00487-ice-pellets-v-a-rarely-observed-winter-precipitation-phenomenon-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00488'] = "en/education/meteorological-instruments/meteorological-satellite/00488-a-new-era-of-meteorological-satellites.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00489'] = "en/education/astronomy-and-time/astronomy/00489-a-day-that-lasts-one-year.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00490'] = "en/education/climate/climate-change/00490-milankovitch-cycles.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00491'] = "en/education/weather/monsoons/00491-monsoon-lows-and-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00492'] = "en/education/weather/wind-and-pressure/00492-beware-of-gusts.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00493'] = "en/education/astronomy-and-time/astronomy/00493-effect-of-atmospheric-refraction-on-the-times-of-sunrise-and-sunset.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00494'] = "en/education/weather/forecasting/00494-temperature-trend-at-fingertips.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00495'] = "en/education/weather/thunderstorm-and-lightning/00495-observe-the-observatory-to-prevent-lightning-strokes.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00496'] = "en/education/weather/forecasting/00496-forecasting-extreme-weather.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00497'] = "en/education/weather/data-and-technology/00497-intelligent-meteorological-monitoring-assistant.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00498'] = "en/education/weather/data-and-technology/00498-characteristics-of-meteorological-databases.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00499'] = "en/education/weather/clouds/00499-circumhorizontal-arc.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00501'] = "en/education/aviation-and-marine/aviation/00501-ice-crystal-icing-a-threat-to-aircraft-engine.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00502'] = "en/education/tropical-cyclone/tracking/00502-besttrack-a-2020-hindsight.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00503'] = "en/education/weather/weather-and-life/00503-why-does-food-taste-bland-on-airplanes.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00504'] = "en/education/meteorological-instruments/automatic-weather-stations/00504-assessing-atmospheric-stability-by-tephigram.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00505'] = "en/education/aviation-and-marine/marine/00505-on-sea-level-rise-and-abnormal-sea-level-in-hong-kong.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00506'] = "en/education/astronomy-and-time/time-service/00506-what-year-is-it-today.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00507'] = "en/education/climate/climate-change/00507-corals-facing-the-double-whammy-brought-about-by-climate-change.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00508'] = "en/education/tropical-cyclone/tracking/00508-super-computer-super-accurate.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00509'] = "en/education/climate/general-climatology/00509-what-is-microclimate-.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00510'] = "en/education/weather/weather-phenomena/00510-waterspout.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00511'] = "en/education/radiation/monitoring-and-assessment/00511-nuclear-accident-consequence-assessment.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00512'] = "en/education/astronomy-and-time/astronomy/00512-no-lunar-eclipses-are-identical.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00513'] = "en/education/weather/forecasting/00513-a-new-milestone-in-weather.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00514'] = "en/education/weather/thunderstorm-and-lightning/00514-can-outdoor-activities-continue-under-thunderstorm-warning.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00515'] = "en/education/weather/data-and-technology/00515-exploring-big-data-for-weatherrelated-societal-impact-assessment.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00516'] = "en/education/weather/forecasting/00516-maintaining-high-availability-of-hong-kong-observatory-operational-computer-systems.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00517'] = "en/education/weather/weather-and-life/00517-meteorologist-x-artist.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00518'] = "en/education/tropical-cyclone/tracking/00518-tropical-cyclone-track-probability-forecast.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00519'] = "en/education/meteorological-instruments/meteorological-satellite/00519-how-to-measure-cloud-top-height-from-a-meteorological-satellite.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00520'] = "en/education/aviation-and-marine/aviation/00520-icao-meteorological-information-exchange-model-101.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00521'] = "en/education/meteorological-instruments/automatic-weather-stations/00521-inversion-layer-impose-its-own-bounds.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00522'] = "en/education/meteorological-instruments/weather-radar/00522-how-to-interpret-velocity-field-from-doppler-weather-radar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00523'] = "en/education/aviation-and-marine/marine/00523-how-to-measure-tide-level-and-storm-surge.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00524'] = "en/education/aviation-and-marine/marine/00524-storm-surge-and-sea-waves.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00525'] = "en/education/climate/general-climatology/00525-why-carbon-dioxide-is-a-greenhouse-gas.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00526'] = "en/education/meteorological-instruments/automatic-weather-stations/00526-thermometers-under-the-shed.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00527'] = "en/education/tropical-cyclone/tracking/00527-data-for-tracking-tropical-cyclones.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00528'] = "en/education/tropical-cyclone/tracking/00528-tropical-cyclone-forecast-track-information.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00529'] = "en/education/weather/wind-and-pressure/00529-gust-vs-sustained-wind.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00530'] = "en/education/weather/data-and-technology/00530-using-the-observatorys-app-to-cope-with-extreme-situation.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00531'] = "en/education/weather/forecasting/00531-hong-kong-observatory-using-nowcasting-to-support-drainage-services-department.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00532'] = "en/education/weather/forecasting/00532-conveying-highimpact-weather-forecasts-with-uncertainties-a-new-challenge-for-public-communication.html";
+fast_redirecturl['/en/education/article.htm?title=ele_140603'] = "en/education/aviation-and-marine/aviation/140603-a-brief-account-of-aircraft-icing.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00537'] = "en/education/aviation-and-marine/aviation/00537-collaboration-of-aviation-weather-services-in-issuance-of-sigmet.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00534'] = "en/education/aviation-and-marine/aviation/00534-st-elmos-fire-as-seen-from-aircraft.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00535'] = "en/education/aviation-and-marine/aviation/00535-magnetism-of-airport-runways.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00538'] = "en/education/meteorological-instruments/weather-radar/00538-use-of-building-information-modelling-to-help-maintain-weather-radar.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00536'] = "en/education/weather/meteorology-basics/00536-ripples-in-the-atmosphere.html";
+fast_redirecturl['/en/education/article.htm?title=ele_00533'] = "en/education/weather/rain/00533-the-shape-of-raindrops.html";
+
+
+//Fast rediect from R3
+fast_redirecturl['/tc/hkco_win.htm'] = "https://cowin.hku.hk/chinese/map.html" 
+fast_redirecturl['/en/hkco_win.htm'] = "https://cowin.hku.hk/english/map.html"
+fast_redirecturl['/sc/hkco_win.htm'] = "https://cowin.hku.hk/chinese/map.html"
+
+// Fast redirect for A1, requested by SSA(A)11 email on 20 May 2021
+fast_redirecturl['/en/aviat/amt_e/vareport.pdf'] = "/en/aviat/amt_e/files/vareport.pdf";
+fast_redirecturl['/aviat/amt_e/vareport.pdf'] = "/en/aviat/amt_e/files/vareport.pdf";
+
+//Fast redirect 
+fast_redirecturl['/sweather_tips.html'] = "/en/sweather_tips.html";
+fast_redirecturl['/sweather_tips_uc.html'] = "/tc/sweather_tips.html";
+
+// Request from D3 team
+fast_redirecturl['/metinfo/notice.html'] = "/en/metinfo/Newspaper-Important-notice.html";
+
+
+// Request from R2 team
+fast_redirecturl['/education/windscalec.htm'] = "/tc/education/windscale.htm";
+fast_redirecturl['/education/edu01met/wxobs/ele_winde.htm'] = "/en/education/windscale.htm";
+fast_redirecturl['/education/article/terms_wind.txt'] = "/en/education/windscale.htm";
+fast_redirecturl['/education/article/terms_windc.txt'] = "/tc/education/windscale.htm";
+fast_redirecturl['/career/index_uc.htm'] = "/tc/career/index.htm";
+fast_redirecturl['/career/index.htm'] = "/en/career/index.htm";
+
+
+// For SEO result on root directory
+fast_redirecturl['/wisnew.htm'] = "/en/whatsnew/index.htm";
+fast_redirecturl['/myindex.htm'] = "/tc/myindex.htm";
+fast_redirecturl['/newcontentpage_uc.htm'] = "/tc/index.html";
+fast_redirecturl['/palm_guidee.htm'] = "/tc/index.html";
+fast_redirecturl['/isitor2000_chi_uc.htm'] = "/tc/index.html";
+fast_redirecturl['/wisnewc2008_uc.htm'] = "/tc/whatsnew/index.htm?year=2008";
+fast_redirecturl['/wisnewc2009_uc.htm'] = "/tc/whatsnew/index.htm?year=2009";
+fast_redirecturl['/wisnewc2010_uc.htm'] = "/tc/whatsnew/index.htm?year=2010";
+fast_redirecturl['/wisnewc2011_uc.htm'] = "/tc/whatsnew/index.htm?year=2011";
+fast_redirecturl['/wisnewc2012_uc.htm'] = "/tc/whatsnew/index.htm?year=2012";
+fast_redirecturl['/wisnewc2013_uc.htm'] = "/tc/whatsnew/index.htm?year=2013";
+fast_redirecturl['/wisnewc2014_uc.htm'] = "/tc/whatsnew/index.htm?year=2014";
+fast_redirecturl['/wisnewc2015_uc.htm'] = "/tc/whatsnew/index.htm?year=2015";
+fast_redirecturl['/wisnewc2016_uc.htm'] = "/tc/whatsnew/index.htm?year=2016";
+fast_redirecturl['/wisnewc2017_uc.htm'] = "/tc/whatsnew/index.htm?year=2017";
+fast_redirecturl['/wisnewc2018_uc.htm'] = "/tc/whatsnew/index.htm?year=2018";
+fast_redirecturl['/wisnewc2019_uc.htm'] = "/tc/whatsnew/index.htm?year=2019";
+fast_redirecturl['/wisnew2008.htm'] = "/en/whatsnew/index.htm?year=2008";
+fast_redirecturl['/wisnew2009.htm'] = "/en/whatsnew/index.htm?year=2009";
+fast_redirecturl['/wisnew2010.htm'] = "/en/whatsnew/index.htm?year=2010";
+fast_redirecturl['/wisnew2011.htm'] = "/en/whatsnew/index.htm?year=2011";
+fast_redirecturl['/wisnew2012.htm'] = "/en/whatsnew/index.htm?year=2012";
+fast_redirecturl['/wisnew2013.htm'] = "/en/whatsnew/index.htm?year=2013";
+fast_redirecturl['/wisnew2014.htm'] = "/en/whatsnew/index.htm?year=2014";
+fast_redirecturl['/wisnew2015.htm'] = "/en/whatsnew/index.htm?year=2015";
+fast_redirecturl['/wisnew2016.htm'] = "/en/whatsnew/index.htm?year=2016";
+fast_redirecturl['/wisnew2017.htm'] = "/en/whatsnew/index.htm?year=2017";
+fast_redirecturl['/wisnew2018.htm'] = "/en/whatsnew/index.htm?year=2018";
+fast_redirecturl['/wisnew2019.htm'] = "/en/whatsnew/index.htm?year=2019";
+
+fast_redirecturl['/enhanced_isobaric_chartc.htm'] = "/tc/index.html";
+fast_redirecturl['/en/education/article.htm?title='] = "/en/education/edu.htm";
+fast_redirecturl['/detail.htm'] = "/en/detail.htm";
+fast_redirecturl['/detail_uc.htm'] = "/tc/detail.htm";
+fast_redirecturl['/gts/time/HKSTime.htm'] = "/en/gts/time/clock_e.html";
+fast_redirecturl['/gts/time/HKSTime_c.htm'] = "/tc/gts/time/clock_e.html";
+fast_redirecturl['/en/gts/time/HKSTime.htm'] = "/en/gts/time/clock_e.html";
+fast_redirecturl['/tc/gts/time/HKSTime.htm'] = "/tc/gts/time/clock_e.html";
+fast_redirecturl['/sc/gts/time/HKSTime.htm'] = "/sc/gts/time/clock_e.html";
+fast_redirecturl['/monthlystarmaps.htm'] = "/tc/monthlystarmaps.htm";
+fast_redirecturl['/education/art/hko_tour.htm'] = "/tc/education/art/hko_tour.htm";
+fast_redirecturl['/education/art/hko_tour_e.htm'] = "/en/education/art/hko_tour.htm";
+fast_redirecturl['/tc/gts/event/event_index.htm'] = "/tc/index.html";
+
+fast_redirecturl['/education/dbcp/menu/eng/emenu.htm'] = "/en/radiation/monitoring/index.html";
+fast_redirecturl['/education/dbcp/menu/chi/cmenu.htm'] = "/tc/radiation/monitoring/index.html";
+
+if(fast_redirecturl[window.location.pathname]){
+	var para = window.location.search;
+	window.location.href = fast_redirecturl[window.location.pathname]+para;
+}
+
+/* mobile link redirection end */
+
+
+redirecturl['/100YearsTCSignals/index_uc.htm'] = "/tc/100YearsTCSignals/index.htm";
+redirecturl['/abouthko/aboutus.htm'] = "/en/abouthko/aboutus.htm";
+redirecturl['/abouthko/aboutus_uc.htm'] = "/tc/abouthko/aboutus.htm";
+redirecturl['/abouthko/logoexplain/logoexplainc.htm'] = "/tc/abouthko/logoexplain/logoexplaine.htm";
+redirecturl['/aviat/100nm_c.htm'] = "/tc/aviat/100nm.htm";
+redirecturl['/aviat/100nm_e.htm'] = "/en/aviat/100nm.htm";
+redirecturl['/aviat/amt/amsmain.htm'] = "/tc/aviat/amt/amsmain.htm";
+redirecturl['/aviat/sigmet_txt_e.htm'] = "/en/aviat/sigmet_txt.htm";
+redirecturl['/aviat/taf_decode.htm'] = "/tc/aviat/taf_decode.htm";
+redirecturl['/aviat/taf_decode_e.htm'] = "/en/aviat/taf_decode.htm";
+redirecturl['/aviat/wxobs_decode.htm'] = "/tc/aviat/wxobs_decode.htm";
+redirecturl['/aviat/wxobs_decode_e.htm'] = "/en/aviat/wxobs_decode.htm";
+redirecturl['/cis/awsDailyElement_uc.htm'] = "/tc/cis/awsDailyElement.htm";
+redirecturl['/cis/awsDailyExtract_uc.htm'] = "/tc/cis/awsDailyExtract.htm";
+redirecturl['/cis/climateStatistics_uc.htm'] = "/tc/cis/climateStatistics.htm";
+redirecturl['/cis/climat_c.htm'] = "/tc/cis/climat.htm";
+redirecturl['/cis/climat_e.htm'] = "/en/cis/climat.htm";
+redirecturl['/cis/dailyElement_uc.htm'] = "/tc/cis/dailyElement.htm";
+redirecturl['/cis/dailyExtract_e.htm'] = "/en/cis/dailyExtract.htm";
+redirecturl['/cis/dailyExtract_uc.htm'] = "/tc/cis/dailyExtract.htm";
+redirecturl['/cis/monthlyExtract_uc.htm'] = "/tc/cis/monthlyExtract.htm";
+redirecturl['/cis/warndb_c.htm'] = "/tc/cis/warndb.htm";
+redirecturl['/climate_change/climate_change_c.htm'] = "/tc/climate_change/climate_change.htm";
+redirecturl['/climate_change/do_you_know_uc.htm'] = "/tc/climate_change/do_you_know.htm";
+redirecturl['/education/article_e.htm'] = "/en/education/article.htm";
+redirecturl['/education/beaufort.htm'] = "/en/education/beaufort.htm";
+redirecturl['/education/beaufortc.htm'] = "/tc/education/beaufortc.htm";
+redirecturl['/education/educ.htm'] = "/tc/education/edue.htm";
+redirecturl['/education/edu_uc.htm'] = "/tc/education/edu.htm";
+redirecturl['/fishermen/mainc.htm'] = "/tc/fishermen/main.htm";
+redirecturl['/gts/astron2019/almanac2019_index_uc.htm'] = "/tc/gts/astron2019/almanac2019_index.htm";
+redirecturl['/gts/astron2019/Solar_Term_2019_uc.htm'] = "/tc/gts/astron2019/Solar_Term_2019.htm";
+redirecturl['/gts/astronomy/Moon_Phase_uc.htm'] = "/tc/gts/astronomy/Moon_Phase.htm";
+redirecturl['/gts/astronomy/site_all_uc.htm'] = "/tc/gts/astronomy/site_all.htm";
+redirecturl['/gts/equake/neqpress_c.htm'] = "/tc/gts/equake/neqpress.htm";
+redirecturl['/gts/equake/neqpress_e.htm'] = "/en/gts/equake/neqpress.htm";
+
+redirecturl['/gts/equake/tsunami_info_warn_c.htm'] = "/tc/gts/equake/tsunami_info_warn.htm";
+redirecturl['/gts/equake/tsunami_info_warn_e.htm'] = "/en/gts/equake/tsunami_info_warn.htm";
+redirecturl['/gts/time/12animalsc.htm'] = "/tc/gts/time/12animals.htm";
+redirecturl['/gts/time/24solartermsc.htm'] = "/tc/gts/time/24solarterms.htm";
+redirecturl['/gts/time/clock_e.html'] = "/en/gts/time/clock_e.html";
+redirecturl['/gts/time/clock_uc.html'] = "/tc/gts/time/clock_e.html";
+redirecturl['/gts/time/conversion.htm'] = "/en/gts/time/conversion.htm";
+redirecturl['/gts/time/conversionc.htm'] = "/tc/gts/time/conversion.htm";
+redirecturl['/gts/time/stemsandbranchesc.htm'] = "/tc/gts/time/stemsandbranches.htm";
+
+redirecturl['/hkonews/indexc.htm'] = "/tc/hkonews/indexe.htm";
+redirecturl['/hkonews/indexe.htm'] = "/en/hkonews/indexe.htm";
+redirecturl['/informtc/sound/tcname2019_uc.htm'] = "/tc/informtc/sound/tcname2019e.htm";
+redirecturl['/informtc/tcMain.htm'] = "/en/informtc/tcMain.htm";
+redirecturl['/informtc/tcReport_uc.htm'] = "/tc/informtc/tcReporte.htm";
+redirecturl['/informtc/tcService_uc.htm'] = "/tc/informtc/tcService.htm";
+redirecturl['/informtc/tcStatistic_uc.htm'] = "/tc/informtc/tcStatistic.htm";
+redirecturl['/informtc/tcWarninge.htm'] = "/en/informtc/tcWarninge.htm";
+redirecturl['/informtc/tcWarning_uc.htm'] = "/tc/informtc/tcWarninge.htm";
+redirecturl['/locspc/locspce.htm'] = "/tc/locspc/locspce.htm";
+redirecturl['/locspc/locspc_uc.htm'] = "/tc/locspc/locspc.htm";
+redirecturl['/lrf/enso/enso-front_uc.htm'] = "/tc/lrf/enso/enso-front.htm";
+redirecturl['/lrf/enso/enso-latest_uc.htm'] = "/tc/lrf/enso/enso-latest.htm";
+
+redirecturl['/nhm/nhm500.htm'] = "/en/nhm/nhm500.htm";
+redirecturl['/nhm/nhm500_uc.htm'] = "/tc/nhm/nhm500.htm";
+redirecturl['/nhm/nhm700_uc.htm'] = "/tc/nhm/nhm700.htm";
+redirecturl['/nhm/nhm850.htm'] = "/en/nhm/nhm850.htm";
+redirecturl['/nhm/nhm850_uc.htm'] = "/tc/nhm/nhm850.htm";
+redirecturl['/nhm/nhm925_uc.htm'] = "/tc/nhm/nhm925.htm";
+redirecturl['/nhm/nhme.htm'] = "/en/nhm/nhme.htm";
+redirecturl['/nhm/nhmsfc.htm'] = "/en/nhm/nhmsfc.htm";
+redirecturl['/nhm/nhmsfc_uc.htm'] = "/tc/nhm/nhmsfc.htm";
+redirecturl['/nhm/nhm_uc.htm'] = "/tc/nhm/nhme.htm";
+redirecturl['/out_photo/outdoor_photo_uc.htm'] = "/tc/out_photo/outdoor_photo.htm";
+redirecturl['/out_photo/upper-air-weather_uc.htm'] = "/tc/out_photo/upper-air-weather.htm";
+redirecturl['/press/index.htm'] = "/en/press/index.htm";
+redirecturl['/press/indexc.htm'] = "/tc/press/index.htm";
+redirecturl['/probfcst/tc_spm.htm'] = "/en/probfcst/tc_spm.htm";
+redirecturl['/probfcst/tc_spm_uc.htm'] = "/tc/probfcst/tc_spm.htm";
+redirecturl['/probfcst/tempfcst_uc.htm'] = "/tc/probfcst/tempfcst.htm";
+redirecturl['/radiation/rmn_hourly_e.htm'] = "/en/radiation/rmn_hourly.htm";
+//redirecturl['/rhr/index_uc.html'] = "/tc/rhr/index.html";
+redirecturl['/rhr/main_uc.html'] = "/tc/rhr/main.html";
+redirecturl['/search/adsearch_uc.htm'] = "/tc/search/adsearch.htm";
+//redirecturl['/sports/wind_uc.htm'] = "/tc/sports/wind.htm";
+//redirecturl['/sweather_tips.html'] = "/en/sweather_tips.html";
+//redirecturl['/sweather_tips_uc.html'] = "/tc/sweather_tips.html";
+redirecturl['/testpage_uc.htm'] = "/tc/testpage.htm";
+redirecturl['/tide/cQUBtext2019.html'] = "/tc/tide/eQUBtext2019.html";
+
+redirecturl['/tide/marine/realtide.htm'] = "/en/tide/marine/realtide.htm";
+redirecturl['/tide/marine/realtide_uc.htm'] = "/tc/tide/marine/realtide.htm";
+redirecturl['/tide/predtide.htm'] = "/en/tide/predtide.htm";
+redirecturl['/vis/visc_index.shtml'] = "/tc/vis/vis_index.shtml";
+redirecturl['/vis/vis_textonly_e.shtml'] = "/en/vis/vis_textonly.shtml";
+redirecturl['/informtc/informtc.htm'] = "/tc/informtc/informtc.htm";
+redirecturl['/wisnewc.htm'] = "/tc/wisnew_v2.htm";
+redirecturl['/wservice/tsheet/pms/mariners_uc.htm'] = "/tc/wservice/tsheet/pms/mariners.htm";
+redirecturl['/wservice/warning/details.htm'] = "/en/wservice/warning/details.htm";
+redirecturl['/wservice/warning/details_uc.htm'] = "/tc/wservice/warning/details.htm";
+redirecturl['/wservice/warning/rainstoc.htm'] = "/tc/wservice/warning/rainstor.htm";
+redirecturl['/wservice/warning/rainstor.htm'] = "/en/wservice/warning/rainstor.htm";
+redirecturl['/wservice/warning/thunderc.htm'] = "/tc/wservice/warning/thunder.htm";
+redirecturl['/wxinfo/aws/kp_text_e.htm'] = "/en/wxinfo/aws/kp_text.htm";
+redirecturl['/wxinfo/climat/gdtour.htm'] = "/en/wxinfo/climat/gdtour.htm";
+redirecturl['/wxinfo/climat/gdwx.htm'] = "/en/wxinfo/climat/gdwx.htm";
+redirecturl['/wxinfo/climat/gdwxc.htm'] = "/tc/wxinfo/climat/gdwx.htm";
+redirecturl['/wxinfo/climat/specialday/html/select_c.shtml'] = "/tc/wxinfo/climat/specialday/html/select.shtml";
+redirecturl['/wxinfo/climat/warndb/warndb1_c.shtml'] = "/tc/wxinfo/climat/warndb/warndb1.shtml";
+redirecturl['/wxinfo/climat/warndb/warndb1_e.shtml'] = "/en/wxinfo/climat/warndb/warndb1.shtml";
+redirecturl['/wxinfo/climat/warndb/warndb3_c.shtml'] = "/tc/wxinfo/climat/warndb/warndb3.shtml";
+redirecturl['/wxinfo/climat/warndb/warndba_c.shtml'] = "/tc/wxinfo/climat/warndb/warndba.shtml";
+redirecturl['/wxinfo/climat/warndb/warndba_e.shtml'] = "/en/wxinfo/climat/warndb/warndba.shtml";
+//redirecturl['/wxinfo/climat/world/chi/asia/jp_ko/seoul_c.htm'] = "";
+//redirecturl['/wxinfo/climat/world/chi/world_climat_c.htm'] = "";
+redirecturl['/wxinfo/currwx/current.htm'] = "/en/wxinfo/currwx/current.htm";
+redirecturl['/wxinfo/currwx/currentc.htm'] = "/tc/wxinfo/currwx/current.htm";
+redirecturl['/wxinfo/currwx/ffish.htm'] = "/en/wxinfo/currwx/ffish.htm";
+redirecturl['/wxinfo/currwx/ffishc.htm'] = "/tc/wxinfo/currwx/ffish.htm";
+redirecturl['/wxinfo/currwx/flw.htm'] = "/en/wxinfo/currwx/flw.htm";
+redirecturl['/wxinfo/currwx/flwc.htm'] = "/tc/wxinfo/currwx/flw.htm";
+redirecturl['/wxinfo/currwx/flw_description/flw_c.htm'] = "/tc/wxinfo/currwx/flw_description/flw.htm";
+redirecturl['/wxinfo/currwx/fmar.htm'] = "/en/wxinfo/currwx/fmar.htm";
+redirecturl['/wxinfo/currwx/fmarc.htm'] = "/tc/wxinfo/currwx/fmar.htm";
+redirecturl['/wxinfo/currwx/fnd.htm'] = "/en/wxinfo/currwx/fnd.htm";
+redirecturl['/wxinfo/currwx/fndc.htm'] = "/tc/wxinfo/currwx/fnd.htm";
+redirecturl['/wxinfo/currwx/tc.htm'] = "/en/wxinfo/currwx/tc.htm";
+redirecturl['/wxinfo/currwx/tc1.htm'] = "/en/wxinfo/currwx/tc1.htm";
+redirecturl['/wxinfo/currwx/tc2.htm'] = "/en/wxinfo/currwx/tc2.htm";
+redirecturl['/wxinfo/currwx/tc3.htm'] = "/en/wxinfo/currwx/tc3.htm";
+redirecturl['/wxinfo/currwx/tcc.htm'] = "/tc/wxinfo/currwx/tc.htm";
+redirecturl['/wxinfo/currwx/tcc1.htm'] = "/tc/wxinfo/currwx/tc1.htm";
+redirecturl['/wxinfo/currwx/tcc2.htm'] = "/tc/wxinfo/currwx/tc2.htm";
+redirecturl['/wxinfo/currwx/tcc3.htm'] = "/tc/wxinfo/currwx/tc3.htm";
+redirecturl['/wxinfo/currwx/tcswarn.htm'] = "/en/wxinfo/currwx/tcswarn.htm";
+redirecturl['/wxinfo/currwx/tcswarnc.htm'] = "/tc/wxinfo/currwx/tcswarn.htm";
+redirecturl['/wxinfo/currwx/tc_fixarea_c.htm'] = "/tc/wxinfo/currwx/tc_fixarea.htm";
+redirecturl['/wxinfo/currwx/tc_fixarea_e.htm'] = "/en/wxinfo/currwx/tc_fixarea.htm";
+redirecturl['/wxinfo/currwx/tc_gis_c.htm'] = "/tc/wxinfo/currwx/tc_gis.htm";
+redirecturl['/wxinfo/currwx/tc_gis_e.htm'] = "/en/wxinfo/currwx/tc_gis.htm";
+redirecturl['/wxinfo/currwx/tc_pos.htm'] = "/en/wxinfo/currwx/tc_pos.htm";
+redirecturl['/wxinfo/currwx/tc_posc.htm'] = "/tc/wxinfo/currwx/tc_pos.htm";
+redirecturl['/wxinfo/currwx/tc_prevposc.htm'] = "/tc/wxinfo/currwx/tc_prevpos.htm";
+redirecturl['/wxinfo/currwx/wxcht.htm'] = "/en/wxinfo/currwx/wxcht.htm";
+redirecturl['/wxinfo/currwx/wxchtbig.shtml'] = "/en/wxinfo/currwx/wxchtbig.shtml";
+redirecturl['/wxinfo/currwx/wxchtbig_uc.shtml'] = "/tc/wxinfo/currwx/wxchtbig.shtml";
+redirecturl['/wxinfo/currwx/wxchtc.htm'] = "/tc/wxinfo/currwx/wxcht.htm";
+redirecturl['/wxinfo/dailywx/dailywxc.shtml'] = "/tc/wxinfo/dailywx/ryes.htm";
+redirecturl['/wxinfo/dailywx/dailywx_uc.htm'] = "/tc/wxinfo/dailywx/dailywx.htm";
+redirecturl['/wxinfo/dailywx/wxwarntoday.htm'] = "/en/wxinfo/dailywx/wxwarntoday.htm";
+redirecturl['/wxinfo/dailywx/wxwarntoday_uc.htm'] = "/tc/wxinfo/dailywx/wxwarntoday.htm";
+redirecturl['/wxinfo/frt/frt.htm'] = "https://maps.weather.gov.hk/ocf/index_e.html?data=mmt&seltime=1";
+redirecturl['/wxinfo/frt/frtc.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=mmt&seltime=1";
+redirecturl['/wxinfo/intersat/satellite/satc_uc.htm'] = "/tc/wxinfo/intersat/satellite/sate.htm";
+redirecturl['/wxinfo/intersat/satellite/sate.htm'] = "/en/wxinfo/intersat/satellite/sate.htm";
+redirecturl['/wxinfo/intersat/satellite/sats_large.htm'] = "/en/wxinfo/intersat/satellite/sats_large.htm";
+redirecturl['/wxinfo/intersat/satellite/sats_large_chi_uc.htm'] = "/tc/wxinfo/intersat/satellite/sats_large.htm";
+redirecturl['/wxinfo/intersat/satellite_gallery/index_c.htm'] = "/tc/wxinfo/intersat/satellite_gallery/index.htm";
+redirecturl['/wxinfo/llis/gm/llis_gm_c.htm'] = "/tc/wxinfo/llis/gm/llis_gm.htm";
+redirecturl['/wxinfo/llis/gm/llis_gm_e.htm'] = "/tc/wxinfo/llis/gm/llis_gm.htm";
+redirecturl['/wxinfo/llis/gm/llis_past_hr_uc.htm'] = "/tc/wxinfo/llis/gm/llis_past_hr.htm";
+redirecturl['/wxinfo/llis/gm_index.htm'] = "/en/wxinfo/llis/gm_index.htm";
+redirecturl['/wxinfo/llis/gm_indexc.htm'] = "/tc/wxinfo/llis/gm_index.htm";
+redirecturl['/wxinfo/llis/indexc.htm'] = "/tc/wxinfo/llis/index.htm";
+redirecturl['/wxinfo/llis/llisradar.shtml'] = "/en/wxinfo/llis/llisradar.shtml";
+redirecturl['/wxinfo/llis/llisradarc.shtml'] = "/tc/wxinfo/llis/llisradar.shtml";
+redirecturl['/wxinfo/pastwx/mws/mwsc_uc.htm'] = "/tc/wxinfo/pastwx/mws/mws.htm";
+redirecturl['/wxinfo/pastwx/pastc.htm'] = "/tc/wxinfo/pastwx/past.htm";
+redirecturl['/wxinfo/pastwx/ryes.htm'] = "/en/wxinfo/pastwx/ryes.htm";
+redirecturl['/wxinfo/pastwx/ryesc.htm'] = "/tc/wxinfo/pastwx/ryes.htm";
+redirecturl['/wxinfo/radars/radar.htm'] = "/en/wxinfo/radars/radar.htm";
+redirecturl['/wxinfo/radars/radar128n.htm'] = "/en/wxinfo/radars/radar128n.htm";
+redirecturl['/wxinfo/radars/radar128n_uc.htm'] = "/tc/wxinfo/radars/radar128n.htm";
+redirecturl['/wxinfo/radars/radar256n.htm'] = "/en/wxinfo/radars/radar256n.htm";
+redirecturl['/wxinfo/radars/radar256n_uc.htm'] = "/tc/wxinfo/radars/radar256n.htm";
+redirecturl['/wxinfo/radars/radar64n.htm'] = "/en/wxinfo/radars/radar64n.htm";
+redirecturl['/wxinfo/radars/radar64n_uc.htm'] = "/tc/wxinfo/radars/radar64n.htm";
+redirecturl['/wxinfo/radars/radarc.htm'] = "/tc/wxinfo/radars/radar.htm";
+redirecturl['/wxinfo/radars/radarc_range1.htm'] = "/tc/wxinfo/radars/radar_range1.htm";
+redirecturl['/wxinfo/radars/radar_gallery/index_c.htm'] = "/tc/wxinfo/radars/radar_gallery/index.htm";
+redirecturl['/wxinfo/radars/radar_range0.htm'] = "/en/wxinfo/radars/radar_range0.htm";
+redirecturl['/wxinfo/radars/radar_range0_uc.htm'] = "/tc/wxinfo/radars/radar_range0.htm";
+redirecturl['/wxinfo/radars/radar_range1.htm'] = "/en/wxinfo/radars/radar_range1.htm";
+redirecturl['/wxinfo/rainfall/isohyet_daily.shtml'] = "/en/wxinfo/rainfall/isohyet_daily.shtml";
+redirecturl['/wxinfo/rainfall/isohyet_daily_uc.shtml'] = "/tc/wxinfo/rainfall/isohyet_daily.shtml";
+redirecturl['/wxinfo/rainfall/isohyet_past1hr.shtml'] = "/en/wxinfo/rainfall/isohyet_past1hr.shtml";
+redirecturl['/wxinfo/rainfall/isohyet_past1hr_uc.shtml'] = "/tc/wxinfo/rainfall/isohyet_past1hr.shtml";
+redirecturl['/wxinfo/rainfall/isohyet_todayc.htm'] = "/tc/wxinfo/rainfall/isohyet_today.shtml";
+//redirecturl['/wxinfo/rainfall/isohyet_ydayc.htm'] = "/tc/wxinfo/rainfall/isohyet_yesterday.shtml";
+redirecturl['/wxinfo/rainfall/isohyet_ydaye.htm'] = "/en/wxinfo/rainfall/isohyet_yesterday.shtml";
+redirecturl['/wxinfo/rainfall/rf_record_e.shtml'] = "/en/wxinfo/rainfall/rf_record.shtml";
+redirecturl['/wxinfo/rainfall/rf_record_uc.shtml'] = "/tc/wxinfo/rainfall/rf_record.shtml";
+redirecturl['/wxinfo/ts/display_element_ff_c.htm'] = "/tc/wxinfo/ts/display_element_ff.htm";
+redirecturl['/wxinfo/ts/display_element_hkhi_uc.htm'] = "/tc/wxinfo/ts/display_element_hkhi.htm";
+redirecturl['/wxinfo/ts/display_element_tt_c.htm'] = "/tc/wxinfo/ts/display_element_tt.htm";
+redirecturl['/wxinfo/ts/display_element_tt_e.htm'] = "/en/wxinfo/ts/display_element_tt.htm";
+redirecturl['/wxinfo/ts/display_graph_c.htm'] = "/tc/wxinfo/ts/display_graph.htm";
+redirecturl['/wxinfo/ts/display_graph_e.htm'] = "/en/wxinfo/ts/display_graph.htm";
+redirecturl['/wxinfo/ts/index.htm'] = "/en/wxinfo/ts/index.htm";
+redirecturl['/wxinfo/ts/index_c_gust.htm'] = "/tc/wxinfo/ts/index_gust.htm";
+redirecturl['/wxinfo/ts/index_c_max.htm'] = "/tc/wxinfo/ts/index_max.htm";
+redirecturl['/wxinfo/ts/index_c_min.htm'] = "/tc/wxinfo/ts/index_min.htm";
+redirecturl['/wxinfo/ts/index_c_rh.htm'] = "/tc/wxinfo/ts/index_rh.htm";
+redirecturl['/wxinfo/ts/index_hkhi_uc.htm'] = "/tc/wxinfo/ts/index_hkhi.htm";
+redirecturl['/wxinfo/ts/index_tc24_uc.htm'] = "/tc/wxinfo/ts/index_tc24.htm";
+redirecturl['/wxinfo/ts/index_webcam_e.htm'] = "/en/wxinfo/ts/index_webcam.htm";
+redirecturl['/wxinfo/ts/index_webcam_uc.htm'] = "/tc/wxinfo/ts/index_webcam.htm";
+redirecturl['/wxinfo/ts/index_wind_c.htm'] = "/tc/wxinfo/ts/index_wind.htm";
+redirecturl['/wxinfo/ts/index_wind_e.htm'] = "/en/wxinfo/ts/index_wind.htm";
+redirecturl['/wxinfo/ts/tsarchive/wxinfo_24hrs_c.shtml'] = "/tc/wxinfo/ts/tsarchive/wxinfo_24hrs.shtml";
+redirecturl['/wxinfo/ts/tsarchive/wxinfo_24hrs_e.shtml'] = "/en/wxinfo/ts/tsarchive/wxinfo_24hrs.shtml";
+redirecturl['/wxinfo/ts/webcam/CCH_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/CCH_photo.htm";
+redirecturl['/wxinfo/ts/webcam/CP1_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/CP1_photo.htm";
+redirecturl['/wxinfo/ts/webcam/HK2_photo_e.htm'] = "/en/wxinfo/ts/webcam/HK2_photo.htm";
+redirecturl['/wxinfo/ts/webcam/HK2_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/HK2_photo.htm";
+redirecturl['/wxinfo/ts/webcam/KLT_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/KLT_photo.htm";
+redirecturl['/wxinfo/ts/webcam/LAM_photo_e.htm'] = "/en/wxinfo/ts/webcam/LAM_photo.htm";
+redirecturl['/wxinfo/ts/webcam/LAM_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/LAM_photo.htm";
+redirecturl['/wxinfo/ts/webcam/LFS_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/LFS_photo.htm";
+redirecturl['/wxinfo/ts/webcam/SLW_photo_e.htm'] = "/en/wxinfo/ts/webcam/SLW_photo.htm";
+redirecturl['/wxinfo/ts/webcam/SLW_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/SLW_photo.htm";
+redirecturl['/wxinfo/ts/webcam/TPK_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/TPK_photo.htm";
+redirecturl['/wxinfo/ts/webcam/VPA_photo_e.htm'] = "/en/wxinfo/ts/webcam/VPA_photo.htm";
+redirecturl['/wxinfo/ts/webcam/VPA_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/VPA_photo.htm";
+redirecturl['/wxinfo/ts/webcam/VPB_photo_e.htm'] = "/en/wxinfo/ts/webcam/VPB_photo.htm";
+redirecturl['/wxinfo/ts/webcam/VPB_photo_uc.htm'] = "/tc/wxinfo/ts/webcam/VPB_photo.htm";
+redirecturl['/wxinfo/ts/windbarb.htm'] = "/en/wxinfo/ts/windbarb.htm";
+redirecturl['/wxinfo/ts/windbarbc.htm'] = "/tc/wxinfo/ts/windbarb.htm";
+redirecturl['/wxinfo/uvinfo/uvinfo_e.html'] = "/en/wxinfo/uvinfo/uvinfo.html";
+redirecturl['/wxinfo/uvinfo/uvinfo_uc.html'] = "/tc/wxinfo/uvinfo/uvinfo.html";
+redirecturl['/wxinfo/worldwx/ci.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cityforecastc.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cityforecaste.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ci_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/wwi.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/education/article_uc.htm'] = "/tc/education/edu.htm";
+redirecturl['/home.htm'] = "/tc/index.html";
+redirecturl['/m/article_e.htm'] = "/en/education/edu.htm";
+redirecturl['/m/article_uc.htm'] = "/tc/education/edu.htm";
+redirecturl['/m/dwm_uc.htm'] = "/tc/wxinfo/currwx/wxcht.htm";
+redirecturl['/m/edu_uc.htm'] = "/tc/education/edu.htm";
+redirecturl['/m/flw.htm'] = "/en/wxinfo/currwx/flw.htm";
+redirecturl['/m/flw_uc.htm'] = "/tc/wxinfo/currwx/flw.htm";
+redirecturl['/m/fnd.htm'] = "/en/wxinfo/currwx/fnd.htm";
+redirecturl['/m/fnd_uc.htm'] = "/tc/wxinfo/currwx/fnd.htm";
+redirecturl['/m/forecaster_blog_index_uc.htm'] = "/tc/forecaster_blog/index.htm";
+redirecturl['/m/forecaster_blog_reader_uc.htm'] = "/tc/forecaster_blog/index.htm";
+redirecturl['/m/home.htm'] = "/en/index.html";
+redirecturl['/m/home_uc.htm'] = "/tc/index.html";
+redirecturl['/m/isohyet.htm'] = "/en/wxinfo/rainfall/isohyete.shtml";
+redirecturl['/m/isohyet_p24_uc.htm'] = "/tc/wxinfo/rainfall/isohyet_past24hr.shtml";
+redirecturl['/m/isohyet_uc.htm'] = "/tc/wxinfo/rainfall/isohyet.shtml";
+redirecturl['/m/llis/mobilellaw_uc.html'] = "/en/wxinfo/llis/gm_index.htm";
+redirecturl['/m/menu.htm'] = "/en/index.html";
+redirecturl['/m/menu_uc.htm'] = "/tc/index.html";
+redirecturl['/m/mylocwx.htm'] = "http://my.weather.gov.hk/myindex.htm";
+redirecturl['/m/mylocwx_uc.htm'] = "https://my.weather.gov.hk/tc/myindex.htm";
+redirecturl['/m/nowcast/hk_rainfall.htm'] = "/en/ocf/index.html?data=ncrf";
+redirecturl['/m/nowcast/hk_rainfall_uc.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+redirecturl['/m/nowcast/lightning/hk_lightning_nowcast_uc.htm'] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncln";
+redirecturl['/m/probfcst/tc_spm.htm'] = "/en/probfcst/tc_spm.htm";
+redirecturl['/m/probfcst/tc_spm_uc.htm'] = "/tc/probfcst/tc_spm.htm";
+redirecturl['/m/quake-info_uc.htm'] = "/tc/gts/equake/quake-info.htm";
+redirecturl['/m/radar.htm'] = "/en/wxinfo/radars/radar_range1.htm";
+redirecturl['/m/radar_uc.htm'] = "/tc/wxinfo/radars/radar_range1.htm";
+redirecturl['/m/reader.htm'] = "/en/index.html";
+redirecturl['/m/reader_uc.htm'] = "/tc/index.html";
+redirecturl['/m/region.htm'] = "/en/wxinfo/ts/index.htm";
+redirecturl['/m/region_hko.htm'] = "/en/wxinfo/ts/display_graph.htm?hko&menu=otherwxi";
+redirecturl['/m/region_sk.htm'] = "/tc/wxinfo/ts/display_graph.htm?sek&menu=otherwxi";
+redirecturl['/m/region_tko_uc.htm'] = "/tc/wxinfo/ts/display_graph.htm?jkb&menu=otherwxi";
+redirecturl['/m/region_tm_uc.htm'] = "/tc/wxinfo/ts/display_graph.htm?tun&menu=otherwxi";
+redirecturl['/m/region_uc.htm'] = "/tc/wxinfo/ts/index.htm";
+redirecturl['/m/rhrread.htm'] = "/en/wxinfo/currwx/current.htm";
+redirecturl['/m/rhrread_uc.htm'] = "/tc/wxinfo/currwx/current.htm";
+redirecturl['/m/rmn_uc.htm'] = "/tc/radiation/rmn_hourly.htm";
+redirecturl['/m/rsmt_uc.htm'] = "/tc/tide/etide_main.htm";
+redirecturl['/m/satellite.htm'] = "/en/wxinfo/intersat/satellite/sate.htm";
+redirecturl['/m/satellite_uc.htm'] = "/tc/wxinfo/intersat/satellite/satc.htm";
+redirecturl['/m/sccw.htm'] = "/en/wxinfo/currwx/ffish.htm";
+redirecturl['/m/sccw_uc.htm'] = "/tc/wxinfo/currwx/ffish.htm";
+redirecturl['/m/tcp.htm'] = "/en/wxinfo/currwx/tc_gis.htm";
+redirecturl['/m/tcp_uc.htm'] = "/tc/wxinfo/currwx/tc_gis.htm";
+redirecturl['/m/uvinfo/m_uvinfo_e.html'] = "/en/wxinfo/uvinfo/uvinfo.html";
+redirecturl['/m/uvinfo/m_uvinfo_uc.html'] = "/tc/wxinfo/uvinfo/uvinfo.html";
+redirecturl['/m/wtc.htm'] = "/en/wxinfo/currwx/tcswarn.htm";
+redirecturl['/m/wtc_uc.htm'] = "/tc/wxinfo/currwx/tcswarnc.htm";
+redirecturl['/m/wtcb.htm'] = "/en/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb_uc.htm'] = "/tc/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb1.htm'] = "/en/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb1_uc.htm'] = "/tc/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb2.htm'] = "/en/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb2_uc.htm'] = "/tc/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb3.htm'] = "/en/wxinfo/currwx/tc.htm";
+redirecturl['/m/wtcb3_uc.htm'] = "/tc/wxinfo/currwx/tc.htm";
+// Move to fast redirect
+//redirecturl['/m/wwi.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+//redirecturl['/m/wwi_uc.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/m/wxphoto.htm'] = "/tc/wxinfo/ts/index_webcam.htm";
+redirecturl['/m/wxwarntoday.htm'] = "/en/wxinfo/dailywx/wxwarntoday.htm";
+redirecturl['/m/wxwarntoday_uc.htm'] = "/tc/wxinfo/dailywx/wxwarntoday.htm";
+//redirecturl['/hko/textonly/v2/forecast/englishwx2.htm'] = "/textonly/v2/forecast/englishwx2.htm";
+//redirecturl['/hko/textonly/v2/forecast/nday.htm'] = "/textonly/v2/forecast/nday.htm";
+//redirecturl['/wisnew.htm'] = "/en/whatsnew/index.htm";
+redirecturl['/informtc/informtc.htm'] = "/tc/informtc/tcMain.htm";
+redirecturl["/forecaster_blog/2019/fb_20190730_uc.htm"] = "/tc/forecaster_blog/fb_20190730.htm";
+redirecturl["/forecaster_blog/index_uc.htm"] = "/tc/forecaster_blog/index.htm";
+redirecturl["/hko/wxinfo/currwx/fndc.htm"] = "/tc/wxinfo/currwx/fnd.htm";
+redirecturl["/index.htm"] = "/en/index.html";
+redirecturl["/informtc/wipha19/wipha_uc.htm"] = "/tc/informtc/wipha19/wipha.htm";
+redirecturl["/old_contentc.htm"] = "/en/index.html";
+redirecturl["/old_contente.htm"] = "/tc/index.html";
+redirecturl["/nowcast/prd/api/index_uc.htm"] = "https://maps.weather.gov.hk/ocf/index_uc.html?data=ncrf";
+redirecturl["/school/mainc.shtml"] = "/tc/school/school.htm";
+redirecturl["/school/school.htm"] = "/en/school/school.htm";
+redirecturl["/school/school_uc.htm"] = "/tc/school/school.htm";
+redirecturl["/wxinfo/dailywx/yeswx/ryesc.htm"] = "/tc/wxinfo/dailywx/dailywx.htm";
+redirecturl["/wxinfo/intersat/modis/sat.html"] = "/en/wxinfo/intersat/satellite/sate.htm";
+redirecturl["/wxinfo/intersat/mtsat/satpic_s.shtml"] = "/en/wxinfo/intersat/satellite/sate.htm";
+redirecturl["/wxinfo/intersat/mtsat/satpicc_s.shtml"] = "/tc/wxinfo/intersat/satellite/sate.htm";
+redirecturl["/wxinfo/intersat/satpicc_s.shtml"] = "/tc/wxinfo/intersat/satellite/sate.htm";
+redirecturl["/wxinfo/pastwx/mws2019/mws201907c_uc.htm"] = "/tc/wxinfo/pastwx/mws2019/mws201907.htm";
+redirecturl["/wxinfo/rainfall/isohyet_p24c.htm"] = "/tc/wxinfo/rainfall/isohyet_past24hr.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_p24c.shtml"] = "/tc/wxinfo/rainfall/isohyet_past24hr.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_p24e.shtml"] = "/en/wxinfo/rainfall/isohyet_past24hr.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_dailye.shtml"] = "/en/wxinfo/rainfall/isohyet_daily.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_dailyc.shtml"] = "/tc/wxinfo/rainfall/isohyet_daily.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_todaye.shtml"] = "/en/wxinfo/rainfall/isohyet_today.shtml";
+redirecturl["/wxinfo/rainfall/isohyet_todayc.shtml"] = "/tc/wxinfo/rainfall/isohyet_today.shtml";
+redirecturl["/wxinfo/rainfall/isohyete.shtml"] = "/en/wxinfo/rainfall/isohyet_past1hr.shtml";
+redirecturl["/wxinfo/rainfall/isohyetc.shtml"] = "/tc/wxinfo/rainfall/isohyet_past1hr.shtml";
+redirecturl["/cis/GBAClimat_uc.htm"] = "/tc/cis/GBAClimat.htm";
+redirecturl["/cis/GBAClimat_e.htm"] = "/en/cis/GBAClimat.htm";
+//redirecturl["/wxinfo/ts/text_readings_e.htm"] = "/en/wxinfo/ts/text_readings.htm";
+//redirecturl["/wxinfo/ts/text_readings_c.htm"] = "/tc/wxinfo/ts/text_readings.htm";
+
+redirecturl["/aviat/airportwx/index.htm"] = "/en/aviat/airportwx/w_airport_wx.htm";
+redirecturl["/wxinfo/dailywx/dailywx.shtml"] = "/en/wxinfo/dailywx/dailywx.htm";
+redirecturl["/wxinfo/dailywx/dailywxc.shtml"] = "/tc/wxinfo/dailywx/dailywx.htm";
+redirecturl["/sports/socare/socare_uc.htm"] = "/tc/sports/socare/socare.htm";
+redirecturl["/sports/socare/socare.htm"] = "/en/sports/socare/socare.htm";
+
+
+// Add WWI redirect links
+redirecturl['/wxinfo/worldwx/aa.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/aa_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/africa.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/africa_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ag.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ag_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/aj.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/aj_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ar.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ar_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/asia.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/asia_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/au.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/au_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/aus_spacific.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/aus_spacific_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bd.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bd_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bh.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bh_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/br.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/br_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bz.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/bz_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ch.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ch_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cn.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cn_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/co.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/co_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ct.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ct_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cu.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cu_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cz.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/cz_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/dn.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/dn_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/dr.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/dr_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/es.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/es_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/europe.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/europe_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ey.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ey_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fi.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fi_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fj.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fj_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fr.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/fr_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ge.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ge_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/gl.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/gl_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/gr.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/gr_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/hu.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/hu_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/id.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/id_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ie.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ie_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/in.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/in_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/index.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/index_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ir.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ir_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/is.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/is_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/iy.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/iy_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jd.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jd_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jm.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jm_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jp.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/jp_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ko.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ko_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ks.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ks_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ky.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ky_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/lu.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/lu_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/lv.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/lv_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ma.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ma_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/majorcities.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/majorcities_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mc.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mc_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ml.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ml_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mo.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mo_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ms.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ms_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mv.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mv_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mx.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/mx_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nc_america.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nc_america_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nl.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nl_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/np.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/np_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nz.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/nz_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/om.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/om_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ph.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ph_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pk.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pk_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pl.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pl_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/po.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/po_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pr.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/pr_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/re.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/re_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ro.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ro_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/s_america.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/s_america_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sa.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sa_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sn.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sn_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sp.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sp_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sr.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sr_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sw.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/sw_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/td.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/td_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/th.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/th_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/tindex_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/tu.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/tu_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ua.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/ua_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uk.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uk_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/us.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/us_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uy.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uy_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uz.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/uz_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vi.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vi_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vn.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vn_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vu.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/vu_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/yg.htm'] = "/en/wxinfo/worldwx/wwi.htm";
+redirecturl['/wxinfo/worldwx/yg_c.htm'] = "/tc/wxinfo/worldwx/wwi.htm";
+
+
+/* inside flash link redirection start */
+
+redirecturl['/aviat/edu_inst/inst_e.htm'] = "/en/aviat/edu_inst/inst.htm";
+redirecturl['/aviat/edu_inst/inst_c.htm'] = "/tc/aviat/edu_inst/inst.htm";
+redirecturl['/aviat/edu_inst/quiz_e.htm'] = "/en/aviat/edu_inst/quiz.htm";
+redirecturl['/aviat/edu_inst/quiz_c.htm'] = "/tc/aviat/edu_inst/quiz.htm";
+redirecturl['/aviat/edu_inst/clfcmi_e.htm'] = "/en/aviat/edu_inst/clfcmi.htm";
+redirecturl['/aviat/edu_inst/clfcmi_c.htm'] = "/tc/aviat/edu_inst/clfcmi.htm";
+redirecturl['/education/met_instrument/introduction.htm'] = "/en/education/met_instrument/introduction.htm";
+redirecturl['/education/met_instrument/met_instrument_chi/introduction_chi.htm'] = "/tc/education/met_instrument/introduction.htm";
+
+redirecturl['/gts/time/digital_clock_uc.html'] = "/tc/gts/time/digital_clock.html";
+redirecturl['/m/rt_uc.htm'] = "/tc/tide/marine/realtide.htm";
+redirecturl['/m/pt_uc.htm'] = "/tc/tide/predtide.htm";
+redirecturl['/m/probfcst/tempfcst_uc.htm'] = "/tc/probfcst/tempfcst.htm";
+redirecturl['/m/clock_uc.htm'] = "/tc/gts/time/clock_e.html";
+redirecturl['/m/clock.htm'] = "/en/gts/time/clock_e.html";
+
+/* inside flash link redirection end */
+
+
+var currentpath = window.location.pathname;
+currentpath = currentpath.replace("/preview/10/draftpreview/", "/");
+
+//console.log(currentpath);
+
+var countdowntime = 5;
+
+var redirectLink = "";
+if(redirecturl[window.location.pathname]){
+	redirectLink = redirecturl[window.location.pathname] ;
+}else if(currentpath.indexOf('/wxinfo/currwx/tc_pastpos_')==0){
+	newpath = currentpath.replace("/wxinfo/currwx/tc_pastpos_", "");
+	newnum = newpath.substring(1, newpath.indexOf('.'));
+	redirectLink = "/en/wxinfo/currwx/tc_pastpos_"+newnum+".html" ;
+}else if(currentpath.indexOf('/wxinfo/currwx/tc_pastposc_')==0){
+	newpath = currentpath.replace("/wxinfo/currwx/tc_pastposc_", "");
+	newnum = newpath.substring(1, newpath.indexOf('.'));
+	redirectLink = "/tc/wxinfo/currwx/tc_pastpos_"+newnum+".html" ;
+}else if(currentpath.indexOf('/wxinfo/currwx/tc_pos_')==0){
+	newpath = currentpath.replace("/wxinfo/currwx/tc_pos_", "");
+	newnum = newpath.substring(1, newpath.indexOf('.'));
+	redirectLink = "/en/wxinfo/currwx/tc_pos_"+newnum+".html" ;
+}else if(currentpath.indexOf('/wxinfo/currwx/tc_posc_')==0){
+	newpath = currentpath.replace("/wxinfo/currwx/tc_posc_", "");
+	newnum = newpath.substring(1, newpath.indexOf('.'));
+	redirectLink = "/tc/wxinfo/currwx/tc_pos_"+newnum+".html" ;
+}
+
+para_redirecturl["/wxinfo/ts/explain_e.htm"] = "/en/wxinfo/ts/explain.htm";
+if(para_redirecturl[window.location.pathname]){
+	var para = window.location.search;
+	redirectLink = para_redirecturl[window.location.pathname]+para;
+}
+
+var countdown;
+
+$(function(){
+
+	$(".countdown").html(countdowntime);
+
+	if (redirectLink == "undefined" || redirectLink == "") {
+		if (window.location.href.match("#$")) {
+			window.location.href = "/tc/index.html";
+		} else {
+			//Check files
+			var checkPath = window.location.pathname;
+			var chi_pattern = '(.*)(_uc|_c)(\.)(.*)';
+			var eng_pattern = '(.*)(_e)(\.)(.*)';
+			var chi_match = checkPath.match(chi_pattern);
+			var eng_match = checkPath.match(eng_pattern);
+
+			var langTest = "tc";
+			if (chi_match) {
+				redirectLink = "/tc"+chi_match[1]+chi_match[3]+chi_match[4];
+				redirectLink += "#";
+			} else if (eng_match) {
+				redirectLink = "/en"+eng_match[1]+eng_match[3]+eng_match[4];
+				redirectLink += "#";
+			}
+		}
+	}
+
+	if (redirectLink == "undefined" || redirectLink == "") {
+		$(".content.not_found").show();
+		$(".content.redirect").hide();
+		redirectLink = window.location.protocol+"//"+window.location.hostname;
+	} else {
+		$(".content.not_found").hide();
+		$(".content.redirect").show();
+	}
+	
+	countdown = setInterval(function() {
+		countdowntime = countdowntime - 1;
+		$(".countdown").html(countdowntime);
+
+		if (countdowntime <= 0) {
+			window.location.href = redirectLink;
+		}
+	}, 1000);
+});
+
+
+</script>
+<body>
+	<div class= "content_holder">
+		<img alt= "天文台 Hong Kong Observatory" src= "/images/logo_hko_e.png">
+		<br>
+		<br>
+		<div class= "content not_found">
+			<br>
+			<h2>對不起，我們找不到你要的網頁。</h2>
+			<br>
+			<h2>你將於 <span class= "countdown"></span> 秒內被轉往香港天文台網站。你亦可按以下連結瀏覽<a href= "https://www.hko.gov.hk">香港天文台網站</a>。</h2>
+			<br>
+			<h2>对不起，我们找不到你要的网页。</h2>
+			<br>
+			<h2>你将于 <span class= "countdown"></span> 秒内被转往香港天文台网站。你亦可按以下连结浏览<a href= "https://www.hko.gov.hk">香港天文台网站</a>。</h2>
+			<br>
+			<h2>Sorry, the page you requested cannot be found.</h2>
+			<br>
+			<h2>You will be re-directed to HKO Website in <span class= "countdown"></span> seconds. You can also click the following link to go to <a href= "https://www.hko.gov.hk">HKO Website</a>.</h2>
+		</div>
+		<div class= "content redirect" style= "display:none">
+			<br>
+			<h2>香港天文台網站已全面翻新，你將於 <span class= "countdown"></span> 秒內被轉往新網站相關頁面。如有需要，請更新網址書籤，以便日後更快捷地瀏覽香港天文台網站。</h2>
+			<br>
+			<h2>香港天文台网站已全面翻新，你将於 <span class= "countdown"></span> 秒内被转往新网站相关页面。如有需要，请更新网址书签，以便日後更快捷地浏览香港天文台网站。</h2>
+			<br>
+			<h2>HKO Website has been revamped, and you will be re-directed to the relevant page on the new website in <span class= "countdown"></span> seconds. Please update your bookmarks as appropriate for more direct access to HKO Website.</h2>
+		</div>
+	</div>
+</body>
+</html>
+

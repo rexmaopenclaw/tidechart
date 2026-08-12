@@ -18,6 +18,34 @@ header { padding: 8px 12px 4px; flex-shrink: 0; }
 header h1 { font-size: 18px; color: #60b0f4; }
 .header-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .subtitle { font-size: 11px; color: #5a6a80; letter-spacing: 0.5px; }
+
+/* HKO Warning Signals (top bar) */
+.warn-bar {
+  display: flex; align-items: center; gap: 6px;
+  padding: 5px 10px; flex-shrink: 0;
+  background: rgba(20,34,56,0.7);
+  border-bottom: 1px solid rgba(255,107,107,0.15);
+  overflow-x: auto; white-space: nowrap;
+}
+.warn-label { font-size: 11px; color: #ffb0b0; font-weight: 600; flex-shrink: 0; }
+.warn-chips { display: flex; gap: 5px; overflow-x: auto; }
+.warn-chip {
+  display: inline-block; flex-shrink: 0;
+  font-size: 11px; font-weight: 600;
+  padding: 2px 9px; border-radius: 12px;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid;
+  transition: filter 0.15s;
+}
+.warn-chip:hover { filter: brightness(1.25); }
+.warn-tc    { background: rgba(200,40,60,0.25); border-color: #ff5a6a; color: #ff8a94; }
+.warn-rain  { background: rgba(30,90,200,0.25); border-color: #5a9aff; color: #9ac2ff; }
+.warn-tsr   { background: rgba(210,160,30,0.2); border-color: #e0b050; color: #ffd98a; }
+.warn-flood { background: rgba(40,140,130,0.22); border-color: #4ecdc4; color: #7fe8e0; }
+.warn-fire  { background: rgba(220,90,30,0.22); border-color: #ff8a4a; color: #ffb08a; }
+.warn-cold  { background: rgba(80,140,230,0.22); border-color: #7ab0ff; color: #b8d4ff; }
+.warn-hot   { background: rgba(240,120,40,0.22); border-color: #ffa050; color: #ffc08a; }
+.warn-other { background: rgba(120,130,150,0.22); border-color: #9aa8b8; color: #c8d4e0; }
 .settings-btn { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px 8px; }
 .settings-btn:hover { opacity: 0.7; }
 

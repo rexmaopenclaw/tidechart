@@ -17,6 +17,21 @@ const DIR_NAMES = {
   'W': '西', 'WNW': '西北西', 'NW': '西北', 'NNW': '北北西'
 };
 
+// HKO warning statement codes -> Chinese names
+const WARNING_NAMES = {
+  'WTC': '熱帶氣旋警告信號',
+  'WRAIN': '暴雨警告信號',
+  'WTSR': '雷暴警告',
+  'WFROST': '霜凍警告',
+  'WFLOOD': '山泥傾瀉警告',
+  'WFIRE': '火災危險警告',
+  'WHCO': '寒冷天氣警告',
+  'WHOT': '酷熱天氣警告',
+  'WFO': '水浸特別報告',
+  'WMS': '強烈季候風信號',
+  'WSPEC': '特別天氣提示'
+};
+
 function degToCompass(deg) {
   const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
   return dirs[Math.round(deg / 22.5) % 16];
@@ -797,6 +812,26 @@ export default {
           total_stations: records.length,
           nearest
         });
+      }
+
+      // ---- API: HKO warning signals ----
+      if (path === '/api/warnings') {
+        const urlW = 'https://data.weather.gov.hk/weatherAPI/opendata/weather.php?dataType=warningInfo&lang=tc&t=' + Date.now();
+        const resp = await fetch(urlW, { headers: { 'User-Agent': 'Mozilla/5.0' }, cache: 'no-store' });
+        if (!resp.ok) return error('HKO warning API returned ' + resp.status, 502);
+        const j = await resp.json();
+        const warnings = [];
+        const list = Array.isArray(j.details) ? j.details : [];
+        for (const d of list) {
+          const code = d.warningStatementCode || '';
+          const first = Array.isArray(d.contents) && d.contents.length > 0 ? d.contents[0] : '';
+          warnings.push({
+            code: code,
+            name: WARNING_NAMES[code] || first.replace(/現正生效。?$/, '').replace(/^[^。]*[。]?\s*/, '').trim() || first,
+            updateTime: d.updateTime || null
+          });
+        }
+        return json({ fetchedAt: new Date().toISOString(), warnings });
       }
 
       // ---- API: Nearby points ----

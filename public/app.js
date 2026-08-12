@@ -260,6 +260,48 @@ const windGfs = document.getElementById('windGfs');
 const windEcmwf = document.getElementById('windEcmwf');
 let windUnit = 'kmh'; // default km/h
 
+// Warning DOM refs
+const warnBar = document.getElementById('warnBar');
+const warnChips = document.getElementById('warnChips');
+
+// HKO warning chip colors by code prefix
+function warnChipClass(code) {
+  if (!code) return '';
+  if (code === 'WTC') return 'warn-tc';
+  if (code === 'WRAIN') return 'warn-rain';
+  if (code === 'WTSR') return 'warn-tsr';
+  if (code === 'WFLOOD' || code === 'WFO') return 'warn-flood';
+  if (code === 'WFIRE') return 'warn-fire';
+  if (code === 'WHCO' || code === 'WFROST') return 'warn-cold';
+  if (code === 'WHOT') return 'warn-hot';
+  return 'warn-other';
+}
+
+async function loadWarnings() {
+  if (!warnBar || !warnChips) return;
+  try {
+    const resp = await fetch(apiUrl('/api/warnings?t=' + Date.now()), { cache: 'no-store' });
+    if (!resp.ok) { warnBar.classList.add('hidden'); return; }
+    const j = await resp.json();
+    const list = (j && j.warnings) || [];
+    if (list.length === 0) { warnBar.classList.add('hidden'); return; }
+    warnChips.innerHTML = '';
+    list.forEach(function(w) {
+      const chip = document.createElement('a');
+      chip.className = 'warn-chip ' + warnChipClass(w.code);
+      chip.href = 'https://www.hko.gov.hk/tc/wxinfo/currwx/warn.htm';
+      chip.target = '_blank';
+      chip.rel = 'noopener';
+      chip.title = (w.updateTime || '') + (w.code ? ' (' + w.code + ')' : '');
+      chip.textContent = '⚠ ' + w.name;
+      warnChips.appendChild(chip);
+    });
+    warnBar.classList.remove('hidden');
+  } catch (e) {
+    warnBar.classList.add('hidden');
+  }
+}
+
 // ----- Map -----
 let map, markerLayer;
 
@@ -1330,6 +1372,10 @@ function init() {
   if (windUnitToggle) {
     windUnitToggle.addEventListener('click', toggleWindUnit);
   }
+
+  // HKO warning signals (top bar) — load now + refresh every 5 min
+  loadWarnings();
+  setInterval(loadWarnings, 5 * 60 * 1000);
 
   // Wind history range toggle (24h / 48h / 7d)
   if (windHistRange) {
