@@ -1213,8 +1213,10 @@ function attachScrub(canvas, key) {
     canvas.setPointerCapture(e.pointerId);
     scrubShow(e, key);
   });
+  // Hover AND drag both show the value
   canvas.addEventListener('pointermove', function(e) {
-    if (scrubCanvas === canvas) scrubShow(e, key);
+    scrubCanvas = canvas;
+    scrubShow(e, key);
   });
   canvas.addEventListener('pointerup', scrubHide);
   canvas.addEventListener('pointerleave', scrubHide);
