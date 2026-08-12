@@ -743,8 +743,8 @@ export default {
         const lat = parseFloat(url.searchParams.get('lat')) || null;
         const lon = parseFloat(url.searchParams.get('lon')) || null;
 
-        const csvUrl = 'https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_10min_wind.csv';
-        const resp = await fetch(csvUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+        const csvUrl = 'https://data.weather.gov.hk/weatherAPI/hko_data/regional-weather/latest_10min_wind.csv?t=' + Date.now();
+        const resp = await fetch(csvUrl, { headers: { 'User-Agent': 'Mozilla/5.0' }, cache: 'no-store' });
         if (!resp.ok) return error('HKO wind CSV returned ' + resp.status, 502);
         const csvText = await resp.text();
 
