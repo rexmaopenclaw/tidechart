@@ -756,7 +756,11 @@ function showHkoWindStation(idx) {
   }
 
   // Station
-  windHkoTime.textContent = h.timestamp ? h.timestamp.substring(11, 16) + ' (' + h.timestamp.substring(5, 10) + ')' : '--';
+  // HKO timestamp format is YYYYMMDDHHMM (e.g. 202608120740) — parse directly
+  const ts = h.timestamp || '';
+  windHkoTime.textContent = ts.length >= 12
+    ? ts.substring(8, 10) + ':' + ts.substring(10, 12) + ' (' + ts.substring(4, 6) + '-' + ts.substring(6, 8) + ')'
+    : '--';
 
   // Load history chart for this station
   loadWindHistory(stn.station);
