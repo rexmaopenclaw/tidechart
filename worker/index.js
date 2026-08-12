@@ -828,7 +828,8 @@ export default {
           warnings.push({
             code: code,
             name: WARNING_NAMES[code] || first.replace(/現正生效。?$/, '').replace(/^[^。]*[。]?\s*/, '').trim() || first,
-            updateTime: d.updateTime || null
+            updateTime: d.updateTime || null,
+            contents: Array.isArray(d.contents) ? d.contents : []
           });
         }
         return json({ fetchedAt: new Date().toISOString(), warnings });

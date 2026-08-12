@@ -287,19 +287,40 @@ async function loadWarnings() {
     if (list.length === 0) { warnBar.classList.add('hidden'); return; }
     warnChips.innerHTML = '';
     list.forEach(function(w) {
-      const chip = document.createElement('a');
+      const chip = document.createElement('span');
       chip.className = 'warn-chip ' + warnChipClass(w.code);
-      chip.href = 'https://www.hko.gov.hk/tc/wxinfo/currwx/warn.htm';
-      chip.target = '_blank';
-      chip.rel = 'noopener';
-      chip.title = (w.updateTime || '') + (w.code ? ' (' + w.code + ')' : '');
+      chip.title = '撳入去睇詳情';
       chip.textContent = '⚠ ' + w.name;
+      chip.addEventListener('click', function() { showWarningDetail(w); });
       warnChips.appendChild(chip);
     });
     warnBar.classList.remove('hidden');
   } catch (e) {
     warnBar.classList.add('hidden');
   }
+}
+
+// Show full warning text in an in-app modal
+function showWarningDetail(w) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  const lines = (w.contents && w.contents.length > 0)
+    ? w.contents.map(function(t) { return '<p>' + t.replace(/</g, '&lt;') + '</p>'; }).join('')
+    : '<p>暫無詳細內容</p>';
+  const timeStr = w.updateTime ? w.updateTime.replace('T', ' ').replace('+08:00', '') : '';
+  overlay.innerHTML = '\
+    <div class="modal warn-modal">\
+      <h3>⚠️ ' + w.name + '</h3>\
+      <div class="warn-modal-meta">' + (w.code ? w.code + ' · ' : '') + (timeStr ? '更新 ' + timeStr : '') + '</div>\
+      <div class="warn-modal-body">' + lines + '</div>\
+      <div class="modal-btns">\
+        <a class="warn-modal-link" href="https://www.hko.gov.hk/tc/wxinfo/currwx/warn.htm" target="_blank" rel="noopener">天文台網頁 ↗</a>\
+        <button class="save" id="warnModalClose">關閉</button>\
+      </div>\
+    </div>';
+  document.body.appendChild(overlay);
+  document.getElementById('warnModalClose').addEventListener('click', function() { overlay.remove(); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
 }
 
 // ----- Map -----
