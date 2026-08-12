@@ -538,7 +538,7 @@ export default {
 
       if (path === '/api/points' && request.method === 'GET') {
         if (!auth) return error('Unauthorized', 401);
-        const points = await db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY created_at').bind(auth.id).all();
+        const points = await db.prepare('SELECT id, name, lat, lon FROM points WHERE user_id = ? ORDER BY id').bind(auth.id).all();
         return json(points.results);
       }
 

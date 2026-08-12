@@ -73,6 +73,7 @@ function hkoWindDirToDeg(dirStr) {
 }
 
 // ----- State -----
+const WIND_STATION_KEY = 'tideWindStationName';
 let state = {
   date: '',
   time: '',
@@ -86,6 +87,11 @@ let state = {
   user: null,
   token: null
 };
+
+// Restore last-picked HKO wind station (persisted across reloads)
+try {
+  state.windStationName = localStorage.getItem(WIND_STATION_KEY) || '';
+} catch (e) { state.windStationName = ''; }
 
 // ----- Auth -----
 const AUTH_KEY = '***';
@@ -136,6 +142,15 @@ async function syncPointsToServer() {
     if (resp.ok) {
       const serverPoints = await resp.json();
       points = serverPoints.map(function(p) { return { id: p.id, name: p.name, lat: p.lat, lon: p.lon, isHydro: false }; });
+      // Re-attach activePoint to its server-side twin (ids changed on server)
+      if (state.activePoint) {
+        const match = points.find(function(p) {
+          return p.name === state.activePoint.name &&
+            Math.abs(p.lat - state.activePoint.lat) < 0.0001 &&
+            Math.abs(p.lon - state.activePoint.lon) < 0.0001;
+        });
+        if (match) state.activePoint = match;
+      }
       saveLocalPoints(points);
       renderPointsBar();
       renderMarkers();
@@ -155,6 +170,15 @@ async function loadServerPoints() {
       const serverPoints = await resp.json();
       if (serverPoints.length > 0) {
         points = serverPoints.map(function(p) { return { id: p.id, name: p.name, lat: p.lat, lon: p.lon, isHydro: false }; });
+        // Re-attach activePoint to its server-side twin (ids changed on server)
+        if (state.activePoint) {
+          const match = points.find(function(p) {
+            return p.name === state.activePoint.name &&
+              Math.abs(p.lat - state.activePoint.lat) < 0.0001 &&
+              Math.abs(p.lon - state.activePoint.lon) < 0.0001;
+          });
+          if (match) state.activePoint = match;
+        }
         saveLocalPoints(points);
       }
     }
@@ -323,12 +347,19 @@ function renderPointsBar() {
 
 function movePoint(dir) {
   if (!state.activePoint) return;
-  const idx = points.findIndex(function(p) { return String(p.id) === String(state.activePoint.id); });
+  // Match by name + coords (ids change after server sync, so never rely on id)
+  const idx = points.findIndex(function(p) {
+    return p.name === state.activePoint.name &&
+      Math.abs(p.lat - state.activePoint.lat) < 0.0001 &&
+      Math.abs(p.lon - state.activePoint.lon) < 0.0001;
+  });
   if (idx < 0) return;
   const newIdx = idx + dir;
   if (newIdx < 0 || newIdx >= points.length) return;
   const item = points.splice(idx, 1)[0];
   points.splice(newIdx, 0, item);
+  // Keep activePoint pointing at the moved item
+  state.activePoint = item;
   saveLocalPoints(points);
   renderPointsBar();
   renderMarkers();
@@ -666,6 +697,7 @@ function renderHkoWind() {
   }
   windStationSelect.value = String(idx);
   state.windStationName = nearest[idx].station;
+  try { localStorage.setItem(WIND_STATION_KEY, state.windStationName); } catch (e) {}
 
   // Show selected station
   showHkoWindStation(idx);
@@ -1293,7 +1325,10 @@ function init() {
     windStationSelect.addEventListener('change', function() {
       const idx = parseInt(windStationSelect.value);
       const h = state.hkoWind;
-      if (h && h.nearest && h.nearest[idx]) state.windStationName = h.nearest[idx].station;
+      if (h && h.nearest && h.nearest[idx]) {
+        state.windStationName = h.nearest[idx].station;
+        try { localStorage.setItem(WIND_STATION_KEY, state.windStationName); } catch (e) {}
+      }
       showHkoWindStation(idx);
     });
   }
