@@ -599,8 +599,19 @@ export default {
         }
 
         const targetDate = new Date(reqDate + 'T' + reqTime.substring(0, 2) + ':' + reqTime.substring(2, 4) + ':00');
-        const tide = processTideData(tideRaw, targetDate);
-        tide.station = tideStation;
+        let tide = processTideData(tideRaw, targetDate);
+        // Open-Meteo only covers today+6d — if the requested date is missing, fall back to HKO full-year table
+        if (tide.error && tideStation.code === 'OPENMETEO') {
+          try {
+            const { station, tideRaw: hkoRaw } = await findNearestValidHKO(lat2, lon2);
+            const hkoTide = processTideData(hkoRaw, targetDate);
+            if (!hkoTide.error) {
+              tide = hkoTide;
+              tide.station = station;
+            }
+          } catch (e2) { /* keep original error */ }
+        }
+        tide.station = tide.station || tideStation;
 
         const geojson = await fetchHydroCurrents(hydroTime, reqMode);
         const channelPoint = findNearest(geojson, 22.39, 113.918);
