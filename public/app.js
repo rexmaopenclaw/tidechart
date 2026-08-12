@@ -73,7 +73,7 @@ function hkoWindDirToDeg(dirStr) {
 }
 
 // ----- State -----
-const WIND_STATION_KEY = 'tideWindStationName';
+const WIND_STATION_KEY = 'tideWindStationMap';
 let state = {
   date: '',
   time: '',
@@ -83,15 +83,22 @@ let state = {
   series: null,
   weather: null,
   hkoWind: null,
-  windStationName: '',
   user: null,
   token: null
 };
 
-// Restore last-picked HKO wind station (persisted across reloads)
+// Per-point last-picked HKO wind station: { pointIdOrKey: stationName }
+let windStationMap = {};
 try {
-  state.windStationName = localStorage.getItem(WIND_STATION_KEY) || '';
-} catch (e) { state.windStationName = ''; }
+  windStationMap = JSON.parse(localStorage.getItem(WIND_STATION_KEY) || '{}') || {};
+} catch (e) { windStationMap = {}; }
+function pointWindKey(p) {
+  if (!p) return '';
+  return p.name + '|' + Math.round(p.lat * 10000) + '|' + Math.round(p.lon * 10000);
+}
+function saveWindStationMap() {
+  try { localStorage.setItem(WIND_STATION_KEY, JSON.stringify(windStationMap)); } catch (e) {}
+}
 
 // ----- Auth -----
 const AUTH_KEY = '***';
@@ -681,7 +688,7 @@ function renderHkoWind() {
   windCard.classList.remove('hidden');
 
   // Populate dropdown
-  const prevName = state.windStationName;
+  const prevName = windStationMap[pointWindKey(state.activePoint)] || '';
   windStationSelect.innerHTML = '';
   nearest.forEach(function(stn, i) {
     const opt = document.createElement('option');
@@ -696,8 +703,8 @@ function renderHkoWind() {
     if (found >= 0) idx = found;
   }
   windStationSelect.value = String(idx);
-  state.windStationName = nearest[idx].station;
-  try { localStorage.setItem(WIND_STATION_KEY, state.windStationName); } catch (e) {}
+  windStationMap[pointWindKey(state.activePoint)] = nearest[idx].station;
+  saveWindStationMap();
 
   // Show selected station
   showHkoWindStation(idx);
@@ -1326,8 +1333,8 @@ function init() {
       const idx = parseInt(windStationSelect.value);
       const h = state.hkoWind;
       if (h && h.nearest && h.nearest[idx]) {
-        state.windStationName = h.nearest[idx].station;
-        try { localStorage.setItem(WIND_STATION_KEY, state.windStationName); } catch (e) {}
+        windStationMap[pointWindKey(state.activePoint)] = h.nearest[idx].station;
+        saveWindStationMap();
       }
       showHkoWindStation(idx);
     });
