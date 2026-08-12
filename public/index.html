@@ -37,6 +37,8 @@
       <span class="bar-label">📍 監測點</span>
       <select id="pointsSelect" class="points-select"></select>
       <button id="addPointBtn" class="add-btn">+</button>
+      <button id="moveUpBtn" class="add-btn" title="上移">↑</button>
+      <button id="moveDownBtn" class="add-btn" title="下移">↓</button>
       <button id="deletePointBtn" class="add-btn del-btn">🗑️</button>
     </div>
 
@@ -216,5 +218,8 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
+
+  <!-- Chart scrub tooltip -->
+  <div id="chartTooltip" class="chart-tooltip" style="display:none;"></div>
 </body>
 </html>

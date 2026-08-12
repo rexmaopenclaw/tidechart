@@ -82,6 +82,7 @@ let state = {
   series: null,
   weather: null,
   hkoWind: null,
+  windStationName: '',
   user: null,
   token: null
 };
@@ -171,6 +172,8 @@ const modeBtn = document.getElementById('modeBtn');
 const pointsSelect = document.getElementById('pointsSelect');
 const addPointBtn = document.getElementById('addPointBtn');
 const deletePointBtn = document.getElementById('deletePointBtn');
+const moveUpBtn = document.getElementById('moveUpBtn');
+const moveDownBtn = document.getElementById('moveDownBtn');
 const loginBtn = document.getElementById('loginBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const loading = document.getElementById('loading');
@@ -316,6 +319,20 @@ function renderPointsBar() {
   } else {
     pointsSelect.value = String(points[0].id);
   }
+}
+
+function movePoint(dir) {
+  if (!state.activePoint) return;
+  const idx = points.findIndex(function(p) { return String(p.id) === String(state.activePoint.id); });
+  if (idx < 0) return;
+  const newIdx = idx + dir;
+  if (newIdx < 0 || newIdx >= points.length) return;
+  const item = points.splice(idx, 1)[0];
+  points.splice(newIdx, 0, item);
+  saveLocalPoints(points);
+  renderPointsBar();
+  renderMarkers();
+  syncPointsToServer();
 }
 
 function deletePoint(id) {
@@ -633,7 +650,7 @@ function renderHkoWind() {
   windCard.classList.remove('hidden');
 
   // Populate dropdown
-  const currentVal = windStationSelect.value;
+  const prevName = state.windStationName;
   windStationSelect.innerHTML = '';
   nearest.forEach(function(stn, i) {
     const opt = document.createElement('option');
@@ -641,9 +658,14 @@ function renderHkoWind() {
     opt.textContent = (i + 1) + '. ' + stn.station + ' (' + stn.distance_km.toFixed(1) + 'km)';
     windStationSelect.appendChild(opt);
   });
-  // Restore selection if still valid, otherwise pick first
-  const idx = nearest.some(function(s, i) { return String(i) === currentVal; }) ? parseInt(currentVal) : 0;
+  // Restore last picked station by NAME (falls back to first if no longer in list)
+  let idx = 0;
+  if (prevName) {
+    const found = nearest.findIndex(function(s) { return s.station === prevName; });
+    if (found >= 0) idx = found;
+  }
   windStationSelect.value = String(idx);
+  state.windStationName = nearest[idx].station;
 
   // Show selected station
   showHkoWindStation(idx);
@@ -825,6 +847,21 @@ function drawWindHistoryChart(data) {
   ctx.fillStyle = '#4a5a70';
   ctx.textAlign = 'right';
   ctx.fillText(windUnit === 'kn' ? 'kn' : 'km/h', pad.left + chartW - 2, pad.top + 9);
+
+  // Store scrub data
+  state.scrubData = state.scrubData || {};
+  state.scrubData.windhist = rows.map(function(r, i) {
+    const v = toUnit(parseFloat(r.wind_speed));
+    const dt = r.datetime || '';
+    return {
+      x: pad.left + (i / (rows.length - 1)) * chartW,
+      y: v == null ? null : yFor(v),
+      label: dt.length >= 12 ? dt.substring(8, 10) + ':' + dt.substring(10, 12) : '',
+      value: v == null ? '--' : (windUnit === 'kn' ? v.toFixed(1) : Math.round(v)) + (windUnit === 'kn' ? ' kn' : ' km/h')
+    };
+  });
+  state.scrubData.windhistPad = pad;
+  state.scrubData.windhistChartW = chartW;
 }
 
 // Range toggle: 24h -> 48h -> 7d
@@ -995,6 +1032,19 @@ function drawTideChart(tide) {
     ctx.textAlign = 'center';
     ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
+
+  // Store scrub data (for hover/drag value display)
+  state.scrubData = state.scrubData || {};
+  state.scrubData.tide = heights.map(function(hVal, i) {
+    return {
+      x: pad.left + i * stepX,
+      y: pad.top + chartH - ((hVal - minH) / range) * chartH,
+      label: String(i).padStart(2, '0') + ':00',
+      value: hVal.toFixed(2) + ' m'
+    };
+  });
+  state.scrubData.tidePad = pad;
+  state.scrubData.tideChartW = chartW;
 }
 
 // ----- Speed Chart -----
@@ -1098,6 +1148,71 @@ function drawSpeedChart(series) {
     ctx.textAlign = 'center';
     ctx.fillText(hourPicker.value + ':' + minPicker.value, x, pad.top - 1);
   }
+
+  // Store scrub data
+  state.scrubData = state.scrubData || {};
+  state.scrubData.speed = speeds.map(function(sVal, i) {
+    return {
+      x: pad.left + (i / (speeds.length - 1)) * chartW,
+      y: pad.top + chartH - ((sVal - minS) / range) * chartH,
+      label: series.series[i] ? series.series[i].time.substring(11, 16) : '',
+      value: sVal.toFixed(2) + ' kn'
+    };
+  });
+  state.scrubData.speedPad = pad;
+  state.scrubData.speedChartW = chartW;
+}
+
+// ----- Chart Scrub (hover/drag to show value) -----
+const chartTooltip = document.getElementById('chartTooltip');
+let scrubCanvas = null;
+
+function attachScrub(canvas, key) {
+  if (!canvas) return;
+  canvas.addEventListener('pointerdown', function(e) {
+    scrubCanvas = canvas;
+    canvas.setPointerCapture(e.pointerId);
+    scrubShow(e, key);
+  });
+  canvas.addEventListener('pointermove', function(e) {
+    if (scrubCanvas === canvas) scrubShow(e, key);
+  });
+  canvas.addEventListener('pointerup', scrubHide);
+  canvas.addEventListener('pointerleave', scrubHide);
+  canvas.addEventListener('pointercancel', scrubHide);
+}
+
+function scrubShow(e, key) {
+  if (!chartTooltip) return;
+  const d = state.scrubData && state.scrubData[key];
+  if (!d || d.length === 0) return;
+  const rect = e.target.getBoundingClientRect();
+  const scaleX = e.target.width / (rect.width || 1);
+  const x = (e.clientX - rect.left) * scaleX;
+  const padKey = key + 'Pad';
+  const pad = state.scrubData[padKey];
+  if (pad && (x < pad.left || x > pad.left + state.scrubData[key + 'ChartW'])) return;
+  // Nearest point
+  let best = 0, bestD = Infinity;
+  d.forEach(function(p, i) {
+    const dist = Math.abs(p.x - x);
+    if (dist < bestD) { bestD = dist; best = i; }
+  });
+  const p = d[best];
+  chartTooltip.textContent = (p.label ? p.label + '  ' : '') + p.value;
+  chartTooltip.style.display = 'block';
+  let tx = e.clientX + 14;
+  let ty = e.clientY - 34;
+  const tw = chartTooltip.offsetWidth;
+  if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 14;
+  if (ty < 4) ty = e.clientY + 14;
+  chartTooltip.style.left = tx + 'px';
+  chartTooltip.style.top = ty + 'px';
+}
+
+function scrubHide() {
+  scrubCanvas = null;
+  if (chartTooltip) chartTooltip.style.display = 'none';
 }
 
 // ----- Init -----
@@ -1176,9 +1291,17 @@ function init() {
   // Wind station dropdown change
   if (windStationSelect) {
     windStationSelect.addEventListener('change', function() {
-      showHkoWindStation(parseInt(windStationSelect.value));
+      const idx = parseInt(windStationSelect.value);
+      const h = state.hkoWind;
+      if (h && h.nearest && h.nearest[idx]) state.windStationName = h.nearest[idx].station;
+      showHkoWindStation(idx);
     });
   }
+
+  // Chart scrub (hover/drag to show value)
+  attachScrub(tideCanvas, 'tide');
+  attachScrub(speedCanvas, 'speed');
+  attachScrub(windHistCanvas, 'windhist');
 
   // Speed toggle
   if (speedToggleBtn && speedInfo) {
@@ -1225,6 +1348,8 @@ pointsSelect.addEventListener('change', function() {
 deletePointBtn.addEventListener('click', function() {
   if (state.activePoint) deletePoint(state.activePoint.id);
 });
+moveUpBtn.addEventListener('click', function() { movePoint(-1); });
+moveDownBtn.addEventListener('click', function() { movePoint(1); });
 loginBtn.addEventListener('click', showLogin);
 logoutBtn.addEventListener('click', doLogout);
 loginCancel.addEventListener('click', hideLogin);
