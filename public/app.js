@@ -342,6 +342,10 @@ function initMap() {
     showAddPointModal(e.latlng.lat, e.latlng.lng);
   });
   setTimeout(function() {
+    // Follow the active monitoring point after refresh
+    if (state.activePoint && state.activePoint.lat && state.activePoint.lon) {
+      map.setView([state.activePoint.lat, state.activePoint.lon], 12, { animate: false });
+    }
     renderMarkers();
     if (state.activePoint) highlightMarker(state.activePoint);
   }, 200);
