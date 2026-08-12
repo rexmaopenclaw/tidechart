@@ -164,7 +164,7 @@ header h1 { font-size: 18px; color: #60b0f4; }
 .hko-wind-speed { display: flex; align-items: baseline; justify-content: center; gap: 3px; }
 .hko-speed-val { font-size: 28px; font-weight: 700; color: #4ecdc4; text-shadow: 0 0 18px rgba(78,205,196,0.2); }
 .hko-speed-unit { font-size: 12px; color: #4a6a8a; }
-.hko-wind-details { display: grid; grid-template-columns: 1fr 1fr; gap: 1px 8px; }
+.hko-wind-details { display: flex; flex-direction: column; gap: 1px; }
 .hko-wind-row { display: flex; justify-content: space-between; padding: 1px 0; font-size: 11px; min-width: 0; }
 .dir-row-full { grid-column: 1 / -1; }
 .dir-hko-wrap { display: flex; align-items: center; gap: 4px; }

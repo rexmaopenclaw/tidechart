@@ -756,9 +756,7 @@ function showHkoWindStation(idx) {
   }
 
   // Station
-  windHkoStation.textContent = stn.station || '--';
-  windHkoDist.textContent = stn.distance_km ? stn.distance_km.toFixed(1) + ' km' : '--';
-  windHkoTime.textContent = h.timestamp ? h.timestamp.substring(11, 16) + ' (' + h.timestamp.substring(0, 10) + ')' : '--';
+  windHkoTime.textContent = h.timestamp ? h.timestamp.substring(11, 16) + ' (' + h.timestamp.substring(5, 10) + ')' : '--';
 
   // Load history chart for this station
   loadWindHistory(stn.station);
@@ -909,7 +907,12 @@ function cycleWindHistRange() {
   if (windHistRange) {
     windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
   }
-  const stn = windHkoStation ? windHkoStation.textContent : null;
+  // Get selected station from dropdown (windHkoStation row was removed)
+  let stn = null;
+  if (windStationSelect && state.hkoWind && state.hkoWind.nearest) {
+    const idx = parseInt(windStationSelect.value);
+    if (state.hkoWind.nearest[idx]) stn = state.hkoWind.nearest[idx].station;
+  }
   if (stn && stn !== '--') loadWindHistory(stn);
   else if (state.hkoWind && state.hkoWind.nearest && state.hkoWind.nearest.length > 0) {
     loadWindHistory(state.hkoWind.nearest[0].station);
@@ -1328,7 +1331,6 @@ function init() {
   if (windHistRange) {
     windHistRange.addEventListener('click', cycleWindHistRange);
   }
-
   // Wind station dropdown change
   if (windStationSelect) {
     windStationSelect.addEventListener('change', function() {
