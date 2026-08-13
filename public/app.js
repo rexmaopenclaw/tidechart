@@ -249,6 +249,61 @@ const speedToggleBtn = document.getElementById('speedToggleBtn');
 const speedInfo = document.getElementById('speedInfo');
 const deleteAccountBtn = document.getElementById('deleteAccountBtn');
 
+// ----- Persist last query state (date/time/mode/point/units) -----
+const STATE_KEY = 'tideLastState';
+function saveState() {
+  try {
+    const s = {
+      date: datePicker.value,
+      hour: hourPicker.value,
+      min: minPicker.value,
+      mode: state.mode,
+      pointId: state.activePoint ? state.activePoint.id : null,
+      pointName: state.activePoint ? state.activePoint.name : null,
+      pointLat: state.activePoint ? state.activePoint.lat : null,
+      pointLon: state.activePoint ? state.activePoint.lon : null,
+      windUnit: windUnit,
+      windHistHours: windHistHours
+    };
+    localStorage.setItem(STATE_KEY, JSON.stringify(s));
+  } catch (e) {}
+}
+function loadState() {
+  try { return JSON.parse(localStorage.getItem(STATE_KEY) || 'null'); } catch (e) { return null; }
+}
+function applyState(s) {
+  if (!s) return;
+  if (s.date) datePicker.value = s.date;
+  if (s.hour != null) hourPicker.value = String(s.hour).padStart(2, '0');
+  if (s.min != null) minPicker.value = String(s.min).padStart(2, '0');
+  if (s.mode === 'S' || s.mode === 'A') {
+    state.mode = s.mode;
+    modeBtn.textContent = state.mode === 'S' ? '水面' : '平均';
+    modeBtn.classList.toggle('active', state.mode === 'A');
+  }
+  if (s.windUnit === 'kn' || s.windUnit === 'kmh') {
+    windUnit = s.windUnit;
+    if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  }
+  if (s.windHistHours) {
+    windHistHours = s.windHistHours;
+    if (windHistRange) windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
+  }
+  // Point: match by id first, then by name+coords (ids change after server sync)
+  if (s.pointId || s.pointName) {
+    let match = null;
+    if (s.pointId) match = points.find(function(p) { return String(p.id) === String(s.pointId); });
+    if (!match && s.pointName != null) {
+      match = points.find(function(p) {
+        return p.name === s.pointName &&
+          Math.abs(p.lat - (s.pointLat || 0)) < 0.0001 &&
+          Math.abs(p.lon - (s.pointLon || 0)) < 0.0001;
+      });
+    }
+    if (match) state.activePoint = match;
+  }
+}
+
 // Wind DOM refs
 const windCard = document.getElementById('windCard');
 const windUnitToggle = document.getElementById('windUnitToggle');
@@ -399,6 +454,7 @@ function selectPoint(p) {
   if (map && p.lat && p.lon) {
     map.flyTo([p.lat, p.lon], 12, { duration: 0.8 });
   }
+  saveState();
   loadData();
 }
 
@@ -996,6 +1052,7 @@ function cycleWindHistRange() {
   if (windHistRange) {
     windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
   }
+  saveState();
   // Get selected station from dropdown (windHkoStation row was removed)
   let stn = null;
   if (windStationSelect && state.hkoWind && state.hkoWind.nearest) {
@@ -1038,6 +1095,7 @@ function renderForecastWind() {
 function toggleWindUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
   if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  saveState();
   renderHkoWind();
   renderForecastWind();
 }
@@ -1376,12 +1434,15 @@ function init() {
   hourPicker.value = String(hrs).padStart(2, '0');
   minPicker.value = String(mins).padStart(2, '0');
 
+  // Restore last query state (date/time/mode/point/units) — 開 link 自動回到上次查詢
+  applyState(loadState());
+
   // Show initial state on charts
   drawTideLabel('載入中...');
   drawSpeedLabel('載入中...');
 
-  // Auto-select first point if exists
-  if (points.length > 0) state.activePoint = points[0];
+  // Auto-select first point if exists (unless restored from saved state)
+  if (points.length > 0 && !state.activePoint) state.activePoint = points[0];
 
   // Tide toggle
   const tideInfo = document.getElementById('tideInfo');
@@ -1474,14 +1535,15 @@ function init() {
 }
 
 // ----- Events -----
-datePicker.addEventListener('change', function() { loadData(); });
-hourPicker.addEventListener('change', function() { loadData(); });
-minPicker.addEventListener('change', function() { loadData(); });
+datePicker.addEventListener('change', function() { saveState(); loadData(); });
+hourPicker.addEventListener('change', function() { saveState(); loadData(); });
+minPicker.addEventListener('change', function() { saveState(); loadData(); });
 refreshBtn.addEventListener('click', function() { loadData(); });
 modeBtn.addEventListener('click', function() {
   state.mode = state.mode === 'S' ? 'A' : 'S';
   modeBtn.textContent = state.mode === 'S' ? '水面' : '平均';
   modeBtn.classList.toggle('active', state.mode === 'A');
+  saveState();
   loadData();
 });
 addPointBtn.addEventListener('click', function() {
