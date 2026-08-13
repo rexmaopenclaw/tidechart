@@ -1265,11 +1265,18 @@ function drawSpeedChart(series) {
   // Store scrub data
   state.scrubData = state.scrubData || {};
   state.scrubData.speed = speeds.map(function(sVal, i) {
+    // 流向: series 每點有 direction (度數)，轉做中文方位
+    const dir = series.series[i] ? series.series[i].direction : null;
+    let dirStr = '';
+    if (dir != null && !isNaN(dir)) {
+      const compass = degToCompass(dir);
+      dirStr = ' ' + (DIR_NAMES[compass] || compass) + ' (' + Math.round(dir) + '°)';
+    }
     return {
       x: pad.left + (i / (speeds.length - 1)) * chartW,
       y: pad.top + chartH - ((sVal - minS) / range) * chartH,
       label: series.series[i] ? series.series[i].time.substring(11, 16) : '',
-      value: sVal.toFixed(2) + ' kn'
+      value: sVal.toFixed(2) + ' kn' + dirStr
     };
   });
   state.scrubData.speedPad = pad;
