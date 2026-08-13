@@ -273,9 +273,7 @@ function loadState() {
 }
 function applyState(s) {
   if (!s) return;
-  if (s.date) datePicker.value = s.date;
-  if (s.hour != null) hourPicker.value = String(s.hour).padStart(2, '0');
-  if (s.min != null) minPicker.value = String(s.min).padStart(2, '0');
+  // 時間唔恢復 — 開 app 永遠用而家時間；只記住 監測點/mode/單位/歷史時段
   if (s.mode === 'S' || s.mode === 'A') {
     state.mode = s.mode;
     modeBtn.textContent = state.mode === 'S' ? '水面' : '平均';

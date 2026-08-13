@@ -1,5 +1,5 @@
 // SeaCast PWA service worker — cache static assets for offline, never cache API data
-const CACHE = 'seacast-v1';
+const CACHE = 'seacast-v2';
 const CORE = [
   '/',
   '/index.html',
