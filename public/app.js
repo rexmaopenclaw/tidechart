@@ -1044,9 +1044,9 @@ function drawWindHistoryChart(data) {
   state.scrubData.windhistChartW = chartW;
 }
 
-// Range toggle: 24h -> 48h -> 7d
+// Range toggle: 12h -> 24h -> 48h -> 7d
 function cycleWindHistRange() {
-  windHistHours = windHistHours === 24 ? 48 : (windHistHours === 48 ? 168 : 24);
+  windHistHours = windHistHours === 12 ? 24 : (windHistHours === 24 ? 48 : (windHistHours === 48 ? 168 : 12));
   if (windHistRange) {
     windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
   }
