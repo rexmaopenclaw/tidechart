@@ -30,6 +30,14 @@ function degToCompass(deg) {
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
+// Arrow pointing where wind/current is GOING (meteorological FROM + 180°), 8 directions
+function dirToArrow(deg) {
+  if (deg == null || isNaN(deg)) return '';
+  const d = ((Math.round(deg) % 360) + 180 + 360) % 360;
+  const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
+  return arrows[Math.round(d / 45) % 8];
+}
+
 // HKO CSV uses text directions — map to degrees
 function hkoWindDirToDeg(dirStr) {
   if (!dirStr || dirStr === '--' || dirStr === 'N/A' || dirStr === 'Calm' || dirStr === 'Variable') return null;
@@ -961,12 +969,11 @@ function drawWindHistoryChart(data) {
   state.scrubData.windhist = rows.map(function(r, i) {
     const v = toUnit(parseFloat(r.wind_speed));
     const dt = r.datetime || '';
-    // 風向: HKO CSV 文字方向 → 度數 → 中文方位 (同風卡一致)
+    // 風向: HKO CSV 文字方向 → 度數 → 箭嘴 (同風卡一致: 指向風吹去嘅方向)
     let dirStr = '';
     const dirDeg = hkoWindDirToDeg(r.wind_dir || '');
     if (dirDeg != null) {
-      const compass = degToCompass(dirDeg);
-      dirStr = ' ' + (DIR_NAMES[compass] || compass) + ' (' + Math.round(dirDeg) + '°)';
+      dirStr = ' ' + dirToArrow(dirDeg);
     }
     return {
       x: pad.left + (i / (rows.length - 1)) * chartW,
@@ -1272,13 +1279,9 @@ function drawSpeedChart(series) {
   // Store scrub data
   state.scrubData = state.scrubData || {};
   state.scrubData.speed = speeds.map(function(sVal, i) {
-    // 流向: series 每點有 direction (度數)，轉做中文方位
+    // 流向: series 每點有 direction (度數)，用箭嘴代替文字
     const dir = series.series[i] ? series.series[i].direction : null;
-    let dirStr = '';
-    if (dir != null && !isNaN(dir)) {
-      const compass = degToCompass(dir);
-      dirStr = ' ' + (DIR_NAMES[compass] || compass) + ' (' + Math.round(dir) + '°)';
-    }
+    const dirStr = (dir != null && !isNaN(dir)) ? ' ' + dirToArrow(dir) : '';
     return {
       x: pad.left + (i / (speeds.length - 1)) * chartW,
       y: pad.top + chartH - ((sVal - minS) / range) * chartH,
