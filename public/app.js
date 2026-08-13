@@ -1323,11 +1323,16 @@ function scrubShow(e, key) {
   const p = d[best];
   chartTooltip.textContent = (p.label ? p.label + '  ' : '') + p.value;
   chartTooltip.style.display = 'block';
-  let tx = e.clientX + 14;
-  let ty = e.clientY - 34;
+  // 放喺手指上方 (高過手指 ~80px)，唔會被遮住；水平置中
   const tw = chartTooltip.offsetWidth;
-  if (tx + tw > window.innerWidth - 8) tx = e.clientX - tw - 14;
-  if (ty < 4) ty = e.clientY + 14;
+  const th = chartTooltip.offsetHeight;
+  let tx = e.clientX - tw / 2;
+  let ty = e.clientY - 80;
+  if (tx < 8) tx = 8;
+  if (tx + tw > window.innerWidth - 8) tx = window.innerWidth - tw - 8;
+  // 頂位唔夠就放手指下方
+  if (ty < 4) ty = e.clientY + 30;
+  if (ty + th > window.innerHeight - 8) ty = window.innerHeight - th - 8;
   chartTooltip.style.left = tx + 'px';
   chartTooltip.style.top = ty + 'px';
 }
