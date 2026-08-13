@@ -284,8 +284,9 @@ function applyState(s) {
     if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
   }
   if (s.windHistHours) {
-    windHistHours = s.windHistHours;
-    if (windHistRange) windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
+    // 舊 saved 可能係 168 (7d)，而家冇 7d 選項 — clamp 返做 48h
+    windHistHours = (s.windHistHours === 168) ? 48 : s.windHistHours;
+    if (windHistRange) windHistRange.textContent = windHistHours + 'h';
   }
   // Point: match by id first, then by name+coords (ids change after server sync)
   if (s.pointId || s.pointName) {
@@ -1044,11 +1045,11 @@ function drawWindHistoryChart(data) {
   state.scrubData.windhistChartW = chartW;
 }
 
-// Range toggle: 12h -> 24h -> 48h -> 7d
+// Range toggle: 12h -> 24h -> 48h -> 12h
 function cycleWindHistRange() {
-  windHistHours = windHistHours === 12 ? 24 : (windHistHours === 24 ? 48 : (windHistHours === 48 ? 168 : 12));
+  windHistHours = windHistHours === 12 ? 24 : (windHistHours === 24 ? 48 : 12);
   if (windHistRange) {
-    windHistRange.textContent = windHistHours === 168 ? '7d' : windHistHours + 'h';
+    windHistRange.textContent = windHistHours + 'h';
   }
   saveState();
   // Get selected station from dropdown (windHkoStation row was removed)
@@ -1487,7 +1488,7 @@ function init() {
   loadWarnings();
   setInterval(loadWarnings, 5 * 60 * 1000);
 
-  // Wind history range toggle (24h / 48h / 7d)
+  // Wind history range toggle (12h / 24h / 48h)
   if (windHistRange) {
     windHistRange.addEventListener('click', cycleWindHistRange);
   }
