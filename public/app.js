@@ -961,11 +961,18 @@ function drawWindHistoryChart(data) {
   state.scrubData.windhist = rows.map(function(r, i) {
     const v = toUnit(parseFloat(r.wind_speed));
     const dt = r.datetime || '';
+    // 風向: HKO CSV 文字方向 → 度數 → 中文方位 (同風卡一致)
+    let dirStr = '';
+    const dirDeg = hkoWindDirToDeg(r.wind_dir || '');
+    if (dirDeg != null) {
+      const compass = degToCompass(dirDeg);
+      dirStr = ' ' + (DIR_NAMES[compass] || compass) + ' (' + Math.round(dirDeg) + '°)';
+    }
     return {
       x: pad.left + (i / (rows.length - 1)) * chartW,
       y: v == null ? null : yFor(v),
       label: dt.length >= 12 ? dt.substring(8, 10) + ':' + dt.substring(10, 12) : '',
-      value: v == null ? '--' : (windUnit === 'kn' ? v.toFixed(1) : Math.round(v)) + (windUnit === 'kn' ? ' kn' : ' km/h')
+      value: v == null ? '--' : (windUnit === 'kn' ? v.toFixed(1) : Math.round(v)) + (windUnit === 'kn' ? ' kn' : ' km/h') + dirStr
     };
   });
   state.scrubData.windhistPad = pad;
