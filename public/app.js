@@ -335,7 +335,7 @@ function warnChipClass(code) {
   if (!code) return '';
   if (code === 'WTC') return 'warn-tc';
   if (code === 'WRAIN') return 'warn-rain';
-  if (code === 'WTSR') return 'warn-tsr';
+  if (code === 'WTS') return 'warn-tsr';
   if (code === 'WFLOOD' || code === 'WFO') return 'warn-flood';
   if (code === 'WFIRE') return 'warn-fire';
   if (code === 'WHCO' || code === 'WFROST') return 'warn-cold';

@@ -21,7 +21,7 @@ const DIR_NAMES = {
 const WARNING_NAMES = {
   'WTC': '熱帶氣旋警告信號',
   'WRAIN': '暴雨警告信號',
-  'WTSR': '雷暴警告',
+  'WTS': '雷暴警告',
   'WFROST': '霜凍警告',
   'WFLOOD': '山泥傾瀉警告',
   'WFIRE': '火災危險警告',
@@ -30,6 +30,13 @@ const WARNING_NAMES = {
   'WFO': '水浸特別報告',
   'WMS': '強烈季候風信號',
   'WSPEC': '特別天氣提示'
+};
+
+// HKO rainstorm subtypes (WRAIN only)
+const WARNING_SUBTYPES = {
+  'WRAINA': '黃色暴雨警告信號',
+  'WRAINR': '紅色暴雨警告信號',
+  'WRAINB': '黑色暴雨警告信號'
 };
 
 function degToCompass(deg) {
@@ -824,10 +831,13 @@ export default {
         const list = Array.isArray(j.details) ? j.details : [];
         for (const d of list) {
           const code = d.warningStatementCode || '';
+          const subtype = d.subtype || '';
           const first = Array.isArray(d.contents) && d.contents.length > 0 ? d.contents[0] : '';
+          // Short name only: exact code -> subtype -> map -> first line before punctuation
+          const fallback = (first.split(/[：:。]/)[0] || first).trim();
           warnings.push({
             code: code,
-            name: WARNING_NAMES[code] || first.replace(/現正生效。?$/, '').replace(/^[^。]*[。]?\s*/, '').trim() || first,
+            name: WARNING_SUBTYPES[subtype] || WARNING_NAMES[code] || fallback,
             updateTime: d.updateTime || null,
             contents: Array.isArray(d.contents) ? d.contents : []
           });
