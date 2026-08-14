@@ -956,9 +956,9 @@ function drawWindHistoryChart(data) {
   const speeds = rows.map(function(r) { return toUnit(parseFloat(r.wind_speed)); });
   const valid = speeds.filter(function(v) { return v != null; });
   if (valid.length < 2) { drawWindHistLabel('暫無數據'); return; }
-  const minS = Math.min.apply(null, valid);
+  const minS = 0; // zero baseline
   const maxS = Math.max.apply(null, valid);
-  const range = (maxS - minS) || 1;
+  const range = maxS || 1;
   const stepX = chartW / (rows.length - 1);
   const yFor = function(v) { return pad.top + chartH - ((v - minS) / range) * chartH; };
 
