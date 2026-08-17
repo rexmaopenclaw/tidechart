@@ -1149,6 +1149,20 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
+  // Set reference time from first model's first time
+  var refTimeEl = document.getElementById('forecastRefTime');
+  if (refTimeEl) {
+    var firstModel = multiModelData.models[FORECAST_MODELS[0].id];
+    if (firstModel && firstModel.times && firstModel.times.length) {
+      var t = firstModel.times[0];
+      var d = new Date(t);
+      var dd = String(d.getDate()).padStart(2, '0');
+      var mm = d.getMonth() + 1;
+      var hh = String(d.getHours()).padStart(2, '0');
+      refTimeEl.textContent = dd + '/' + mm + ' ' + hh + ':00';
+    }
+  }
+
       // Compact reference rows — one line + gust
   const now = new Date();
   var html = [];
