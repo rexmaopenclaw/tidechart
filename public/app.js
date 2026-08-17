@@ -337,7 +337,6 @@ const FORECAST_MODELS = [
   { id: 'gfs_seamless',          name: 'GFS',         color: '#60b0f4' },
   { id: 'ecmwf_ifs025',          name: 'ECMWF',       color: '#f4a261' },
   { id: 'icon_seamless',         name: 'ICON',        color: '#4ecdc4' },
-  { id: 'meteofrance_seamless',  name: 'MeteoFrance', color: '#c77dff' },
 ];
 const FORECAST_DIR16 = ['北','北北東','東北','東北東','東','東南東','東南','東南南','南','南南西','西南','西南西','西','西北西','西北','西北北'];
 
@@ -746,7 +745,7 @@ async function loadData() {
       state.hkoWind = null;
     }
 
-    // Multi-model forecast (GFS / ECMWF / ICON / MeteoFrance)
+    // Multi-model forecast (GFS / ECMWF / ICON)
     await loadMultiModelForecast(p.lat, p.lon);
 
     render();
@@ -1257,11 +1256,9 @@ function renderMultiModelDayTable(day) {
 
 function fmtDay(iso) {
   var d = new Date(iso + 'T00:00:00');
-  var today = new Date();
-  var diff = Math.floor((new Date(iso + 'T00:00:00') - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
-  var names = ['今日','聽日','後日'];
-  if (diff >= 0 && diff < 3) return names[diff];
-  return d.toLocaleDateString('zh-HK', { weekday: 'short', month: 'numeric', day: 'numeric' });
+  var dd = d.getDate();
+  var mm = d.getMonth() + 1;
+  return dd + '/' + mm;
 }
 function toggleForecastUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
