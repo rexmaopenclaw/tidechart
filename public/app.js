@@ -1148,8 +1148,8 @@ function renderMultiModelForecast() {
         '<span class="model-dot" style="background:' + m.color + '"></span>' +
         '<span class="model-name">' + m.name + '</span>' +
         '<span class="model-wind">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
-        '<span class="model-gust">陣風 ' + (gustVal != null ? gustVal : '—') + '</span>' +
-        '<span class="model-dir"><span class="arrow">' + dir.arrow + '</span>' + dir.text + (dir.deg != null ? ' (' + dir.deg + '°)' : '') + '</span>' +
+        '' +
+        '<span class="model-dir"><span class="arrow">' + dir.arrow + '</span></span>' +
       '</div>'
     );
   });
@@ -1201,7 +1201,7 @@ function renderMultiModelDayTable(day) {
       var kn = d.speed[i];
       var dir = forecastWindDir(d.dir ? d.dir[i] : null);
       var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
-      cells.push('<td>' + speedVal + ' <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span><br><small style="color:var(--dim)">' + dir.text + (dir.deg != null ? dir.deg + '°' : '') + '</small></td>');
+      cells.push('<td>' + speedVal + ' <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span></td>');
     });
     rows.push('<tr>' + cells.join('') + '</tr>');
   });

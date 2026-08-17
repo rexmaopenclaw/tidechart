@@ -1,5 +1,26 @@
 # Wind Card Changes — 2026-08-10
 
+## 2026-08-17 Windward 合併 — Version 963e7e39
+
+### Worker 拆檔（4 個 modules）
+- `worker/index.js` → main router，import from auth/wind/tide
+- `worker/auth.js` → CORS、JWT、points CRUD、hash、warnings helpers
+- `worker/wind.js` → HKO 風站、cron collect、weather、warnings、**`/api/forecast`**（Open-Meteo multi-model proxy）
+- `worker/tide.js` → 潮汐 + 水流 + 就近站點
+
+### Frontend 多模型風力預測
+- 取代舊「預報風 (參考)」card，改為 4 models（GFS / ECMWF / ICON / MeteoFrance）
+- 即時 card：4 行 model-row，顯示風速 + 陣風 + 風向 arrow
+- Hourly 表：7 日 tabs，每 3h 一格，顯示風速 + 風向 arrow
+- 兩個 toggle 掣（windUnitToggle + forecastUnitToggle）同步
+- 每次 loadData 會 call `loadMultiModelForecast(lat, lon)` 經 `/api/forecast` proxy
+- 移除舊 `state.weather`、`renderForecastWind()`、`windGfs`/`windEcmwf` DOM
+
+### Deploy
+- Deploy 到 `https://tidechart.rexmaopenclaw.workers.dev`（Version 963e7e39）
+- Windward 保留做輕量版 reference
+
+
 ## 改動總結
 
 ### 1. Server (`server/index.js`)
