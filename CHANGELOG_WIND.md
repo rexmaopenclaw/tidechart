@@ -57,3 +57,17 @@
 - 風向箭嘴用 **meteorological FROM + 180°** = 指向風吹去嘅方向（同水流箭嘴 convention 一致）
 - 預報風（GFS/ECMWF）係 model forecast，任何時間都顯示
 - 天文台風只有揀「現在時間」先顯示
+## 2026-08-17 — Bookmark 顯示改 Windward 模式（Version 61c2042c）
+
+**✨ 新功能**
+- 監測點由 dropdown 改做 **chips 顯示**（★ + 名，active 高亮）
+- **改名**：撳 spot → input 自動填名 → 改完撳 ★ 儲存 = 改名（sync server）
+- **Inline 新增**：地圖點選 / + 掣 → input 自動填名 → ★ 儲存 = 新增（取代 modal）
+- 保留 ↑↓ 排序 + 🗑️ 刪除
+
+**🛠️ 技術**
+- public/index.html: select → #pointsChips + .point-edit-row
+- public/app.js: renderPointsBar 改 render chips；pendingNewPoint inline 新增；pointSaveBtn 改名/新增
+- public/style.css: .point-edit-row / #pointNameInput / .save-chip-btn
+
+**🔗 URL**: https://tidechart.rexmaopenclaw.workers.dev
