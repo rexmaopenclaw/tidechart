@@ -340,6 +340,29 @@ const FORECAST_MODELS = [
   { id: 'meteofrance_seamless',  name: 'MeteoFrance', color: '#c77dff' },
 ];
 const FORECAST_DIR16 = ['北','北北東','東北','東北東','東','東南東','東南','東南南','南','南南西','西南','西南西','西','西北西','西北','西北北'];
+
+// Beaufort scale
+function knToBf(kn) {
+  if (kn < 1) return 0;
+  if (kn <= 3) return 1;
+  if (kn <= 6) return 2;
+  if (kn <= 10) return 3;
+  if (kn <= 16) return 4;
+  if (kn <= 21) return 5;
+  if (kn <= 27) return 6;
+  if (kn <= 33) return 7;
+  if (kn <= 40) return 8;
+  if (kn <= 47) return 9;
+  if (kn <= 55) return 10;
+  return 11;
+}
+function bfColor(bf) {
+  if (bf <= 2) return '#3498db';
+  if (bf <= 4) return '#2d8a4e';
+  if (bf <= 6) return '#e67e22';
+  if (bf <= 8) return '#e74c3c';
+  return '#8e44ad';
+}
 const FORECAST_ARROWS = ['↑','↗','→','↘','↓','↙','←','↖'];
 function forecastWindDir(deg) {
   if (deg == null || isNaN(deg)) return { text: '—', arrow: '·', deg: null };
@@ -1127,7 +1150,7 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
-  // Compact reference rows
+    // Compact reference rows — one line + gust
   const now = new Date();
   var html = [];
   FORECAST_MODELS.forEach(function(m) {
@@ -1139,14 +1162,17 @@ function renderMultiModelForecast() {
       if (diff < best) { best = diff; idx = i; }
     });
     var kn = d.speed[idx];
+    var gust = d.gust ? d.gust[idx] : null;
     var dir = forecastWindDir(d.dir ? d.dir[idx] : null);
     var u = windUnit === 'kmh' ? 'km/h' : 'kn';
     var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+    var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
     html.push(
       '<div class="model-row">' +
         '<span class="model-dot" style="background:' + m.color + '"></span>' +
         '<span class="model-name">' + m.name + '</span>' +
-        '<span class="model-wind">' + speedVal + ' <small style="color:var(--dim);font-size:10px">' + u + '</small></span>' +
+        '<span class="model-wind">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
+        '<span class="model-gust">' + (gustVal != null ? '陣風' + gustVal : '') + '</span>' +
         '<span class="model-dir">' + dir.arrow + '</span>' +
       '</div>'
     );
@@ -1165,16 +1191,36 @@ function renderMultiModelHourly() {
     if (days.indexOf(d) === -1) days.push(d);
   });
   days = days.slice(0, 7);
+
+  // Max BF per day across all models
+  var dayBf = {};
+  days.forEach(function(d) { dayBf[d] = 0; });
+  FORECAST_MODELS.forEach(function(m) {
+    var md = multiModelData.models[m.id];
+    if (!md) return;
+    md.times.forEach(function(t, i) {
+      var d = t.slice(0, 10);
+      if (dayBf[d] === undefined) return;
+      var bf = knToBf(md.speed[i]);
+      if (bf > dayBf[d]) dayBf[d] = bf;
+    });
+  });
+
+  var activeDay = selectedForecastDay && days.indexOf(selectedForecastDay) !== -1 ? selectedForecastDay : days[0];
   var tabs = [];
   days.forEach(function(d, i) {
-    tabs.push('<button class="day-tab' + (i === 0 ? ' active' : '') + '" data-day="' + d + '">' + fmtDay(d) + '</button>');
+    var bf = dayBf[d] || 0;
+    var color = bfColor(bf);
+    var active = d === activeDay ? ' active' : '';
+    var label = 'D' + (i + 1);
+    tabs.push('<button class="bf-chip' + active + '" data-day="' + d + '" style="background:' + color + ';color:#fff;border:none;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;cursor:pointer;opacity:' + (d === activeDay ? '1' : '0.65') + '">' + label + ' BF' + bf + '</button>');
   });
-  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
-  var activeDay = selectedForecastDay && days.indexOf(selectedForecastDay) !== -1 ? selectedForecastDay : days[0];
-  hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
+  hourlyTable.innerHTML = '<div class="bf-chips">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
+  hourlyTable.querySelectorAll('.bf-chip').forEach(function(tab) {
     tab.onclick = function() {
-      hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); });
+      hourlyTable.querySelectorAll('.bf-chip').forEach(function(t) { t.classList.remove('active'); t.style.opacity = '0.65'; });
       tab.classList.add('active');
+      tab.style.opacity = '1';
       selectedForecastDay = tab.dataset.day;
       renderMultiModelDayTable(tab.dataset.day);
     };
@@ -1205,14 +1251,7 @@ function renderMultiModelDayTable(day) {
   tbody.innerHTML = rows.join('');
 }
 
-function fmtDay(iso) {
-  var d = new Date(iso + 'T00:00:00');
-  var today = new Date();
-  var diff = Math.floor((new Date(iso + 'T00:00:00') - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
-  var names = ['今日','聽日','後日'];
-  if (diff >= 0 && diff < 3) return names[diff];
-  return d.toLocaleDateString('zh-HK', { weekday: 'short', month: 'numeric', day: 'numeric' });
-}
+// fmtDay removed
 
 function toggleForecastUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';

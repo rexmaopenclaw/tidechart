@@ -244,22 +244,20 @@ header h1 { font-size: 18px; color: #60b0f4; }
 .forecast-wind-card:hover { border-color: rgba(96,176,244,0.25); }
 .forecast-wind-body { padding: 2px 0; }
 
-/* Multi-model forecast rows — compact like old reference cards */
-.model-row { display: flex; align-items: center; gap: 6px; padding: 2px 0; font-size: 12px; font-family: 'SF Mono', 'Menlo', monospace; }
+/* Multi-model forecast rows — one line with gust */
+.model-row { display: flex; align-items: center; gap: 4px; padding: 2px 0; font-size: 12px; font-family: 'SF Mono', 'Menlo', monospace; white-space: nowrap; }
 .model-dot { width: 6px; height: 6px; border-radius: 50%; flex: 0 0 auto; }
-.model-name { width: 85px; font-weight: 700; color: #e0e8f0; flex: 0 0 auto; }
-.model-wind { font-size: 12px; font-weight: 700; color: #60b0f4; width: 48px; text-align: right; flex: 0 0 auto; }
-.model-dir { flex: 1 1 auto; text-align: right; font-size: 13px; color: #4ecdc4; }
+.model-name { width: 75px; font-weight: 700; color: #e0e8f0; flex: 0 0 auto; }
+.model-wind { font-size: 12px; font-weight: 700; color: #60b0f4; width: 52px; text-align: right; flex: 0 0 auto; }
+.model-gust { font-size: 10px; color: #8fa3bd; flex: 0 0 auto; }
+.model-dir { flex: 0 0 auto; text-align: right; font-size: 14px; color: #4ecdc4; margin-left: auto; }
+
+/* BF chips */
+.bf-chips { display: flex; gap: 4px; margin: 10px 0 8px; flex-wrap: wrap; }
 
 /* Hourly table */
 #hourlyWrap { background: #0f1c30; border: 1px solid rgba(30,52,82,0.5); border-radius: 10px; padding: 10px 12px; }
 #hourlyWrap summary { cursor: pointer; font-size: 13.5px; color: #e0e8f0; user-select: none; }
-.day-tabs { display: flex; gap: 4px; margin: 10px 0 8px; flex-wrap: wrap; }
-.day-tab {
-  background: #14253d; border: 1px solid rgba(30,52,82,0.5); color: #8fa3bd;
-  border-radius: 6px; padding: 3px 10px; font-size: 12px; cursor: pointer;
-}
-.day-tab.active { background: #60b0f4; color: #06203a; font-weight: 700; }
 table.hourly { width: 100%; border-collapse: collapse; font-size: 12px; }
 table.hourly th {
   position: sticky; top: 0; background: #14253d; color: #8fa3bd;
