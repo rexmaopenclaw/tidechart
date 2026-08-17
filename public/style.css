@@ -252,8 +252,8 @@ header h1 { font-size: 18px; color: #60b0f4; }
 .model-gust { font-size: 10px; color: #8fa3bd; flex: 0 0 auto; }
 .model-dir { flex: 0 0 auto; text-align: right; font-size: 14px; color: #4ecdc4; margin-left: auto; }
 
-/* BF chips */
-.bf-chips { display: flex; gap: 4px; margin: 10px 0 8px; flex-wrap: wrap; }
+/* Day tabs */
+.day-tabs { display: flex; gap: 4px; margin: 10px 0 8px; flex-wrap: wrap; }
 
 /* Hourly table */
 #hourlyWrap { background: #0f1c30; border: 1px solid rgba(30,52,82,0.5); border-radius: 10px; padding: 10px 12px; }

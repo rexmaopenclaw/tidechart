@@ -1192,7 +1192,7 @@ function renderMultiModelHourly() {
   });
   days = days.slice(0, 7);
 
-  // Max BF per day across all models
+  // Max BF per day across all models for tab coloring
   var dayBf = {};
   days.forEach(function(d) { dayBf[d] = 0; });
   FORECAST_MODELS.forEach(function(m) {
@@ -1212,13 +1212,14 @@ function renderMultiModelHourly() {
     var bf = dayBf[d] || 0;
     var color = bfColor(bf);
     var active = d === activeDay ? ' active' : '';
-    var label = 'D' + (i + 1);
-    tabs.push('<button class="bf-chip' + active + '" data-day="' + d + '" style="background:' + color + ';color:#fff;border:none;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;cursor:pointer;opacity:' + (d === activeDay ? '1' : '0.65') + '">' + label + ' BF' + bf + '</button>');
+    var label = fmtDay(d);
+    var bg = 'background:' + color + ';color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer';
+    tabs.push('<button class="day-tab' + active + '" data-day="' + d + '" style="' + bg + ';opacity:' + (d === activeDay ? '1' : '0.65') + '">' + label + '</button>');
   });
-  hourlyTable.innerHTML = '<div class="bf-chips">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
-  hourlyTable.querySelectorAll('.bf-chip').forEach(function(tab) {
+  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
+  hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
     tab.onclick = function() {
-      hourlyTable.querySelectorAll('.bf-chip').forEach(function(t) { t.classList.remove('active'); t.style.opacity = '0.65'; });
+      hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); t.style.opacity = '0.65'; });
       tab.classList.add('active');
       tab.style.opacity = '1';
       selectedForecastDay = tab.dataset.day;
@@ -1244,15 +1245,24 @@ function renderMultiModelDayTable(day) {
       var kn = d.speed[i];
       var dir = forecastWindDir(d.dir ? d.dir[i] : null);
       var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
-      cells.push('<td>' + speedVal + ' <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span></td>');
+      cells.push('<td><span style="color:' + bfColor(knToBf(kn)) + ';font-weight:700">' + speedVal + '</span> <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span></td>');
     });
     rows.push('<tr>' + cells.join('') + '</tr>');
   });
   tbody.innerHTML = rows.join('');
 }
 
-// fmtDay removed
 
+
+
+function fmtDay(iso) {
+  var d = new Date(iso + 'T00:00:00');
+  var today = new Date();
+  var diff = Math.floor((new Date(iso + 'T00:00:00') - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+  var names = ['今日','聽日','後日'];
+  if (diff >= 0 && diff < 3) return names[diff];
+  return d.toLocaleDateString('zh-HK', { weekday: 'short', month: 'numeric', day: 'numeric' });
+}
 function toggleForecastUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
   if (forecastUnitToggle) forecastUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
