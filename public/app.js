@@ -457,7 +457,7 @@ function selectPoint(p) {
   state.activePoint = p;
   pendingNewPoint = null;
   if (pointNameInput) pointNameInput.value = p.name;
-  if (pointSaveBtn) pointSaveBtn.textContent = '★ 儲存';
+  if (pointSaveBtn) pointSaveBtn.textContent = '儲存';
   renderPointsBar();
   highlightMarker(p);
   if (map && p.lat && p.lon) {
@@ -1573,7 +1573,7 @@ pointSaveBtn.addEventListener('click', function() {
     points.push(newPoint);
     saveLocalPoints(points);
     pendingNewPoint = null;
-    pointSaveBtn.textContent = '★ 儲存';
+    pointSaveBtn.textContent = '儲存';
     selectPoint(newPoint);
     syncPointsToServer();
   } else if (state.activePoint) {
