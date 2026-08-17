@@ -1149,7 +1149,7 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
-    // Compact reference rows — one line + gust
+      // Compact reference rows — one line + gust
   const now = new Date();
   var html = [];
   FORECAST_MODELS.forEach(function(m) {
@@ -1166,13 +1166,14 @@ function renderMultiModelForecast() {
     var u = windUnit === 'kmh' ? 'km/h' : 'kn';
     var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
     var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
+    var speedColor = bfColor(knToBf(kn));
     html.push(
       '<div class="model-row">' +
         '<span class="model-dot" style="background:' + m.color + '"></span>' +
         '<span class="model-name">' + m.name + '</span>' +
-        '<span class="model-wind">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
-        '<span class="model-gust">' + (gustVal != null ? '陣風' + gustVal : '') + '</span>' +
+        '<span class="model-wind" style="color:' + speedColor + '">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
         '<span class="model-dir">' + dir.arrow + '</span>' +
+        '<span class="model-gust">' + (gustVal != null ? '陣風' + gustVal : '') + '</span>' +
       '</div>'
     );
   });
@@ -1258,7 +1259,8 @@ function fmtDay(iso) {
   var d = new Date(iso + 'T00:00:00');
   var dd = String(d.getDate()).padStart(2, '0');
   var mm = d.getMonth() + 1;
-  return dd + '/' + mm;
+  var weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  return dd + '/' + mm + ' (' + weekdays[d.getDay()] + ')';
 }
 function toggleForecastUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
