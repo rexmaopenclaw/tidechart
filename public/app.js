@@ -285,6 +285,7 @@ function applyState(s) {
   if (s.windUnit === 'kn' || s.windUnit === 'kmh') {
     windUnit = s.windUnit;
     if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+    if (forecastUnitToggle) forecastUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
   }
   if (s.windHistHours) {
     // 舊 saved 可能係 168 (7d)，而家冇 7d 選項 — clamp 返做 48h
@@ -325,9 +326,26 @@ const windHistRange = document.getElementById('windHistRange');
 const windHistNote = document.getElementById('windHistNote');
 const forecastWindCard = document.getElementById('forecastWindCard');
 const forecastWindBody = document.getElementById('forecastWindBody');
-const windGfs = document.getElementById('windGfs');
-const windEcmwf = document.getElementById('windEcmwf');
+const forecastUnitToggle = document.getElementById('forecastUnitToggle');
+const multiModelNow = document.getElementById('multiModelNow');
+const hourlyWrap = document.getElementById('hourlyWrap');
+const hourlyTable = document.getElementById('hourlyTable');
 let windUnit = 'kmh'; // default km/h
+
+// Multi-model forecast config
+const FORECAST_MODELS = [
+  { id: 'gfs_seamless',          name: 'GFS',         color: '#60b0f4' },
+  { id: 'ecmwf_ifs025',          name: 'ECMWF',       color: '#f4a261' },
+  { id: 'icon_seamless',         name: 'ICON',        color: '#4ecdc4' },
+  { id: 'meteofrance_seamless',  name: 'MeteoFrance', color: '#c77dff' },
+];
+const FORECAST_DIR16 = ['北','北北東','東北','東北東','東','東南東','東南','東南南','南','南南西','西南','西南西','西','西北西','西北','西北北'];
+const FORECAST_ARROWS = ['↑','↗','→','↘','↓','↙','←','↖'];
+function forecastWindDir(deg) {
+  if (deg == null || isNaN(deg)) return { text: '—', arrow: '·', deg: null };
+  const idx = Math.round(deg / 22.5) % 16;
+  return { text: FORECAST_DIR16[idx], arrow: FORECAST_ARROWS[Math.floor(idx / 2)], deg: Math.round(deg) };
+}
 
 // Warning DOM refs
 const warnBar = document.getElementById('warnBar');
@@ -683,10 +701,9 @@ async function loadData() {
     if (p.lat && p.lon) {
       url += '&lat=' + p.lat + '&lon=' + p.lon;
     }
-    const [currentResp, seriesResp, weatherResp, hkoWindResp] = await Promise.all([
+    const [currentResp, seriesResp, hkoWindResp] = await Promise.all([
       fetch(url),
       fetch(apiUrl('/api/current-series?date=' + date + '&mode=' + state.mode + '&lat=' + p.lat + '&lon=' + p.lon)),
-      fetch(apiUrl('/api/weather?lat=' + p.lat + '&lon=' + p.lon + '&date=' + date + '&time=' + time)).catch(function(){ return null; }),
       fetch(apiUrl('/api/hko-wind?lat=' + p.lat + '&lon=' + p.lon)).catch(function(){ return null; })
     ]);
 
@@ -699,19 +716,15 @@ async function loadData() {
       state.series = null;
     }
 
-    // Forecast wind (GFS + ECMWF) — optional
-    if (weatherResp && weatherResp.ok) {
-      state.weather = await weatherResp.json();
-    } else {
-      state.weather = null;
-    }
-
     // HKO real-time wind
     if (hkoWindResp && hkoWindResp.ok) {
       state.hkoWind = await hkoWindResp.json();
     } else {
       state.hkoWind = null;
     }
+
+    // Multi-model forecast (GFS / ECMWF / ICON / MeteoFrance)
+    await loadMultiModelForecast(p.lat, p.lon);
 
     render();
   } catch (err) {
@@ -789,7 +802,7 @@ function render() {
   }).join(' · ');
 
   renderHkoWind();
-  renderForecastWind();
+  renderMultiModelForecast();
 
   drawTideChart(tide);
   drawSpeedChart(state.series);
@@ -1073,39 +1086,153 @@ function cycleWindHistRange() {
   }
 }
 
-// ----- Forecast Wind (GFS + ECMWF) — reference card -----
-function renderForecastWind() {
-  if (!forecastWindBody || !windGfs || !windEcmwf) return;
-  const w = state.weather;
-  if (!w) {
-    forecastWindBody.classList.add('hidden');
+// ----- Multi-Model Forecast (Windward 4 models) -----
+let multiModelData = null;
+
+async function loadMultiModelForecast(lat, lon) {
+  try {
+    const params = new URLSearchParams({
+      latitude: lat, longitude: lon,
+      forecast_days: '7',
+      models: FORECAST_MODELS.map(m => m.id).join(','),
+    });
+    const res = await fetch(apiUrl('/api/forecast?' + params));
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (json.error) throw new Error(json.reason);
+    const data = { models: {} };
+    const h = json.hourly;
+    FORECAST_MODELS.forEach(function(m) {
+      const speed = h && h['wind_speed_10m_' + m.id];
+      if (!speed) { data.models[m.id] = null; return; }
+      data.models[m.id] = {
+        times: h.time,
+        speed: speed,
+        gust: h['wind_gusts_10m_' + m.id],
+        dir: h['wind_direction_10m_' + m.id],
+      };
+    });
+    multiModelData = data;
+  } catch (e) {
+    multiModelData = null;
+  }
+}
+
+function renderMultiModelForecast() {
+  if (!forecastWindBody || !multiModelNow) return;
+  if (!multiModelData) {
     forecastWindCard.classList.add('hidden');
     return;
   }
-
-  const fmt = function(m) {
-    if (!m || m.speed_kn == null) return '--';
-    if (windUnit === 'kn') {
-      return m.speed_kn.toFixed(1) + ' kn (陣風 ' + m.gust_kn.toFixed(1) + ' kn) ' + (m.compass_cn || m.compass || '');
-    } else {
-      const kmh = Math.round(m.speed_kn * 1.852 * 10) / 10;
-      const gustKmh = m.gust_kn != null ? Math.round(m.gust_kn * 1.852 * 10) / 10 : null;
-      return kmh.toFixed(1) + ' km/h' + (gustKmh != null ? ' (陣風 ' + gustKmh.toFixed(1) + ' km/h)' : '') + ' ' + (m.compass_cn || m.compass || '');
-    }
-  };
-
-  forecastWindBody.classList.remove('hidden');
   forecastWindCard.classList.remove('hidden');
-  windGfs.textContent = fmt(w.gfs);
-  windEcmwf.textContent = fmt(w.ecmwf);
+
+  // Now card
+  const now = new Date();
+  var html = [];
+  FORECAST_MODELS.forEach(function(m) {
+    const d = multiModelData.models[m.id];
+    if (!d) { html.push('<div class="model-row"><span class="model-dot" style="background:' + m.color + '"></span><span class="model-name">' + m.name + '</span><span class="model-wind">—</span></div>'); return; }
+    var idx = 0, best = Infinity;
+    d.times.forEach(function(t, i) {
+      var diff = Math.abs(new Date(t).getTime() - now.getTime());
+      if (diff < best) { best = diff; idx = i; }
+    });
+    var kn = d.speed[idx];
+    var gust = d.gust ? d.gust[idx] : null;
+    var dir = forecastWindDir(d.dir ? d.dir[idx] : null);
+    var u = windUnit === 'kmh' ? 'km/h' : 'kn';
+    var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+    var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
+    html.push(
+      '<div class="model-row">' +
+        '<span class="model-dot" style="background:' + m.color + '"></span>' +
+        '<span class="model-name">' + m.name + '</span>' +
+        '<span class="model-wind">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
+        '<span class="model-gust">陣風 ' + (gustVal != null ? gustVal : '—') + '</span>' +
+        '<span class="model-dir"><span class="arrow">' + dir.arrow + '</span>' + dir.text + (dir.deg != null ? ' (' + dir.deg + '°)' : '') + '</span>' +
+      '</div>'
+    );
+  });
+  multiModelNow.innerHTML = html.join('');
+
+  // Hourly table
+  renderMultiModelHourly();
+}
+
+// Fix: MultiModelHourly uses FORECAST_MODELS
+function renderMultiModelHourly() {
+  if (!hourlyTable || !multiModelData) return;
+  var first = multiModelData.models[FORECAST_MODELS[0].id];
+  if (!first) { hourlyTable.innerHTML = ''; return; }
+  var days = [];
+  first.times.forEach(function(t) {
+    var d = t.slice(0, 10);
+    if (days.indexOf(d) === -1) days.push(d);
+  });
+  days = days.slice(0, 7);
+  var tabs = [];
+  days.forEach(function(d, i) {
+    tabs.push('<button class="day-tab' + (i === 0 ? ' active' : '') + '" data-day="' + d + '">' + fmtDay(d) + '</button>');
+  });
+  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
+  hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
+    tab.onclick = function() {
+      hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      renderMultiModelDayTable(tab.dataset.day);
+    };
+  });
+  renderMultiModelDayTable(days[0]);
+}
+
+function renderMultiModelDayTable(day) {
+  var tbody = document.querySelector('#hourlyTable tbody');
+  if (!tbody) return;
+  var rows = [];
+  var first = multiModelData.models[FORECAST_MODELS[0].id];
+  if (!first) return;
+  first.times.forEach(function(t, i) {
+    if (!t.startsWith(day)) return;
+    var h = t.slice(11, 13);
+    var cells = ['<td class="time">' + h + ':00</td>'];
+    FORECAST_MODELS.forEach(function(m) {
+      var d = multiModelData.models[m.id];
+      if (!d) { cells.push('<td>—</td>'); return; }
+      var kn = d.speed[i];
+      var dir = forecastWindDir(d.dir ? d.dir[i] : null);
+      var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+      cells.push('<td>' + speedVal + ' <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span><br><small style="color:var(--dim)">' + dir.text + (dir.deg != null ? dir.deg + '°' : '') + '</small></td>');
+    });
+    rows.push('<tr>' + cells.join('') + '</tr>');
+  });
+  tbody.innerHTML = rows.join('');
+}
+
+function fmtDay(iso) {
+  var d = new Date(iso + 'T00:00:00');
+  var today = new Date();
+  var diff = Math.floor((new Date(iso + 'T00:00:00') - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+  var names = ['今日','聽日','後日'];
+  if (diff >= 0 && diff < 3) return names[diff];
+  return d.toLocaleDateString('zh-HK', { weekday: 'short', month: 'numeric', day: 'numeric' });
+}
+
+function toggleForecastUnit() {
+  windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
+  if (forecastUnitToggle) forecastUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  saveState();
+  renderHkoWind();
+  if (multiModelData) renderMultiModelForecast();
 }
 
 function toggleWindUnit() {
   windUnit = (windUnit === 'kn') ? 'kmh' : 'kn';
   if (windUnitToggle) windUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
+  if (forecastUnitToggle) forecastUnitToggle.textContent = (windUnit === 'kn') ? 'knot' : 'km/h';
   saveState();
   renderHkoWind();
-  renderForecastWind();
+  renderMultiModelForecast();
 }
 
 // ----- Canvas Helpers -----
@@ -1491,6 +1618,9 @@ function init() {
   // Wind unit toggle
   if (windUnitToggle) {
     windUnitToggle.addEventListener('click', toggleWindUnit);
+  }
+  if (forecastUnitToggle) {
+    forecastUnitToggle.addEventListener('click', toggleForecastUnit);
   }
 
   // HKO warning signals (top bar) — load now + refresh every 5 min
