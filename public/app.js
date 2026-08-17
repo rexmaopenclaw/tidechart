@@ -1256,7 +1256,7 @@ function renderMultiModelDayTable(day) {
 
 function fmtDay(iso) {
   var d = new Date(iso + 'T00:00:00');
-  var dd = d.getDate();
+  var dd = String(d.getDate()).padStart(2, '0');
   var mm = d.getMonth() + 1;
   return dd + '/' + mm;
 }
