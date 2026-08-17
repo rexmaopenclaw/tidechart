@@ -1088,6 +1088,7 @@ function cycleWindHistRange() {
 
 // ----- Multi-Model Forecast (Windward 4 models) -----
 let multiModelData = null;
+let selectedForecastDay = null;
 
 async function loadMultiModelForecast(lat, lon) {
   try {
@@ -1151,6 +1152,66 @@ function renderMultiModelForecast() {
     );
   });
   multiModelNow.innerHTML = html.join('');
+  renderMultiModelHourly();
+}
+
+function renderMultiModelHourly() {
+  if (!hourlyTable || !multiModelData) return;
+  var first = multiModelData.models[FORECAST_MODELS[0].id];
+  if (!first) { hourlyTable.innerHTML = ''; return; }
+  var days = [];
+  first.times.forEach(function(t) {
+    var d = t.slice(0, 10);
+    if (days.indexOf(d) === -1) days.push(d);
+  });
+  days = days.slice(0, 7);
+  var tabs = [];
+  days.forEach(function(d, i) {
+    tabs.push('<button class="day-tab' + (i === 0 ? ' active' : '') + '" data-day="' + d + '">' + fmtDay(d) + '</button>');
+  });
+  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
+  var activeDay = selectedForecastDay && days.indexOf(selectedForecastDay) !== -1 ? selectedForecastDay : days[0];
+  hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
+    tab.onclick = function() {
+      hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); });
+      tab.classList.add('active');
+      selectedForecastDay = tab.dataset.day;
+      renderMultiModelDayTable(tab.dataset.day);
+    };
+  });
+  renderMultiModelDayTable(activeDay);
+}
+
+function renderMultiModelDayTable(day) {
+  var tbody = document.querySelector('#hourlyTable tbody');
+  if (!tbody) return;
+  var rows = [];
+  var first = multiModelData.models[FORECAST_MODELS[0].id];
+  if (!first) return;
+  first.times.forEach(function(t, i) {
+    if (!t.startsWith(day)) return;
+    var h = t.slice(11, 13);
+    var cells = ['<td class="time">' + h + ':00</td>'];
+    FORECAST_MODELS.forEach(function(m) {
+      var d = multiModelData.models[m.id];
+      if (!d) { cells.push('<td>—</td>'); return; }
+      var kn = d.speed[i];
+      var dir = forecastWindDir(d.dir ? d.dir[i] : null);
+      var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+      cells.push('<td>' + speedVal + ' <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span></td>');
+    });
+    rows.push('<tr>' + cells.join('') + '</tr>');
+  });
+  tbody.innerHTML = rows.join('');
+}
+
+function fmtDay(iso) {
+  var d = new Date(iso + 'T00:00:00');
+  var today = new Date();
+  var diff = Math.floor((new Date(iso + 'T00:00:00') - new Date(today.getFullYear(), today.getMonth(), today.getDate())) / 86400000);
+  var names = ['今日','聽日','後日'];
+  if (diff >= 0 && diff < 3) return names[diff];
+  return d.toLocaleDateString('zh-HK', { weekday: 'short', month: 'numeric', day: 'numeric' });
 }
 
 function toggleForecastUnit() {
