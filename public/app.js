@@ -366,7 +366,9 @@ const FORECAST_ARROWS = ['↑','↗','→','↘','↓','↙','←','↖'];
 function forecastWindDir(deg) {
   if (deg == null || isNaN(deg)) return { text: '—', arrow: '·', deg: null };
   const idx = Math.round(deg / 22.5) % 16;
-  return { text: FORECAST_DIR16[idx], arrow: FORECAST_ARROWS[Math.floor(idx / 2)], deg: Math.round(deg) };
+  // Flip 180°: arrow points TO direction (meteorological FROM + 180°)
+  var arrowIdx = Math.floor(((idx + 8) % 16) / 2);
+  return { text: FORECAST_DIR16[idx], arrow: FORECAST_ARROWS[arrowIdx], deg: Math.round(deg) };
 }
 
 // Warning DOM refs
