@@ -290,7 +290,11 @@ export async function handleForecast(request, env) {
       headers: { 'accept': 'application/json' },
     });
     const body = await upstream.json();
-    return json(body, upstream.status);
+    const resp = json(body, upstream.status);
+    // Prevent Cloudflare edge caching of forecast data
+    const headers = new Headers(resp.headers);
+    headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+    return new Response(resp.body, { status: resp.status, statusText: resp.statusText, headers });
   } catch (err) {
     return json({ error: 'upstream error: ' + err.message }, 502);
   }

@@ -1121,7 +1121,7 @@ async function loadMultiModelForecast(lat, lon) {
       forecast_days: '7',
       models: FORECAST_MODELS.map(m => m.id).join(','),
     });
-    const res = await fetch(apiUrl('/api/forecast?' + params));
+    const res = await fetch(apiUrl('/api/forecast?' + params + '&t=' + Date.now()));
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const json = await res.json();
     if (json.error) throw new Error(json.reason);
