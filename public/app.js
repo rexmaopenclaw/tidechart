@@ -470,18 +470,26 @@ function selectPoint(p) {
 function renderPointsBar() {
   if (!pointsChips) return;
   pointsChips.innerHTML = '';
-  if (points.length === 0) {
+  // 去重：同名同座標只留一個（D1 可能有歷史重複）
+  const seen = new Set();
+  const uniq = points.filter(function(p) {
+    const key = (p.name || '').trim() + '|' + Number(p.lat).toFixed(4) + '|' + Number(p.lon).toFixed(4);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+  if (uniq.length === 0) {
     const span = document.createElement('span');
     span.className = 'no-points';
     span.textContent = '選擇一個點...';
     pointsChips.appendChild(span);
     return;
   }
-  points.forEach(function(p) {
+  uniq.forEach(function(p) {
     const chip = document.createElement('button');
     chip.className = 'point-chip';
     if (state.activePoint && String(state.activePoint.id) === String(p.id)) chip.classList.add('active');
-    chip.textContent = '★ ' + p.name;
+    chip.textContent = p.name;
     chip.addEventListener('click', function() { selectPoint(p); });
     pointsChips.appendChild(chip);
   });
