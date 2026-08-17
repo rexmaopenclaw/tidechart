@@ -212,7 +212,10 @@ const hourPicker = document.getElementById('hourPicker');
 const minPicker = document.getElementById('minPicker');
 const refreshBtn = document.getElementById('refreshBtn');
 const modeBtn = document.getElementById('modeBtn');
-const pointsSelect = document.getElementById('pointsSelect');
+const pointsChips = document.getElementById('pointsChips');
+const pointNameInput = document.getElementById('pointNameInput');
+const pointSaveBtn = document.getElementById('pointSaveBtn');
+let pendingNewPoint = null; // {lat, lon} 待新增（地圖點選 / + 掣）
 const addPointBtn = document.getElementById('addPointBtn');
 const deletePointBtn = document.getElementById('deletePointBtn');
 const moveUpBtn = document.getElementById('moveUpBtn');
@@ -405,7 +408,11 @@ function initMap() {
   }).addTo(map);
   markerLayer = L.layerGroup().addTo(map);
   map.on('click', function(e) {
-    showAddPointModal(e.latlng.lat, e.latlng.lng);
+    // Windward 模式：地圖點選 → inline 新增（唔彈 modal）
+    pendingNewPoint = { lat: e.latlng.lat, lon: e.latlng.lng };
+    pointNameInput.value = '點 ' + (points.length + 1);
+    pointSaveBtn.textContent = '＋ 新增';
+    pointNameInput.focus();
   });
   setTimeout(function() {
     // Follow the active monitoring point after refresh
@@ -448,6 +455,9 @@ function highlightMarker(point) {
 // ----- Point Management -----
 function selectPoint(p) {
   state.activePoint = p;
+  pendingNewPoint = null;
+  if (pointNameInput) pointNameInput.value = p.name;
+  if (pointSaveBtn) pointSaveBtn.textContent = '★ 儲存';
   renderPointsBar();
   highlightMarker(p);
   if (map && p.lat && p.lon) {
@@ -458,32 +468,23 @@ function selectPoint(p) {
 }
 
 function renderPointsBar() {
-  if (!pointsSelect) return;
-  const prev = pointsSelect.value;
-  pointsSelect.innerHTML = '';
+  if (!pointsChips) return;
+  pointsChips.innerHTML = '';
   if (points.length === 0) {
-    const opt = document.createElement('option');
-    opt.value = '';
-    opt.textContent = '選擇一個點...';
-    pointsSelect.appendChild(opt);
-    pointsSelect.disabled = true;
+    const span = document.createElement('span');
+    span.className = 'no-points';
+    span.textContent = '選擇一個點...';
+    pointsChips.appendChild(span);
     return;
   }
-  pointsSelect.disabled = false;
   points.forEach(function(p) {
-    const opt = document.createElement('option');
-    opt.value = String(p.id);
-    opt.textContent = p.name;
-    pointsSelect.appendChild(opt);
+    const chip = document.createElement('button');
+    chip.className = 'point-chip';
+    if (state.activePoint && String(state.activePoint.id) === String(p.id)) chip.classList.add('active');
+    chip.textContent = '★ ' + p.name;
+    chip.addEventListener('click', function() { selectPoint(p); });
+    pointsChips.appendChild(chip);
   });
-  // Restore or select active point
-  if (state.activePoint && points.some(function(p) { return String(p.id) === String(state.activePoint.id); })) {
-    pointsSelect.value = String(state.activePoint.id);
-  } else if (prev && points.some(function(p) { return String(p.id) === prev; })) {
-    pointsSelect.value = prev;
-  } else {
-    pointsSelect.value = String(points[0].id);
-  }
 }
 
 function movePoint(dir) {
@@ -1546,12 +1547,45 @@ modeBtn.addEventListener('click', function() {
   loadData();
 });
 addPointBtn.addEventListener('click', function() {
-  showAddPointModal(22.38, 113.92);
+  // Windward 模式：inline 新增（用 map 中心做預設位）
+  const c = map ? map.getCenter() : { lat: 22.38, lng: 113.92 };
+  pendingNewPoint = { lat: c.lat, lon: c.lng };
+  pointNameInput.value = '點 ' + (points.length + 1);
+  pointSaveBtn.textContent = '＋ 新增';
+  pointNameInput.focus();
 });
-pointsSelect.addEventListener('change', function() {
-  const id = pointsSelect.value;
-  const p = points.find(function(x) { return String(x.id) === String(id); });
-  if (p) selectPoint(p);
+pointSaveBtn.addEventListener('click', function() {
+  const name = (pointNameInput.value || '').trim();
+  if (!name) { alert('入個名先！'); return; }
+  if (pendingNewPoint) {
+    // 新增 point
+    pointIdCounter++;
+    localStorage.setItem('tidePointId', String(pointIdCounter));
+    const newPoint = { id: 'local_' + pointIdCounter, name: name, lat: pendingNewPoint.lat, lon: pendingNewPoint.lon, isHydro: false };
+    points.push(newPoint);
+    saveLocalPoints(points);
+    pendingNewPoint = null;
+    pointSaveBtn.textContent = '★ 儲存';
+    selectPoint(newPoint);
+    syncPointsToServer();
+  } else if (state.activePoint) {
+    // 改名（id 可能 sync 後變，用 name+coords match）
+    const old = state.activePoint;
+    const idx = points.findIndex(function(p) {
+      return p.id === old.id || (p.name === old.name && Math.abs(p.lat - old.lat) < 0.0001 && Math.abs(p.lon - old.lon) < 0.0001);
+    });
+    if (idx >= 0) {
+      points[idx].name = name;
+      state.activePoint = points[idx];
+      saveLocalPoints(points);
+      renderPointsBar();
+      renderMarkers();
+      syncPointsToServer();
+    }
+  }
+});
+pointNameInput.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') pointSaveBtn.click();
 });
 deletePointBtn.addEventListener('click', function() {
   if (state.activePoint) deletePoint(state.activePoint.id);

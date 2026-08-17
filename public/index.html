@@ -50,11 +50,15 @@
     <!-- Saved Points -->
     <div class="points-bar" id="pointsBar">
       <span class="bar-label">📍 監測點</span>
-      <select id="pointsSelect" class="points-select"></select>
+      <div id="pointsChips" class="points-list"></div>
       <button id="addPointBtn" class="add-btn">+</button>
       <button id="moveUpBtn" class="add-btn" title="上移">↑</button>
       <button id="moveDownBtn" class="add-btn" title="下移">↓</button>
       <button id="deletePointBtn" class="add-btn del-btn">🗑️</button>
+    </div>
+    <div class="point-edit-row">
+      <input id="pointNameInput" placeholder="改名 / 新增點名" maxlength="30">
+      <button id="pointSaveBtn" class="save-chip-btn">★ 儲存</button>
     </div>
 
     <!-- Cards Row: HKO Wind + Current side by side -->
