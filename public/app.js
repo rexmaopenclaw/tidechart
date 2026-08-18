@@ -1197,15 +1197,27 @@ function renderMultiModelHourly() {
   });
   days = days.slice(0, 7);
 
+  var d = multiModelData.models['ecmwf_ifs'];
   var activeDay = selectedForecastDay && days.indexOf(selectedForecastDay) !== -1 ? selectedForecastDay : days[0];
   var tabs = [];
   days.forEach(function(day) {
     var active = day === activeDay ? ' active' : '';
     var label = fmtDay(day);
-    tabs.push('<button class="day-tab' + active + '" data-day="' + day + '" style="background:#2a4a6a;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;opacity:' + (day === activeDay ? '1' : '0.65') + '">' + label + '</button>');
+    // Max BF for the day
+    var maxBf = 0;
+    if (d) {
+      d.times.forEach(function(t, i) {
+        if (t.startsWith(day)) {
+          var bf = knToBf(d.speed[i]);
+          if (bf > maxBf) maxBf = bf;
+        }
+      });
+    }
+    var color = maxBf > 0 ? bfColor(maxBf) : '#2a4a6a';
+    tabs.push('<button class="day-tab' + active + '" data-day="' + day + '" style="background:' + color + ';color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;opacity:' + (day === activeDay ? '1' : '0.65') + '">' + label + '</button>');
   });
   var uLabel = windUnit === 'kn' ? 'kn' : 'km/h';
-  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th><th style="color:#f4a261">ECMWF (' + uLabel + ')</th></tr></thead><tbody></tbody></table></div>';
+  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th><th style="color:#f4a261">風速</th><th style="color:#f4a261">陣風</th></tr></thead><tbody></tbody></table></div>';
   hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
     tab.onclick = function() {
       hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); t.style.opacity = '0.65'; });
@@ -1234,7 +1246,10 @@ function renderMultiModelDayTable(day) {
     var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
     var uLabel = windUnit === 'kn' ? 'kn' : 'km/h';
     var color = bfColor(knToBf(kn));
-    rows.push('<tr><td class="time">' + h + ':00</td><td><span style="color:' + color + ';font-weight:700">' + speedVal + ' ' + uLabel + '</span> <span class="arrow" style="color:#4a6a8a">' + dir.arrow + '</span> <span style="color:#4a6a8a;font-size:11px">G' + gustVal + '</span></td></tr>');
+    var gustColor = gust != null ? bfColor(knToBf(gust)) : '#4a6a8a';
+    rows.push('<tr><td class="time">' + h + ':00</td>' +
+      '<td><span style="color:' + color + ';font-weight:700">' + speedVal + '</span> <span class="arrow" style="color:#4a6a8a">' + dir.arrow + '</span></td>' +
+      '<td><span style="color:' + gustColor + ';font-weight:600">' + gustVal + ' ' + uLabel + '</span></td></tr>');
   });
   tbody.innerHTML = rows.join('');
 }
