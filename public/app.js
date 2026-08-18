@@ -1151,8 +1151,9 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
-  // Set reference time from first model's first time
+  // Show model run info
   var refTimeEl = document.getElementById('forecastRefTime');
+  var modelRunEl = document.getElementById('modelRunTime');
   if (refTimeEl) {
     var firstModel = multiModelData.models[FORECAST_MODELS[0].id];
     if (firstModel && firstModel.times && firstModel.times.length) {
@@ -1163,6 +1164,13 @@ function renderMultiModelForecast() {
       var hh = String(d.getHours()).padStart(2, '0');
       refTimeEl.textContent = dd + '/' + mm + ' ' + hh + ':00';
     }
+  }
+  if (modelRunEl && firstModel && firstModel.times && firstModel.times.length) {
+    // Model run time is the first timestep
+    var t = firstModel.times[0];
+    var d = new Date(t);
+    var ds = String(d.getFullYear()).slice(2) + '/' + String(d.getMonth() + 1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':00';
+    modelRunEl.textContent = '（預測，非實時 · 起始 ' + ds + '）';
   }
 
       // Compact reference rows — one line + gust
