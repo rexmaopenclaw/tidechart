@@ -334,9 +334,7 @@ let windUnit = 'kmh'; // default km/h
 
 // Multi-model forecast config
 const FORECAST_MODELS = [
-  { id: 'gfs_seamless',          name: 'GFS',         color: '#60b0f4' },
   { id: 'ecmwf_ifs',             name: 'ECMWF',       color: '#f4a261' },
-  { id: 'icon_seamless',         name: 'ICON',        color: '#4ecdc4' },
 ];
 const FORECAST_DIR16 = ['北','北北東','東北','東北東','東','東南東','東南','東南南','南','南南西','西南','西南西','西','西北西','西北','西北北'];
 
@@ -1151,49 +1149,38 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
-  // Compact reference rows — one line + gust
+  var d = multiModelData.models['ecmwf_ifs'];
+  if (!d) { multiModelNow.innerHTML = '<div class="model-row" style="font-size:11px;color:#4a6a8a">ECMWF 數據載入中...</div>'; return; }
+
   const now = new Date();
-  var html = [];
-  var nearestTimeStr = '';
-  var firstModel = null;
-  FORECAST_MODELS.forEach(function(m) {
-    const d = multiModelData.models[m.id];
-    if (!d) { html.push('<div class="model-row"><span class="model-dot" style="background:' + m.color + '"></span><span class="model-name">' + m.name + '</span><span class="model-wind">—</span></div>'); return; }
-    if (!firstModel) firstModel = d;
-    var idx = 0, best = Infinity;
-    d.times.forEach(function(t, i) {
-      var diff = Math.abs(new Date(t).getTime() - now.getTime());
-      if (diff < best) { best = diff; idx = i; }
-    });
-    // Save nearest time string for display
-    if (!nearestTimeStr && d.times[idx]) nearestTimeStr = d.times[idx];
-    var kn = d.speed[idx];
-    var gust = d.gust ? d.gust[idx] : null;
-    var dir = forecastWindDir(d.dir ? d.dir[idx] : null);
-    var u = windUnit === 'kmh' ? 'km/h' : 'kn';
-    var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
-    var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
-    var speedColor = bfColor(knToBf(kn));
-    html.push(
-      '<div class="model-row">' +
-        '<span class="model-dot" style="background:' + m.color + '"></span>' +
-        '<span class="model-name">' + m.name + '</span>' +
-        '<span class="model-wind" style="color:' + speedColor + '">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
-        '<span class="model-dir">' + dir.arrow + '</span>' +
-        '<span class="model-gust">' + (gustVal != null ? '陣風' + gustVal : '') + '</span>' +
-      '</div>'
-    );
+  var idx = 0, best = Infinity;
+  d.times.forEach(function(t, i) {
+    var diff = Math.abs(new Date(t).getTime() - now.getTime());
+    if (diff < best) { best = diff; idx = i; }
   });
-  multiModelNow.innerHTML = html.join('');
+  var nearestTimeStr = d.times[idx] || '';
+  var kn = d.speed[idx];
+  var gust = d.gust ? d.gust[idx] : null;
+  var dir = forecastWindDir(d.dir ? d.dir[idx] : null);
+  var u = windUnit === 'kmh' ? 'km/h' : 'kn';
+  var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+  var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
+  var speedColor = bfColor(knToBf(kn));
+  var html = '<div class="model-row forecast-main-row">' +
+    '<span class="model-name">ECMWF 0.1°</span>' +
+    '<span class="model-wind" style="color:' + speedColor + ';font-size:16px;font-weight:700">' + speedVal + '<small style="color:var(--dim);font-size:10px"> ' + u + '</small></span>' +
+    '<span class="model-dir" style="font-size:16px">' + dir.arrow + '</span>' +
+    '<span class="model-gust" style="font-size:12px;color:#4a6a8a">陣風' + gustVal + '</span>' +
+  '</div>';
+  multiModelNow.innerHTML = html;
   renderMultiModelHourly();
 
-  // Show nearest time in header
   var refTimeEl = document.getElementById('forecastRefTime');
   if (refTimeEl && nearestTimeStr) {
-    var d = new Date(nearestTimeStr);
-    var dd = String(d.getDate()).padStart(2, '0');
-    var mm = d.getMonth() + 1;
-    var hh = String(d.getHours()).padStart(2, '0');
+    var dt = new Date(nearestTimeStr);
+    var dd = String(dt.getDate()).padStart(2, '0');
+    var mm = dt.getMonth() + 1;
+    var hh = String(dt.getHours()).padStart(2, '0');
     refTimeEl.textContent = dd + '/' + mm + ' ' + hh + ':00';
   }
 }
@@ -1209,31 +1196,15 @@ function renderMultiModelHourly() {
   });
   days = days.slice(0, 7);
 
-  // Max BF per day across all models for tab coloring
-  var dayBf = {};
-  days.forEach(function(d) { dayBf[d] = 0; });
-  FORECAST_MODELS.forEach(function(m) {
-    var md = multiModelData.models[m.id];
-    if (!md) return;
-    md.times.forEach(function(t, i) {
-      var d = t.slice(0, 10);
-      if (dayBf[d] === undefined) return;
-      var bf = knToBf(md.speed[i]);
-      if (bf > dayBf[d]) dayBf[d] = bf;
-    });
-  });
-
   var activeDay = selectedForecastDay && days.indexOf(selectedForecastDay) !== -1 ? selectedForecastDay : days[0];
   var tabs = [];
-  days.forEach(function(d, i) {
-    var bf = dayBf[d] || 0;
-    var color = bfColor(bf);
-    var active = d === activeDay ? ' active' : '';
-    var label = fmtDay(d);
-    var bg = 'background:' + color + ';color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer';
-    tabs.push('<button class="day-tab' + active + '" data-day="' + d + '" style="' + bg + ';opacity:' + (d === activeDay ? '1' : '0.65') + '">' + label + '</button>');
+  days.forEach(function(day) {
+    var active = day === activeDay ? ' active' : '';
+    var label = fmtDay(day);
+    tabs.push('<button class="day-tab' + active + '" data-day="' + day + '" style="background:#2a4a6a;color:#fff;border:none;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:700;cursor:pointer;opacity:' + (day === activeDay ? '1' : '0.65') + '">' + label + '</button>');
   });
-  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th>' + FORECAST_MODELS.map(function(m) { return '<th style="color:' + m.color + '">' + m.name + '</th>'; }).join('') + '</tr></thead><tbody></tbody></table></div>';
+  var uLabel = windUnit === 'kn' ? 'kn' : 'km/h';
+  hourlyTable.innerHTML = '<div class="day-tabs">' + tabs.join('') + '</div><div class="hourly-scroll"><table class="hourly"><thead><tr><th>時間</th><th style="color:#f4a261">ECMWF (' + uLabel + ')</th></tr></thead><tbody></tbody></table></div>';
   hourlyTable.querySelectorAll('.day-tab').forEach(function(tab) {
     tab.onclick = function() {
       hourlyTable.querySelectorAll('.day-tab').forEach(function(t) { t.classList.remove('active'); t.style.opacity = '0.65'; });
@@ -1249,22 +1220,20 @@ function renderMultiModelHourly() {
 function renderMultiModelDayTable(day) {
   var tbody = document.querySelector('#hourlyTable tbody');
   if (!tbody) return;
+  var d = multiModelData.models['ecmwf_ifs'];
+  if (!d) return;
   var rows = [];
-  var first = multiModelData.models[FORECAST_MODELS[0].id];
-  if (!first) return;
-  first.times.forEach(function(t, i) {
+  d.times.forEach(function(t, i) {
     if (!t.startsWith(day)) return;
     var h = t.slice(11, 13);
-    var cells = ['<td class="time">' + h + ':00</td>'];
-    FORECAST_MODELS.forEach(function(m) {
-      var d = multiModelData.models[m.id];
-      if (!d) { cells.push('<td>—</td>'); return; }
-      var kn = d.speed[i];
-      var dir = forecastWindDir(d.dir ? d.dir[i] : null);
-      var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
-      cells.push('<td><span style="color:' + bfColor(knToBf(kn)) + ';font-weight:700">' + speedVal + '</span> <span class="arrow" style="color:' + m.color + '">' + dir.arrow + '</span></td>');
-    });
-    rows.push('<tr>' + cells.join('') + '</tr>');
+    var kn = d.speed[i];
+    var dir = forecastWindDir(d.dir ? d.dir[i] : null);
+    var gust = d.gust ? d.gust[i] : null;
+    var speedVal = windUnit === 'kmh' ? (kn * 1.852).toFixed(1) : kn.toFixed(1);
+    var gustVal = gust != null ? (windUnit === 'kmh' ? (gust * 1.852).toFixed(1) : gust.toFixed(1)) : null;
+    var uLabel = windUnit === 'kn' ? 'kn' : 'km/h';
+    var color = bfColor(knToBf(kn));
+    rows.push('<tr><td class="time">' + h + ':00</td><td><span style="color:' + color + ';font-weight:700">' + speedVal + ' ' + uLabel + '</span> <span class="arrow" style="color:#4a6a8a">' + dir.arrow + '</span> <span style="color:#4a6a8a;font-size:11px">G' + gustVal + '</span></td></tr>');
   });
   tbody.innerHTML = rows.join('');
 }
