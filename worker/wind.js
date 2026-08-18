@@ -279,7 +279,7 @@ export async function handleForecast(request, env) {
       return json({ error: 'latitude & longitude required' }, 400);
     }
     const days = p.get('forecast_days') || '7';
-    const models = p.get('models') || 'ecmwf_ifs';
+    const models = p.get('models') || 'ecmwf_ifs,gfs_seamless';
     // Build query manually — URLSearchParams would encode ',' as '%2C'
     // and Open-Meteo then fails to parse multi-model.
     const q =
