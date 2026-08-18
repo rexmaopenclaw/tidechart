@@ -1151,39 +1151,22 @@ function renderMultiModelForecast() {
   }
   forecastWindCard.classList.remove('hidden');
 
-  // Show model run info
-  var refTimeEl = document.getElementById('forecastRefTime');
-  var modelRunEl = document.getElementById('modelRunTime');
-  if (refTimeEl) {
-    var firstModel = multiModelData.models[FORECAST_MODELS[0].id];
-    if (firstModel && firstModel.times && firstModel.times.length) {
-      var t = firstModel.times[0];
-      var d = new Date(t);
-      var dd = String(d.getDate()).padStart(2, '0');
-      var mm = d.getMonth() + 1;
-      var hh = String(d.getHours()).padStart(2, '0');
-      refTimeEl.textContent = dd + '/' + mm + ' ' + hh + ':00';
-    }
-  }
-  if (modelRunEl && firstModel && firstModel.times && firstModel.times.length) {
-    // Model run time is the first timestep
-    var t = firstModel.times[0];
-    var d = new Date(t);
-    var ds = String(d.getFullYear()).slice(2) + '/' + String(d.getMonth() + 1).padStart(2,'0') + '/' + String(d.getDate()).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':00';
-    modelRunEl.textContent = '（預測，非實時 · 起始 ' + ds + '）';
-  }
-
-      // Compact reference rows — one line + gust
+  // Compact reference rows — one line + gust
   const now = new Date();
   var html = [];
+  var nearestTimeStr = '';
+  var firstModel = null;
   FORECAST_MODELS.forEach(function(m) {
     const d = multiModelData.models[m.id];
     if (!d) { html.push('<div class="model-row"><span class="model-dot" style="background:' + m.color + '"></span><span class="model-name">' + m.name + '</span><span class="model-wind">—</span></div>'); return; }
+    if (!firstModel) firstModel = d;
     var idx = 0, best = Infinity;
     d.times.forEach(function(t, i) {
       var diff = Math.abs(new Date(t).getTime() - now.getTime());
       if (diff < best) { best = diff; idx = i; }
     });
+    // Save nearest time string for display
+    if (!nearestTimeStr && d.times[idx]) nearestTimeStr = d.times[idx];
     var kn = d.speed[idx];
     var gust = d.gust ? d.gust[idx] : null;
     var dir = forecastWindDir(d.dir ? d.dir[idx] : null);
@@ -1203,6 +1186,16 @@ function renderMultiModelForecast() {
   });
   multiModelNow.innerHTML = html.join('');
   renderMultiModelHourly();
+
+  // Show nearest time in header
+  var refTimeEl = document.getElementById('forecastRefTime');
+  if (refTimeEl && nearestTimeStr) {
+    var d = new Date(nearestTimeStr);
+    var dd = String(d.getDate()).padStart(2, '0');
+    var mm = d.getMonth() + 1;
+    var hh = String(d.getHours()).padStart(2, '0');
+    refTimeEl.textContent = dd + '/' + mm + ' ' + hh + ':00';
+  }
 }
 
 function renderMultiModelHourly() {
@@ -1746,6 +1739,28 @@ datePicker.addEventListener('change', function() { saveState(); loadData(); });
 hourPicker.addEventListener('change', function() { saveState(); loadData(); });
 minPicker.addEventListener('change', function() { saveState(); loadData(); });
 refreshBtn.addEventListener('click', function() { loadData(); });
+
+// Manual forecast refresh button
+var forecastRefreshBtn = document.getElementById('forecastRefreshBtn');
+if (forecastRefreshBtn) {
+  forecastRefreshBtn.addEventListener('click', function() {
+    if (state.activePoint) {
+      loadMultiModelForecast(state.activePoint.lat, state.activePoint.lon).then(function() {
+        renderMultiModelForecast();
+      });
+    }
+  });
+}
+
+// Auto-refresh forecast every 30 minutes
+function autoRefreshForecast() {
+  if (state.activePoint) {
+    loadMultiModelForecast(state.activePoint.lat, state.activePoint.lon).then(function() {
+      renderMultiModelForecast();
+    });
+  }
+}
+setInterval(autoRefreshForecast, 30 * 60 * 1000);
 modeBtn.addEventListener('click', function() {
   state.mode = state.mode === 'S' ? 'A' : 'S';
   modeBtn.textContent = state.mode === 'S' ? '水面' : '平均';
