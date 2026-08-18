@@ -335,7 +335,7 @@ let windUnit = 'kmh'; // default km/h
 // Multi-model forecast config
 const FORECAST_MODELS = [
   { id: 'gfs_seamless',          name: 'GFS',         color: '#60b0f4' },
-  { id: 'ecmwf_ifs025',          name: 'ECMWF',       color: '#f4a261' },
+  { id: 'ecmwf_ifs',             name: 'ECMWF',       color: '#f4a261' },
   { id: 'icon_seamless',         name: 'ICON',        color: '#4ecdc4' },
 ];
 const FORECAST_DIR16 = ['北','北北東','東北','東北東','東','東南東','東南','東南南','南','南南西','西南','西南西','西','西北西','西北','西北北'];
